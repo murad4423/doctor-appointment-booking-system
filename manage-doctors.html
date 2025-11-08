@@ -440,30 +440,55 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Auth state observer
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                loadDoctors();
-            } else {
-                document.getElementById('loginScreen').style.display = 'flex';
-                document.getElementById('dashboard').style.display = 'none';
-            }
-        });
+// Auth state observer - Check if user is already logged in
+onAuthStateChanged(auth, (user) => {
+    console.log('Auth state changed:', user ? 'Logged in' : 'Not logged in');
+    if (user) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        loadDoctors();
+    } else {
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('dashboard').style.display = 'none';
+    }
+});
 
-        // Login
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+// Login
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const errorDiv = document.getElementById('loginError');
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    
+    // Clear previous error
+    errorDiv.textContent = '';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Logging in...';
 
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                document.getElementById('loginError').textContent = 'Invalid credentials';
-            }
-        });
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log('Login successful:', userCredential.user);
+        // The onAuthStateChanged listener will handle the UI update
+    } catch (error) {
+        console.error('Login error:', error);
+        
+        // Show specific error messages
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+            errorDiv.textContent = 'Invalid email or password';
+        } else if (error.code === 'auth/user-not-found') {
+            errorDiv.textContent = 'No account found with this email';
+        } else if (error.code === 'auth/too-many-requests') {
+            errorDiv.textContent = 'Too many failed attempts. Please try again later.';
+        } else {
+            errorDiv.textContent = 'Login failed. Please try again.';
+        }
+        
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Login';
+    }
+});
 
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
