@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Doctors</title>
+    <title>Doctor Profile</title>
     <style>
         * {
             margin: 0;
@@ -16,376 +16,239 @@
             background: #f5f7fa;
         }
 
-        .login-container {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-        }
-
-        .login-box {
+        .navbar {
             background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 400px;
-            width: 100%;
-        }
-
-        .login-box h2 {
-            color: #667eea;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .dashboard {
-            display: none;
-        }
-
-        .header {
-            background: white;
-            padding: 20px 40px;
+            padding: 15px 40px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
         }
 
-        .header h1 {
+        .navbar h1 {
             color: #667eea;
             font-size: 24px;
         }
 
-        .header-actions {
+        .back-btn {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .doctor-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+            font-size: 48px;
+            font-weight: bold;
+            margin: 0 auto 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .profile-header p {
+            font-size: 18px;
+            opacity: 0.95;
+        }
+
+        .profile-body {
+            padding: 40px;
+        }
+
+        .info-section {
+            margin-bottom: 30px;
+        }
+
+        .info-section h2 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
             gap: 10px;
         }
 
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-item label {
+            display: block;
+            color: #666;
+            font-size: 13px;
             font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item p {
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .time-slots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .time-slot {
+            background: #e0e7ff;
+            color: #4338ca;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .days-available {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .day-badge {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .appointment-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+        }
+
+        .appointment-section h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .appointment-section p {
+            margin-bottom: 25px;
+            opacity: 0.95;
+        }
+
+        .btn-appointment {
+            padding: 15px 40px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.3s;
             text-decoration: none;
             display: inline-block;
         }
 
-        .btn-primary {
-            background: #667eea;
-            color: white;
+        .btn-appointment:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
-        .btn-primary:hover {
-            background: #5568d3;
-        }
-
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #dc2626;
-        }
-
-        .btn-secondary {
-            background: #6b7280;
-            color: white;
-        }
-
-        .content {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .add-form {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-            display: none;
-        }
-
-        .add-form.active {
-            display: block;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .doctors-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .doctor-card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-        }
-
-        .doctor-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .doctor-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 32px;
-            font-weight: bold;
-            margin: 0 auto 15px;
-        }
-
-        .doctor-card h3 {
+        .loading {
             text-align: center;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .doctor-card .specialty {
-            text-align: center;
-            color: #667eea;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .doctor-card .info {
+            padding: 100px 20px;
             color: #666;
-            font-size: 14px;
-            margin-bottom: 15px;
         }
 
-        .card-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .message {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+        .error {
             text-align: center;
-            display: none;
-        }
-
-        .message.success {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .message.error {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .time-slots-input {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-
-        .time-slot-tag {
-            background: #667eea;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 13px;
-        }
-
-        .time-slot-tag button {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
+            padding: 100px 20px;
+            color: #ef4444;
         }
 
         @media (max-width: 768px) {
-            .header {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .profile-header {
+                padding: 30px 20px;
+            }
+
+            .profile-body {
                 padding: 20px;
             }
 
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .doctors-grid {
+            .info-grid {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div id="loginScreen" class="login-container">
-        <div class="login-box">
-            <h2>🔐 Admin Login</h2>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
-                <div id="loginError" style="color: #ef4444; text-align: center; margin-top: 10px;"></div>
-            </form>
-        </div>
+    <div class="navbar">
+        <h1>🏥 Doctor Profile</h1>
+        <a href="index.html" class="back-btn">← Back to Home</a>
     </div>
 
-    <!-- Dashboard -->
-    <div id="dashboard" class="dashboard">
-        <div class="header">
-            <h1>👨‍⚕️ Manage Doctors</h1>
-            <div class="header-actions">
-                <a href="admin.html" class="btn btn-secondary">View Bookings</a>
-                <button class="btn btn-primary" onclick="toggleAddForm()">+ Add Doctor</button>
-                <button class="btn btn-danger" id="logoutBtn">Logout</button>
-            </div>
-        </div>
-
-        <div class="content">
-            <div id="message" class="message"></div>
-
-            <!-- Add/Edit Form -->
-            <div id="addForm" class="add-form">
-                <h2 style="margin-bottom: 20px; color: #333;">Add New Doctor</h2>
-                <form id="doctorForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Doctor Name *</label>
-                            <input type="text" id="name" required placeholder="Dr. John Doe">
-                        </div>
-                        <div class="form-group">
-                            <label>Specialty *</label>
-                            <input type="text" id="specialty" required placeholder="e.g., Cardiologist">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Education</label>
-                            <input type="text" id="education" placeholder="MBBS, MD">
-                        </div>
-                        <div class="form-group">
-                            <label>Experience</label>
-                            <input type="text" id="experience" placeholder="e.g., 15 years">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Phone</label>
-                            <input type="tel" id="phone" placeholder="01XXXXXXXXX">
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" id="emailDoctor" placeholder="doctor@example.com">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Chamber Address</label>
-                        <input type="text" id="chamberAddress" placeholder="Full address">
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Chamber Time</label>
-                            <input type="text" id="chamberTime" placeholder="9:00 AM - 5:00 PM">
-                        </div>
-                        <div class="form-group">
-                            <label>Consultation Fee</label>
-                            <input type="text" id="consultationFee" placeholder="1500 BDT">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Available Days (comma separated)</label>
-                        <input type="text" id="availableDays" placeholder="Saturday, Sunday, Monday">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Time Slots (comma separated)</label>
-                        <input type="text" id="timeSlots" placeholder="09:00 AM, 10:00 AM, 11:00 AM">
-                    </div>
-
-                    <div style="display: flex; gap: 10px;">
-                        <button type="submit" class="btn btn-primary">Save Doctor</button>
-                        <button type="button" class="btn btn-secondary" onclick="toggleAddForm()">Cancel</button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Doctors List -->
-            <div id="doctorsList" class="doctors-grid"></div>
+    <div class="container">
+        <div id="profileContent" class="loading">
+            Loading doctor information...
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyBgL3nTaBFS1789IwrsFb1SN4T7GIas3Jk",
@@ -398,143 +261,127 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Auth state observer
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                loadDoctors();
-            } else {
-                document.getElementById('loginScreen').style.display = 'flex';
-                document.getElementById('dashboard').style.display = 'none';
-            }
-        });
+        // Get doctor ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const doctorId = urlParams.get('id');
 
-        // Login
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        if (!doctorId) {
+            document.getElementById('profileContent').innerHTML = 
+                '<div class="error">Invalid doctor ID. <a href="index.html">Go back to home</a></div>';
+        } else {
+            loadDoctorProfile(doctorId);
+        }
 
+        async function loadDoctorProfile(id) {
             try {
-                await signInWithEmailAndPassword(auth, email, password);
+                const docRef = doc(db, 'doctors', id);
+                const docSnap = await getDoc(docRef);
+
+                if (!docSnap.exists()) {
+                    document.getElementById('profileContent').innerHTML = 
+                        '<div class="error">Doctor not found. <a href="index.html">Go back to home</a></div>';
+                    return;
+                }
+
+                const doctor = docSnap.data();
+                displayProfile(doctor, id);
             } catch (error) {
-                document.getElementById('loginError').textContent = 'Invalid credentials';
-            }
-        });
-
-        // Logout
-        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
-
-        // Toggle add form
-        window.toggleAddForm = function() {
-            const form = document.getElementById('addForm');
-            form.classList.toggle('active');
-            if (!form.classList.contains('active')) {
-                document.getElementById('doctorForm').reset();
-            }
-        };
-
-        // Add doctor
-        document.getElementById('doctorForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const availableDaysInput = document.getElementById('availableDays').value;
-            const timeSlotsInput = document.getElementById('timeSlots').value;
-
-            const doctorData = {
-                name: document.getElementById('name').value,
-                specialty: document.getElementById('specialty').value,
-                education: document.getElementById('education').value,
-                experience: document.getElementById('experience').value,
-                phone: document.getElementById('phone').value,
-                email: document.getElementById('emailDoctor').value,
-                chamberAddress: document.getElementById('chamberAddress').value,
-                chamberTime: document.getElementById('chamberTime').value,
-                consultationFee: document.getElementById('consultationFee').value,
-                availableDays: availableDaysInput ? availableDaysInput.split(',').map(d => d.trim()) : [],
-                timeSlots: timeSlotsInput ? timeSlotsInput.split(',').map(t => t.trim()) : [],
-                status: 'Active',
-                createdAt: serverTimestamp()
-            };
-
-            try {
-                await addDoc(collection(db, 'doctors'), doctorData);
-                showMessage('Doctor added successfully!', 'success');
-                document.getElementById('doctorForm').reset();
-                toggleAddForm();
-                loadDoctors();
-            } catch (error) {
-                showMessage('Failed to add doctor. Please try again.', 'error');
-            }
-        });
-
-        // Load doctors
-        async function loadDoctors() {
-            try {
-                const querySnapshot = await getDocs(collection(db, 'doctors'));
-                const doctors = [];
-                querySnapshot.forEach((doc) => {
-                    doctors.push({ id: doc.id, ...doc.data() });
-                });
-
-                displayDoctors(doctors);
-            } catch (error) {
-                console.error('Error loading doctors:', error);
+                console.error('Error loading doctor:', error);
+                document.getElementById('profileContent').innerHTML = 
+                    '<div class="error">Failed to load doctor profile. Please try again.</div>';
             }
         }
 
-        // Display doctors
-        function displayDoctors(doctors) {
-            const container = document.getElementById('doctorsList');
+        function displayProfile(doctor, doctorId) {
+            const timeSlotsHTML = doctor.timeSlots && doctor.timeSlots.length > 0
+                ? doctor.timeSlots.map(slot => `<span class="time-slot">${slot}</span>`).join('')
+                : '<p style="color: #666;">Time slots not specified</p>';
 
-            if (doctors.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #666;">No doctors added yet.</p>';
-                return;
-            }
+            const daysHTML = doctor.availableDays && doctor.availableDays.length > 0
+                ? doctor.availableDays.map(day => `<span class="day-badge">${day}</span>`).join('')
+                : '<p style="color: #666;">Available days not specified</p>';
 
-            container.innerHTML = doctors.map(doctor => `
-                <div class="doctor-card">
-                    <div class="doctor-avatar">${doctor.name.charAt(0)}</div>
-                    <h3>${doctor.name}</h3>
-                    <div class="specialty">${doctor.specialty || 'Specialist'}</div>
-                    <div class="info">
-                        <strong>Chamber:</strong> ${doctor.chamberAddress || 'Not specified'}<br>
-                        <strong>Time:</strong> ${doctor.chamberTime || 'Not specified'}<br>
-                        <strong>Fee:</strong> ${doctor.consultationFee || 'Contact for details'}
+            document.getElementById('profileContent').innerHTML = `
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="doctor-avatar">${doctor.name.charAt(0)}</div>
+                        <h1>${doctor.name}</h1>
+                        <p>${doctor.specialty || 'Medical Specialist'}</p>
                     </div>
-                    <div class="card-actions">
-                        <button class="btn btn-danger" style="flex: 1;" onclick="deleteDoctor('${doctor.id}')">Delete</button>
+
+                    <div class="profile-body">
+                        <div class="info-section">
+                            <h2>📋 Professional Information</h2>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label>Education</label>
+                                    <p>${doctor.education || 'Not specified'}</p>
+                                </div>
+                                <div class="info-item">
+                                    <label>Experience</label>
+                                    <p>${doctor.experience || 'Not specified'}</p>
+                                </div>
+                                <div class="info-item">
+                                    <label>Consultation Fee</label>
+                                    <p>${doctor.consultationFee || 'Contact for details'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-section">
+                            <h2>📍 Chamber Information</h2>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label>Chamber Address</label>
+                                    <p>${doctor.chamberAddress || 'Not specified'}</p>
+                                </div>
+                                <div class="info-item">
+                                    <label>Chamber Time</label>
+                                    <p>${doctor.chamberTime || 'Not specified'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-section">
+                            <h2>📞 Contact Information</h2>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label>Phone</label>
+                                    <p>${doctor.phone || 'Not specified'}</p>
+                                </div>
+                                <div class="info-item">
+                                    <label>Email</label>
+                                    <p>${doctor.email || 'Not specified'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-section">
+                            <h2>🕒 Available Days</h2>
+                            <div class="days-available">
+                                ${daysHTML}
+                            </div>
+                        </div>
+
+                        <div class="info-section">
+                            <h2>⏰ Time Slots</h2>
+                            <div class="time-slots">
+                                ${timeSlotsHTML}
+                            </div>
+                        </div>
+
+                        <div class="appointment-section">
+                            <h2>Ready to Book an Appointment?</h2>
+                            <p>Schedule your visit with ${doctor.name}</p>
+                            <a href="booking.html?doctor=${doctorId}" class="btn-appointment">
+                                📅 Book Appointment
+                            </a>
+                        </div>
                     </div>
                 </div>
-            `).join('');
-        }
-
-        // Delete doctor
-        window.deleteDoctor = async function(doctorId) {
-            if (!confirm('Are you sure you want to delete this doctor?')) return;
-
-            try {
-                await deleteDoc(doc(db, 'doctors', doctorId));
-                showMessage('Doctor deleted successfully!', 'success');
-                loadDoctors();
-            } catch (error) {
-                showMessage('Failed to delete doctor.', 'error');
-            }
-        };
-
-        // Show message
-        function showMessage(text, type) {
-            const messageDiv = document.getElementById('message');
-            messageDiv.textContent = text;
-            messageDiv.className = `message ${type}`;
-            messageDiv.style.display = 'block';
-            setTimeout(() => {
-                messageDiv.style.display = 'none';
-            }, 3000);
+            `;
         }
     </script>
 </body>
