@@ -589,10 +589,6 @@
                 });
         }
 
-        // Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('appointmentDate').setAttribute('min', today);
-
         // Form submission
         const form = document.getElementById('bookingForm');
         const submitBtn = document.getElementById('submitBtn');
