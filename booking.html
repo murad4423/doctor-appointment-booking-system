@@ -161,6 +161,580 @@
                 font-size: 24px;
             }
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            margin: 3% auto;
+            width: 90%;
+            max-width: 700px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close-modal {
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close-modal:hover {
+            transform: scale(1.2);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .date-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .date-nav-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .date-nav-btn:hover {
+            background: #5568d3;
+            transform: scale(1.1);
+        }
+
+        #modalDatePicker {
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #modalDatePicker:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .doctor-info-display {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .serial-loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .serial-blocks {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+            min-height: 200px;
+        }
+
+        .serial-block {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .serial-block.available {
+            background: #10b981;
+            color: white;
+        }
+
+        .serial-block.available:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .serial-block.booked {
+            background: #ef4444;
+            color: white;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .serial-block.selected {
+            background: #3b82f6;
+            color: white;
+            border-color: #1e40af;
+            transform: scale(1.15);
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .serial-legend {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .legend-color {
+            width: 25px;
+            height: 25px;
+            border-radius: 6px;
+        }
+
+        .legend-color.available {
+            background: #10b981;
+        }
+
+        .legend-color.booked {
+            background: #ef4444;
+        }
+
+        .legend-color.selected {
+            background: #3b82f6;
+        }
+
+        .serial-message {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .serial-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            display: block;
+        }
+
+        .serial-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            display: block;
+        }
+
+        .serial-message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            display: block;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn-cancel,
+        .btn-confirm {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #4b5563;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-confirm:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+
+            .modal-header {
+                padding: 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .serial-blocks {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 8px;
+            }
+
+            .serial-block {
+                font-size: 14px;
+            }
+
+            .date-selector {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            #modalDatePicker {
+                width: 100%;
+            }
+
+            .serial-legend {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+        // Global variables for serial selection
+        let currentDoctor = null;
+        let selectedSerialNumber = null;
+        let selectedAppointmentDate = null;
+
+        // Load doctor info if ID provided
+        if (doctorId) {
+            import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js')
+                .then(({ doc, getDoc }) => {
+                    return getDoc(doc(db, 'doctors', doctorId));
+                })
+                .then(docSnap => {
+                    if (docSnap.exists()) {
+                        const doctor = docSnap.data();
+                        doctorName = doctor.name;
+                        currentDoctor = { id: doctorId, ...doctor };
+                        document.getElementById('doctorInfo').textContent = 
+                            `Book appointment with ${doctor.name} - ${doctor.specialty || 'Specialist'}`;
+                    }
+                });
+        }
+
+        // Open serial selection modal
+        window.openSerialModal = function() {
+            if (!currentDoctor) {
+                alert('Doctor information not loaded. Please refresh the page.');
+                return;
+            }
+
+            if (!currentDoctor.maxPatients || currentDoctor.maxPatients <= 0) {
+                alert('This doctor has not set maximum patient limit. Please contact admin.');
+                return;
+            }
+
+            const modal = document.getElementById('serialModal');
+            modal.style.display = 'block';
+
+            // Set initial date to next available day
+            const today = new Date();
+            const nextAvailableDate = getNextAvailableDate(today);
+            document.getElementById('modalDatePicker').value = nextAvailableDate;
+            document.getElementById('modalDatePicker').min = today.toISOString().split('T')[0];
+
+            // Show doctor info
+            document.getElementById('doctorInfoDisplay').innerHTML = 
+                `<strong>${currentDoctor.name}</strong> - Max ${currentDoctor.maxPatients} patients per day`;
+
+            // Load serials for initial date
+            loadSerials();
+        };
+
+        // Close modal
+        window.closeSerialModal = function() {
+            document.getElementById('serialModal').style.display = 'none';
+            selectedSerialNumber = null;
+        };
+
+        // Get next available date based on doctor's schedule
+        function getNextAvailableDate(fromDate) {
+            if (!currentDoctor.availableDays || currentDoctor.availableDays.length === 0) {
+                return fromDate.toISOString().split('T')[0];
+            }
+
+            let checkDate = new Date(fromDate);
+            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+            // Check next 30 days
+            for (let i = 0; i < 30; i++) {
+                const dayName = daysOfWeek[checkDate.getDay()];
+                if (currentDoctor.availableDays.includes(dayName)) {
+                    return checkDate.toISOString().split('T')[0];
+                }
+                checkDate.setDate(checkDate.getDate() + 1);
+            }
+
+            return fromDate.toISOString().split('T')[0];
+        }
+
+        // Change date with arrows
+        window.changeDate = function(direction) {
+            const datePicker = document.getElementById('modalDatePicker');
+            const currentDate = new Date(datePicker.value);
+            currentDate.setDate(currentDate.getDate() + direction);
+
+            const nextDate = getNextAvailableDate(currentDate);
+            datePicker.value = nextDate;
+            loadSerials();
+        };
+
+        // Check if date is available for booking
+        function isDateAvailable(dateString) {
+            if (!currentDoctor.availableDays || currentDoctor.availableDays.length === 0) {
+                return true;
+            }
+
+            const date = new Date(dateString);
+            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const dayName = daysOfWeek[date.getDay()];
+
+            return currentDoctor.availableDays.includes(dayName);
+        }
+
+        // Load serial numbers for selected date
+        window.loadSerials = async function() {
+            const selectedDate = document.getElementById('modalDatePicker').value;
+            
+            if (!selectedDate) {
+                return;
+            }
+
+            // Check if date is available
+            if (!isDateAvailable(selectedDate)) {
+                const date = new Date(selectedDate);
+                const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getDay()];
+                
+                document.getElementById('serialMessage').className = 'serial-message error';
+                document.getElementById('serialMessage').textContent = 
+                    `${currentDoctor.name} is not available on ${dayName}s. Available days: ${currentDoctor.availableDays.join(', ')}`;
+                document.getElementById('serialBlocks').innerHTML = '';
+                return;
+            }
+
+            document.getElementById('serialMessage').style.display = 'none';
+            document.getElementById('serialLoading').style.display = 'block';
+            document.getElementById('serialBlocks').innerHTML = '';
+            selectedSerialNumber = null;
+
+            try {
+                // Get all bookings for this doctor on this date
+                const { collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                const q = query(
+                    collection(db, 'bookings'),
+                    where('doctorId', '==', doctorId),
+                    where('appointmentDate', '==', selectedDate)
+                );
+
+                const querySnapshot = await getDocs(q);
+                const bookedSerials = new Set();
+
+                querySnapshot.forEach((doc) => {
+                    const booking = doc.data();
+                    if (booking.serialNumber) {
+                        bookedSerials.add(parseInt(booking.serialNumber));
+                    }
+                });
+
+                document.getElementById('serialLoading').style.display = 'none';
+
+                // Generate serial blocks
+                const maxPatients = parseInt(currentDoctor.maxPatients);
+                const blocksContainer = document.getElementById('serialBlocks');
+                
+                // Check if all booked
+                if (bookedSerials.size >= maxPatients) {
+                    document.getElementById('serialMessage').className = 'serial-message error';
+                    document.getElementById('serialMessage').textContent = 
+                        '❌ All serials are booked for this date. Please try another day.';
+                    return;
+                }
+
+                for (let i = 1; i <= maxPatients; i++) {
+                    const block = document.createElement('div');
+                    block.className = 'serial-block';
+                    block.textContent = i;
+
+                    if (bookedSerials.has(i)) {
+                        block.classList.add('booked');
+                    } else {
+                        block.classList.add('available');
+                        block.onclick = () => selectSerial(i, block);
+                    }
+
+                    blocksContainer.appendChild(block);
+                }
+
+                // Show available count
+                const availableCount = maxPatients - bookedSerials.size;
+                document.getElementById('serialMessage').className = 'serial-message info';
+                document.getElementById('serialMessage').textContent = 
+                    `✓ ${availableCount} out of ${maxPatients} serials available`;
+
+            } catch (error) {
+                console.error('Error loading serials:', error);
+                document.getElementById('serialLoading').style.display = 'none';
+                document.getElementById('serialMessage').className = 'serial-message error';
+                document.getElementById('serialMessage').textContent = 
+                    'Failed to load serials. Please try again.';
+            }
+        };
+
+        // Select serial number
+        function selectSerial(serialNum, blockElement) {
+            // Remove previous selection
+            document.querySelectorAll('.serial-block.selected').forEach(block => {
+                block.classList.remove('selected');
+                block.classList.add('available');
+            });
+
+            // Add new selection
+            blockElement.classList.remove('available');
+            blockElement.classList.add('selected');
+            selectedSerialNumber = serialNum;
+
+            // Enable confirm button
+            document.getElementById('confirmSerialBtn').disabled = false;
+        }
+
+        // Confirm serial selection
+        window.confirmSerial = function() {
+            if (!selectedSerialNumber) {
+                alert('Please select a serial number');
+                return;
+            }
+
+            const selectedDate = document.getElementById('modalDatePicker').value;
+            
+            // Update hidden fields
+            document.getElementById('selectedSerial').value = selectedSerialNumber;
+            document.getElementById('selectedDate').value = selectedDate;
+
+            // Update display field
+            const formattedDate = new Date(selectedDate).toLocaleDateString('en-US', {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+
+            document.getElementById('serialDisplay').value = 
+                `Serial #${selectedSerialNumber} - ${formattedDate}`;
+
+            // Close modal
+            closeSerialModal();
+        };
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('serialModal');
+            if (event.target === modal) {
+                closeSerialModal();
+            }
+        };
     </style>
 </head>
 <body>
@@ -188,25 +762,20 @@
                 <label for="email">Email Address</label>
                 <input type="email" id="email" name="email" placeholder="example@email.com">
             </div>
-
             <div class="form-group">
-                <label for="appointmentDate">Preferred Date <span class="required">*</span></label>
-                <input type="date" id="appointmentDate" name="appointmentDate" required>
-            </div>
-
-            <div class="form-group">
-                <label for="appointmentTime">Preferred Time <span class="required">*</span></label>
-                <select id="appointmentTime" name="appointmentTime" required>
-                    <option value="">Select time slot</option>
-                    <option value="09:00 AM">09:00 AM</option>
-                    <option value="10:00 AM">10:00 AM</option>
-                    <option value="11:00 AM">11:00 AM</option>
-                    <option value="12:00 PM">12:00 PM</option>
-                    <option value="02:00 PM">02:00 PM</option>
-                    <option value="03:00 PM">03:00 PM</option>
-                    <option value="04:00 PM">04:00 PM</option>
-                    <option value="05:00 PM">05:00 PM</option>
-                </select>
+                <label for="serialDisplay">Select Serial Number & Date <span class="required">*</span></label>
+                <input 
+                    type="text" 
+                    id="serialDisplay" 
+                    name="serialDisplay" 
+                    required 
+                    readonly
+                    placeholder="Click to select serial number"
+                    style="cursor: pointer; background: #f8f9fa;"
+                    onclick="openSerialModal()"
+                >
+                <input type="hidden" id="selectedSerial" name="selectedSerial">
+                <input type="hidden" id="selectedDate" name="selectedDate">
             </div>
 
             <div class="form-group">
@@ -279,17 +848,17 @@
 
             try {
                 const formData = {
-                    patientName: document.getElementById('patientName').value,
-                    phone: document.getElementById('phone').value,
-                    email: document.getElementById('email').value || 'Not provided',
-                    appointmentDate: document.getElementById('appointmentDate').value,
-                    appointmentTime: document.getElementById('appointmentTime').value,
-                    reason: document.getElementById('reason').value,
-                    doctorId: doctorId || 'general',
-                    doctorName: doctorName,
-                    status: 'Pending',
-                    createdAt: serverTimestamp()
-                };
+    patientName: document.getElementById('patientName').value,
+    phone: document.getElementById('phone').value,
+    email: document.getElementById('email').value || 'Not provided',
+    serialNumber: document.getElementById('selectedSerial').value,
+    appointmentDate: document.getElementById('selectedDate').value,
+    reason: document.getElementById('reason').value,
+    doctorId: doctorId || 'general',
+    doctorName: doctorName,
+    status: 'Pending',
+    createdAt: serverTimestamp()
+};
 
                 await addDoc(collection(db, 'bookings'), formData);
 
@@ -310,5 +879,56 @@
             }
         });
     </script>
+<!-- Serial Selection Modal -->
+<div id="serialModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Select Serial Number & Date</h2>
+            <span class="close-modal" onclick="closeSerialModal()">&times;</span>
+        </div>
+        
+        <div class="modal-body">
+            <!-- Date Selection -->
+            <div class="date-selector">
+                <button class="date-nav-btn" onclick="changeDate(-1)">◄</button>
+                <input type="date" id="modalDatePicker" onchange="loadSerials()">
+                <button class="date-nav-btn" onclick="changeDate(1)">►</button>
+            </div>
+
+            <!-- Doctor Info Display -->
+            <div id="doctorInfoDisplay" class="doctor-info-display"></div>
+
+            <!-- Loading Indicator -->
+            <div id="serialLoading" class="serial-loading" style="display: none;">
+                Loading available serials...
+            </div>
+
+            <!-- Serial Blocks -->
+            <div id="serialBlocks" class="serial-blocks"></div>
+
+            <!-- Legend -->
+            <div class="serial-legend">
+                <span class="legend-item">
+                    <span class="legend-color available"></span> Available
+                </span>
+                <span class="legend-item">
+                    <span class="legend-color booked"></span> Booked
+                </span>
+                <span class="legend-item">
+                    <span class="legend-color selected"></span> Selected
+                </span>
+            </div>
+
+            <!-- Message Display -->
+            <div id="serialMessage" class="serial-message"></div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeSerialModal()">Cancel</button>
+            <button class="btn-confirm" id="confirmSerialBtn" onclick="confirmSerial()">Confirm Selection</button>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
