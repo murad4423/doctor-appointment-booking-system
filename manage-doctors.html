@@ -309,8 +309,10 @@
 
             <!-- Add/Edit Form -->
             <div id="addForm" class="add-form">
-                <h2 style="margin-bottom: 20px; color: #333;">Add New Doctor</h2>
+                <h2 id="formTitle" style="margin-bottom: 20px; color: #333;">Add New Doctor</h2>
                 <form id="doctorForm">
+                    <input type="hidden" id="doctorId" value="">
+                    <input type="hidden" id="editMode" value="false">
                     <div class="form-row">
                         <div class="form-group">
                             <label>Doctor Name *</label>
@@ -390,7 +392,7 @@
                     </div>
 
                     <div style="display: flex; gap: 10px;">
-                        <button type="submit" class="btn btn-primary">Save Doctor</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">Save Doctor</button>
                         <button type="button" class="btn btn-secondary" onclick="toggleAddForm()">Cancel</button>
                     </div>
                 </form>
@@ -404,7 +406,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, getDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyBgL3nTaBFS1789IwrsFb1SN4T7GIas3Jk",
@@ -449,51 +451,123 @@
         document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
 
         // Toggle add form
-        window.toggleAddForm = function() {
-            const form = document.getElementById('addForm');
-            form.classList.toggle('active');
-            if (!form.classList.contains('active')) {
-                document.getElementById('doctorForm').reset();
-            }
-        };
-
-        // Add doctor
-        document.getElementById('doctorForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const availableDaysInput = document.getElementById('availableDays').value;
-
-            const doctorData = {
-    name: document.getElementById('name').value,
-    specialty: document.getElementById('specialty').value,
-    education: document.getElementById('education').value,
-    experience: document.getElementById('experience').value,
-    institutionName: document.getElementById('institutionName').value,
-    designation: document.getElementById('designation').value,
-    phone: document.getElementById('phone').value,
-    email: document.getElementById('emailDoctor').value,
-    maxPatients: document.getElementById('maxPatients').value,
-    facebookLink: document.getElementById('facebookLink').value,
-    chamberName: document.getElementById('chamberName').value,
-    chamberAddress: document.getElementById('chamberAddress').value,
-    chamberTime: document.getElementById('chamberTime').value,
-    consultationFee: document.getElementById('consultationFee').value,
-    availableDays: availableDaysInput ? availableDaysInput.split(',').map(d => d.trim()) : [],
-    status: 'Active',
-    createdAt: serverTimestamp()
+// Toggle add form
+window.toggleAddForm = function() {
+    const form = document.getElementById('addForm');
+    form.classList.toggle('active');
+    if (!form.classList.contains('active')) {
+        document.getElementById('doctorForm').reset();
+        document.getElementById('doctorId').value = '';
+        document.getElementById('editMode').value = 'false';
+        document.getElementById('formTitle').textContent = 'Add New Doctor';
+        document.getElementById('submitBtn').textContent = 'Save Doctor';
+    }
 };
 
-            try {
-                await addDoc(collection(db, 'doctors'), doctorData);
-                showMessage('Doctor added successfully!', 'success');
-                document.getElementById('doctorForm').reset();
-                toggleAddForm();
-                loadDoctors();
-            } catch (error) {
-                showMessage('Failed to add doctor. Please try again.', 'error');
-            }
-        });
+// NEW: Edit doctor function
+window.editDoctor = async function(doctorId) {
+    try {
+        // Import getDoc if not already imported at top
+        const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const docRef = doc(db, 'doctors', doctorId);
+        const docSnap = await getDoc(docRef);
+        
+        if (!docSnap.exists()) {
+            showMessage('Doctor not found!', 'error');
+            return;
+        }
+        
+        const doctor = docSnap.data();
+        
+        // Fill form with doctor data
+        document.getElementById('doctorId').value = doctorId;
+        document.getElementById('editMode').value = 'true';
+        document.getElementById('name').value = doctor.name || '';
+        document.getElementById('specialty').value = doctor.specialty || '';
+        document.getElementById('education').value = doctor.education || '';
+        document.getElementById('experience').value = doctor.experience || '';
+        document.getElementById('institutionName').value = doctor.institutionName || '';
+        document.getElementById('designation').value = doctor.designation || '';
+        document.getElementById('phone').value = doctor.phone || '';
+        document.getElementById('emailDoctor').value = doctor.email || '';
+        document.getElementById('maxPatients').value = doctor.maxPatients || '';
+        document.getElementById('facebookLink').value = doctor.facebookLink || '';
+        document.getElementById('chamberName').value = doctor.chamberName || '';
+        document.getElementById('chamberAddress').value = doctor.chamberAddress || '';
+        document.getElementById('chamberTime').value = doctor.chamberTime || '';
+        document.getElementById('consultationFee').value = doctor.consultationFee || '';
+        document.getElementById('availableDays').value = doctor.availableDays ? doctor.availableDays.join(', ') : '';
+        
+        // Change form title and button
+        document.getElementById('formTitle').textContent = 'Edit Doctor';
+        document.getElementById('submitBtn').textContent = 'Update Doctor';
+        
+        // Show form
+        document.getElementById('addForm').classList.add('active');
+        
+        // Scroll to form
+        document.getElementById('addForm').scrollIntoView({ behavior: 'smooth' });
+        
+    } catch (error) {
+        console.error('Error loading doctor:', error);
+        showMessage('Failed to load doctor data', 'error');
+    }
+};
 
+// Add or Update doctor
+document.getElementById('doctorForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const availableDaysInput = document.getElementById('availableDays').value;
+    const editMode = document.getElementById('editMode').value === 'true';
+    const doctorId = document.getElementById('doctorId').value;
+
+    const doctorData = {
+        name: document.getElementById('name').value,
+        specialty: document.getElementById('specialty').value,
+        education: document.getElementById('education').value,
+        experience: document.getElementById('experience').value,
+        institutionName: document.getElementById('institutionName').value,
+        designation: document.getElementById('designation').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('emailDoctor').value,
+        maxPatients: document.getElementById('maxPatients').value,
+        facebookLink: document.getElementById('facebookLink').value,
+        chamberName: document.getElementById('chamberName').value,
+        chamberAddress: document.getElementById('chamberAddress').value,
+        chamberTime: document.getElementById('chamberTime').value,
+        consultationFee: document.getElementById('consultationFee').value,
+        availableDays: availableDaysInput ? availableDaysInput.split(',').map(d => d.trim()) : [],
+        status: 'Active'
+    };
+
+    try {
+        if (editMode && doctorId) {
+            // UPDATE existing doctor
+            const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+            await updateDoc(doc(db, 'doctors', doctorId), doctorData);
+            showMessage('Doctor updated successfully!', 'success');
+        } else {
+            // ADD new doctor
+            doctorData.createdAt = serverTimestamp();
+            await addDoc(collection(db, 'doctors'), doctorData);
+            showMessage('Doctor added successfully!', 'success');
+        }
+        
+        document.getElementById('doctorForm').reset();
+        document.getElementById('doctorId').value = '';
+        document.getElementById('editMode').value = 'false';
+        document.getElementById('formTitle').textContent = 'Add New Doctor';
+        document.getElementById('submitBtn').textContent = 'Save Doctor';
+        toggleAddForm();
+        loadDoctors();
+        
+    } catch (error) {
+        console.error('Error saving doctor:', error);
+        showMessage(editMode ? 'Failed to update doctor.' : 'Failed to add doctor.', 'error');
+    }
+});
         // Load doctors
         async function loadDoctors() {
             try {
@@ -530,9 +604,10 @@
     <strong>Max Patients:</strong> ${doctor.maxPatients || 'Not specified'}/day<br>
     <strong>Fee:</strong> ${doctor.consultationFee || 'Contact for details'}
 </div>
-                    <div class="card-actions">
-                        <button class="btn btn-danger" style="flex: 1;" onclick="deleteDoctor('${doctor.id}')">Delete</button>
-                    </div>
+<div class="card-actions">
+    <button class="btn btn-primary" style="flex: 1;" onclick="editDoctor('${doctor.id}')">Edit</button>
+    <button class="btn btn-danger" style="flex: 1;" onclick="deleteDoctor('${doctor.id}')">Delete</button>
+</div>
                 </div>
             `).join('');
         }
