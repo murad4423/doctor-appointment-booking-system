@@ -333,18 +333,6 @@
                         </div>
                     </div>
 
-<!-- NEW: Professional Details -->
-<div class="form-row">
-    <div class="form-group">
-        <label>Organization Name</label>
-        <input type="text" id="organizationName" placeholder="e.g., Square Hospital">
-    </div>
-    <div class="form-group">
-        <label>Designation</label>
-        <input type="text" id="designation" placeholder="e.g., Senior Consultant">
-    </div>
-</div>
-
                     <div class="form-row">
                         <div class="form-group">
                             <label>Phone</label>
@@ -360,13 +348,6 @@
                         <label>Chamber Address</label>
                         <input type="text" id="chamberAddress" placeholder="Full address">
                     </div>
-
-<!-- NEW: Maximum Patients -->
-<div class="form-row">
-    <div class="form-group">
-        <label>Maximum Patients Per Day</label>
-        <input type="number" id="maxPatients" placeholder="e.g., 50" min="1">
-    </div>
 
                     <div class="form-row">
                         <div class="form-group">
@@ -384,30 +365,10 @@
                         <input type="text" id="availableDays" placeholder="Saturday, Sunday, Monday">
                     </div>
 
-
-<!-- NEW: Profile Image URL -->
-<div class="form-group">
-    <label>Profile Image URL</label>
-    <input type="url" id="imageUrl" placeholder="https://example.com/photo.jpg">
-    <small style="color: #666; font-size: 12px;">Paste an image URL or leave empty for default avatar</small>
-</div>
-
-<!-- NEW: Social Media Links -->
-<div class="form-group">
-    <label>Facebook Profile</label>
-    <input type="url" id="facebookUrl" placeholder="https://facebook.com/doctorname">
-</div>
-
-<div class="form-row">
-    <div class="form-group">
-        <label>LinkedIn Profile</label>
-        <input type="url" id="linkedinUrl" placeholder="https://linkedin.com/in/doctorname">
-    </div>
-    <div class="form-group">
-        <label>Twitter/X Profile</label>
-        <input type="url" id="twitterUrl" placeholder="https://twitter.com/doctorname">
-    </div>
-</div>
+                    <div class="form-group">
+                        <label>Time Slots (comma separated)</label>
+                        <input type="text" id="timeSlots" placeholder="09:00 AM, 10:00 AM, 11:00 AM">
+                    </div>
 
                     <div style="display: flex; gap: 10px;">
                         <button type="submit" class="btn btn-primary">Save Doctor</button>
@@ -440,162 +401,65 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-// Auth state observer - Check if user is already logged in
-onAuthStateChanged(auth, (user) => {
-    console.log('Auth state changed:', user ? 'Logged in' : 'Not logged in');
-    if (user) {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        loadDoctors();
-    } else {
-        document.getElementById('loginScreen').style.display = 'flex';
-        document.getElementById('dashboard').style.display = 'none';
-    }
-});
+        // Auth state observer
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadDoctors();
+            } else {
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('dashboard').style.display = 'none';
+            }
+        });
 
-// Login
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const errorDiv = document.getElementById('loginError');
-    const submitBtn = e.target.querySelector('button[type="submit"]');
-    
-    // Clear previous error
-    errorDiv.textContent = '';
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Logging in...';
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
 
-    try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        console.log('Login successful:', userCredential.user);
-        // The onAuthStateChanged listener will handle the UI update
-    } catch (error) {
-        console.error('Login error:', error);
-        
-        // Show specific error messages
-        if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
-            errorDiv.textContent = 'Invalid email or password';
-        } else if (error.code === 'auth/user-not-found') {
-            errorDiv.textContent = 'No account found with this email';
-        } else if (error.code === 'auth/too-many-requests') {
-            errorDiv.textContent = 'Too many failed attempts. Please try again later.';
-        } else {
-            errorDiv.textContent = 'Login failed. Please try again.';
-        }
-        
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Login';
-    }
-});
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                document.getElementById('loginError').textContent = 'Invalid credentials';
+            }
+        });
 
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
 
         // Toggle add form
         window.toggleAddForm = function() {
-    const form = document.getElementById('addForm');
-    form.classList.toggle('active');
-    if (!form.classList.contains('active')) {
-        document.getElementById('doctorForm').reset();
-        editingDoctorId = null;
-        document.querySelector('#addForm h2').textContent = 'Add New Doctor';
-        document.querySelector('#doctorForm button[type="submit"]').textContent = 'Save Doctor';
-    }
-};
+            const form = document.getElementById('addForm');
+            form.classList.toggle('active');
+            if (!form.classList.contains('active')) {
+                document.getElementById('doctorForm').reset();
+            }
+        };
 
-// Add/Update doctor
-document.getElementById('doctorForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const availableDaysInput = document.getElementById('availableDays').value;
-
-    const doctorData = {
-        name: document.getElementById('name').value,
-        specialty: document.getElementById('specialty').value,
-        education: document.getElementById('education').value,
-        experience: document.getElementById('experience').value,
-        organizationName: document.getElementById('organizationName').value,
-        designation: document.getElementById('designation').value,
-        phone: document.getElementById('phone').value,
-        email: document.getElementById('emailDoctor').value,
-        organizationAddress: document.getElementById('organizationAddress').value,
-        chamberTime: document.getElementById('chamberTime').value,
-        consultationFee: document.getElementById('consultationFee').value,
-        maxPatients: document.getElementById('maxPatients').value,
-        availableDays: availableDaysInput ? availableDaysInput.split(',').map(d => d.trim()) : [],
-        imageUrl: document.getElementById('imageUrl').value,
-        facebookUrl: document.getElementById('facebookUrl').value,
-        linkedinUrl: document.getElementById('linkedinUrl').value,
-        twitterUrl: document.getElementById('twitterUrl').value,
-        status: 'Active'
-    };
-
-    try {
-        if (editingDoctorId) {
-            // Update existing doctor
-            const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-            await updateDoc(doc(db, 'doctors', editingDoctorId), doctorData);
-            showMessage('Doctor updated successfully!', 'success');
-            editingDoctorId = null;
-        } else {
-            // Add new doctor
-            doctorData.createdAt = serverTimestamp();
-            await addDoc(collection(db, 'doctors'), doctorData);
-            showMessage('Doctor added successfully!', 'success');
-        }
-        
-        document.getElementById('doctorForm').reset();
-        document.querySelector('#addForm h2').textContent = 'Add New Doctor';
-        document.querySelector('#doctorForm button[type="submit"]').textContent = 'Save Doctor';
-        toggleAddForm();
-        loadDoctors();
-    } catch (error) {
-        console.error('Error saving doctor:', error);
-        showMessage('Failed to save doctor. Please try again.', 'error');
-    }
-});
+        // Add doctor
+        document.getElementById('doctorForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
             const availableDaysInput = document.getElementById('availableDays').value;
             const timeSlotsInput = document.getElementById('timeSlots').value;
 
-            const availableDaysInput = document.getElementById('availableDays').value;
-
-const doctorData = {
-    name: document.getElementById('name').value,
-    specialty: document.getElementById('specialty').value,
-    education: document.getElementById('education').value,
-    experience: document.getElementById('experience').value,
-    
-    // NEW: Professional Details
-    organizationName: document.getElementById('organizationName').value,
-    designation: document.getElementById('designation').value,
-    
-    phone: document.getElementById('phone').value,
-    email: document.getElementById('emailDoctor').value,
-    
-    // UPDATED: Organization address instead of chamber
-    organizationAddress: document.getElementById('organizationAddress').value,
-    chamberTime: document.getElementById('chamberTime').value,
-    consultationFee: document.getElementById('consultationFee').value,
-    
-    // NEW: Maximum patients
-    maxPatients: document.getElementById('maxPatients').value,
-    
-    availableDays: availableDaysInput ? availableDaysInput.split(',').map(d => d.trim()) : [],
-    
-    // REMOVED: timeSlots line deleted
-    
-    // NEW: Image and social media
-    imageUrl: document.getElementById('imageUrl').value,
-    facebookUrl: document.getElementById('facebookUrl').value,
-    linkedinUrl: document.getElementById('linkedinUrl').value,
-    twitterUrl: document.getElementById('twitterUrl').value,
-    
-    status: 'Active',
-    createdAt: serverTimestamp()
-};
+            const doctorData = {
+                name: document.getElementById('name').value,
+                specialty: document.getElementById('specialty').value,
+                education: document.getElementById('education').value,
+                experience: document.getElementById('experience').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('emailDoctor').value,
+                chamberAddress: document.getElementById('chamberAddress').value,
+                chamberTime: document.getElementById('chamberTime').value,
+                consultationFee: document.getElementById('consultationFee').value,
+                availableDays: availableDaysInput ? availableDaysInput.split(',').map(d => d.trim()) : [],
+                timeSlots: timeSlotsInput ? timeSlotsInput.split(',').map(t => t.trim()) : [],
+                status: 'Active',
+                createdAt: serverTimestamp()
+            };
 
             try {
                 await addDoc(collection(db, 'doctors'), doctorData);
@@ -633,78 +497,21 @@ const doctorData = {
             }
 
             container.innerHTML = doctors.map(doctor => `
-    <div class="doctor-card">
-        ${doctor.imageUrl ? 
-            `<img src="${doctor.imageUrl}" alt="${doctor.name}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px; display: block;">` :
-            `<div class="doctor-avatar">${doctor.name.charAt(0)}</div>`
+                <div class="doctor-card">
+                    <div class="doctor-avatar">${doctor.name.charAt(0)}</div>
+                    <h3>${doctor.name}</h3>
+                    <div class="specialty">${doctor.specialty || 'Specialist'}</div>
+                    <div class="info">
+                        <strong>Chamber:</strong> ${doctor.chamberAddress || 'Not specified'}<br>
+                        <strong>Time:</strong> ${doctor.chamberTime || 'Not specified'}<br>
+                        <strong>Fee:</strong> ${doctor.consultationFee || 'Contact for details'}
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-danger" style="flex: 1;" onclick="deleteDoctor('${doctor.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
         }
-        <h3>${doctor.name}</h3>
-        <div class="specialty">${doctor.specialty || 'Specialist'}</div>
-        <div class="info">
-            <strong>Organization:</strong> ${doctor.organizationName || 'Not specified'}<br>
-            <strong>Designation:</strong> ${doctor.designation || 'Not specified'}<br>
-            <strong>Max Patients/Day:</strong> ${doctor.maxPatients || 'Not set'}<br>
-            <strong>Fee:</strong> ${doctor.consultationFee || 'Contact for details'}
-        </div>
-        <div class="card-actions">
-            <button class="btn btn-primary" style="flex: 1;" onclick="editDoctor('${doctor.id}')">Edit</button>
-            <button class="btn btn-danger" style="flex: 1;" onclick="deleteDoctor('${doctor.id}')">Delete</button>
-        </div>
-    </div>
-`).join('');
-        }
-
-// NEW: Edit doctor function
-let editingDoctorId = null;
-
-window.editDoctor = async function(doctorId) {
-    try {
-        // Import getDoc and doc
-        const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-        
-        const docRef = doc(db, 'doctors', doctorId);
-        const docSnap = await getDoc(docRef);
-        
-        if (!docSnap.exists()) {
-            showMessage('Doctor not found', 'error');
-            return;
-        }
-        
-        const doctor = docSnap.data();
-        editingDoctorId = doctorId;
-        
-        // Fill the form with existing data
-        document.getElementById('name').value = doctor.name || '';
-        document.getElementById('specialty').value = doctor.specialty || '';
-        document.getElementById('education').value = doctor.education || '';
-        document.getElementById('experience').value = doctor.experience || '';
-        document.getElementById('organizationName').value = doctor.organizationName || '';
-        document.getElementById('designation').value = doctor.designation || '';
-        document.getElementById('phone').value = doctor.phone || '';
-        document.getElementById('emailDoctor').value = doctor.email || '';
-        document.getElementById('organizationAddress').value = doctor.organizationAddress || '';
-        document.getElementById('chamberTime').value = doctor.chamberTime || '';
-        document.getElementById('consultationFee').value = doctor.consultationFee || '';
-        document.getElementById('maxPatients').value = doctor.maxPatients || '';
-        document.getElementById('availableDays').value = doctor.availableDays ? doctor.availableDays.join(', ') : '';
-        document.getElementById('imageUrl').value = doctor.imageUrl || '';
-        document.getElementById('facebookUrl').value = doctor.facebookUrl || '';
-        document.getElementById('linkedinUrl').value = doctor.linkedinUrl || '';
-        document.getElementById('twitterUrl').value = doctor.twitterUrl || '';
-        
-        // Show form and change title
-        document.querySelector('#addForm h2').textContent = 'Edit Doctor';
-        document.querySelector('#doctorForm button[type="submit"]').textContent = 'Update Doctor';
-        toggleAddForm();
-        
-        // Scroll to form
-        document.getElementById('addForm').scrollIntoView({ behavior: 'smooth' });
-        
-    } catch (error) {
-        console.error('Error loading doctor:', error);
-        showMessage('Failed to load doctor data', 'error');
-    }
-};
 
         // Delete doctor
         window.deleteDoctor = async function(doctorId) {
