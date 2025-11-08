@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Doctor Bookings System</title>
+    <title>Admin Panel - Doctor Bookings</title>
     <style>
         * {
             margin: 0;
@@ -322,7 +322,10 @@
     <div id="dashboard" class="dashboard">
         <div class="header">
             <h1>📊 Doctor Booking Dashboard</h1>
-            <button class="logout-btn" id="logoutBtn">Logout</button>
+            <div style="display: flex; gap: 10px;">
+                <a href="manage-doctors.html" class="logout-btn" style="background: #667eea; text-decoration: none;">Manage Doctors</a>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
         </div>
 
         <div class="stats">
@@ -351,6 +354,12 @@
                     <input type="text" id="searchInput" placeholder="Search...">
                 </div>
                 <div class="filter-group">
+                    <label>Filter by Doctor</label>
+                    <select id="doctorFilter">
+                        <option value="">All Doctors</option>
+                    </select>
+                </div>
+                <div class="filter-group">
                     <label>Filter by Status</label>
                     <select id="statusFilter">
                         <option value="">All Status</option>
@@ -371,6 +380,7 @@
                     <thead>
                         <tr>
                             <th>Serial</th>
+                            <th>Doctor</th>
                             <th>Patient Name</th>
                             <th>Phone</th>
                             <th>Date</th>
@@ -450,8 +460,21 @@
                 const querySnapshot = await getDocs(q);
                 
                 allBookings = [];
+                const doctorNames = new Set();
+                
                 querySnapshot.forEach((doc) => {
-                    allBookings.push({ id: doc.id, ...doc.data() });
+                    const booking = { id: doc.id, ...doc.data() };
+                    allBookings.push(booking);
+                    if (booking.doctorName) {
+                        doctorNames.add(booking.doctorName);
+                    }
+                });
+
+                // Populate doctor filter
+                const doctorFilter = document.getElementById('doctorFilter');
+                doctorFilter.innerHTML = '<option value="">All Doctors</option>';
+                doctorNames.forEach(name => {
+                    doctorFilter.innerHTML += `<option value="${name}">${name}</option>`;
                 });
 
                 updateStats();
@@ -486,6 +509,7 @@
             tbody.innerHTML = bookings.map((booking, index) => `
                 <tr>
                     <td class="serial">#${index + 1}</td>
+                    <td><strong>${booking.doctorName || 'General'}</strong></td>
                     <td>${booking.patientName}</td>
                     <td>${booking.phone}</td>
                     <td>${booking.appointmentDate}</td>
@@ -521,26 +545,28 @@
 
         // Search and filter
         document.getElementById('searchInput').addEventListener('input', applyFilters);
+        document.getElementById('doctorFilter').addEventListener('change', applyFilters);
         document.getElementById('statusFilter').addEventListener('change', applyFilters);
         document.getElementById('dateFilter').addEventListener('change', applyFilters);
 
         function applyFilters() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const doctorFilter = document.getElementById('doctorFilter').value;
             const statusFilter = document.getElementById('statusFilter').value;
             const dateFilter = document.getElementById('dateFilter').value;
 
             let filtered = allBookings.filter(booking => {
                 const matchesSearch = booking.patientName.toLowerCase().includes(searchTerm) ||
                                     booking.phone.includes(searchTerm);
+                const matchesDoctor = !doctorFilter || booking.doctorName === doctorFilter;
                 const matchesStatus = !statusFilter || booking.status === statusFilter;
                 const matchesDate = !dateFilter || booking.appointmentDate === dateFilter;
 
-                return matchesSearch && matchesStatus && matchesDate;
+                return matchesSearch && matchesDoctor && matchesStatus && matchesDate;
             });
 
             displayBookings(filtered);
         }
     </script>
 </body>
-
 </html>
