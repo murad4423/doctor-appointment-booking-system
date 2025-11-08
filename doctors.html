@@ -306,7 +306,10 @@
             document.getElementById('profileContent').innerHTML = `
                 <div class="profile-card">
                     <div class="profile-header">
-                        <div class="doctor-avatar">${doctor.name.charAt(0)}</div>
+                        ${doctor.imageUrl ? 
+    `<img src="${doctor.imageUrl}" alt="${doctor.name}" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">` :
+    `<div class="doctor-avatar">${doctor.name.charAt(0)}</div>`
+}
                         <h1>${doctor.name}</h1>
                         <p>${doctor.specialty || 'Medical Specialist'}</p>
                     </div>
@@ -332,11 +335,23 @@
 
                         <div class="info-section">
                             <h2>📍 Chamber Information</h2>
-                            <div class="info-grid">
-                                <div class="info-item">
-                                    <label>Chamber Address</label>
-                                    <p>${doctor.chamberAddress || 'Not specified'}</p>
-                                </div>
+<div class="info-grid">
+    <div class="info-item">
+        <label>Organization</label>
+        <p>${doctor.organizationName || 'Not specified'}</p>
+    </div>
+    <div class="info-item">
+        <label>Designation</label>
+        <p>${doctor.designation || 'Not specified'}</p>
+    </div>
+    <div class="info-item">
+        <label>Organization Address</label>
+        <p>${doctor.organizationAddress || 'Not specified'}</p>
+    </div>
+    <div class="info-item">
+        <label>Max Patients/Day</label>
+        <p>${doctor.maxPatients || 'Not specified'}</p>
+    </div>
                                 <div class="info-item">
                                     <label>Chamber Time</label>
                                     <p>${doctor.chamberTime || 'Not specified'}</p>
@@ -371,6 +386,19 @@
                                 ${timeSlotsHTML}
                             </div>
                         </div>
+                        
+                        <!-- ADD THIS ENTIRE BLOCK HERE -->
+                        ${(doctor.facebookUrl || doctor.linkedinUrl || doctor.twitterUrl) ? `
+                            <div class="info-section">
+                                <h2>🔗 Social Media</h2>
+                                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                                    ${doctor.facebookUrl ? `<a href="${doctor.facebookUrl}" target="_blank" style="color: #1877f2; text-decoration: none; font-weight: 600;">📘 Facebook</a>` : ''}
+                                    ${doctor.linkedinUrl ? `<a href="${doctor.linkedinUrl}" target="_blank" style="color: #0a66c2; text-decoration: none; font-weight: 600;">💼 LinkedIn</a>` : ''}
+                                    ${doctor.twitterUrl ? `<a href="${doctor.twitterUrl}" target="_blank" style="color: #1da1f2; text-decoration: none; font-weight: 600;">🐦 Twitter</a>` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
+                        <!-- END OF SOCIAL MEDIA BLOCK -->
 
                         <div class="appointment-section">
                             <h2>Ready to Book an Appointment?</h2>
