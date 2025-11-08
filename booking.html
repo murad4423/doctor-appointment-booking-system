@@ -570,7 +570,8 @@
         const urlParams = new URLSearchParams(window.location.search);
         const doctorId = urlParams.get('doctor');
         let doctorName = 'General';
-
+        let currentDoctor = null; // ADD THIS LINE
+        
         // Load doctor info if ID provided
         if (doctorId) {
             import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js')
@@ -581,6 +582,7 @@
                     if (docSnap.exists()) {
                         const doctor = docSnap.data();
                         doctorName = doctor.name;
+                        currentDoctor = { id: doctorId, ...doctor }; // ADD THIS LINE
                         document.getElementById('doctorInfo').textContent = 
                             `Book appointment with ${doctor.name} - ${doctor.specialty || 'Specialist'}`;
                     }
@@ -639,26 +641,13 @@
         });
 
         // Global variables for serial selection
-        let currentDoctor = null;
+      //  let currentDoctor = null;
         let selectedSerialNumber = null;
         let selectedAppointmentDate = null;
 
-        // Load doctor info if ID provided
-        if (doctorId) {
-            import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js')
-                .then(({ doc, getDoc }) => {
-                    return getDoc(doc(db, 'doctors', doctorId));
-                })
-                .then(docSnap => {
-                    if (docSnap.exists()) {
-                        const doctor = docSnap.data();
-                        doctorName = doctor.name;
-                        currentDoctor = { id: doctorId, ...doctor };
-                        document.getElementById('doctorInfo').textContent = 
-                            `Book appointment with ${doctor.name} - ${doctor.specialty || 'Specialist'}`;
-                    }
-                });
-        }
+
+
+
 
         // Open serial selection modal
         window.openSerialModal = function() {
