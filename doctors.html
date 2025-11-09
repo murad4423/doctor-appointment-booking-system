@@ -533,55 +533,47 @@
             const trainingCourses = doctor.trainings ? `Training/Courses: ${doctor.trainings.split('\n')[0]}` : '';
 
             document.getElementById('profileContent').innerHTML = `
-                <!-- Profile Header -->
-                <div class="profile-header">
-                    <button class="share-btn">🔗 Share</button>
-                    
-                    <div class="doctor-main-info">
-                        <div class="doctor-image-container">
-                            <div class="doctor-image">${doctor.name.charAt(0)}</div>
-                            <div class="online-badge">Online</div>
-                        </div>
+ <!-- Profile Header -->
+<div class="profile-header">
+    <button class="share-btn">🔗 Share</button>
+    
+    <div class="doctor-main-info">
+        <div class="doctor-image-container">
+            <div class="doctor-image">${doctor.name.charAt(0)}</div>
+            <div class="online-badge">Online</div>
+        </div>
 
-                        <div class="doctor-details">
-                            <h1 class="doctor-name">${doctor.name}</h1>
-                            <div class="doctor-degree">${degrees}</div>
-                            ${trainingCourses ? `<div class="doctor-training">${trainingCourses}</div>` : ''}
-                            <span class="specialty-badge">${doctor.specialty || 'Medical Specialist'}</span>
-                            
-                            <div class="doctor-stats">
-                                <div class="stat-item">
-                                    <div class="stat-label">Total Experience</div>
-                                    <div class="stat-value">${experienceYears}</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-label">BMDC Number</div>
-                                    <div class="stat-value">${doctor.bmdcRegNo || 'N/A'}</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-label">Total Rating</div>
-                                    <div class="stat-value rating-value">
-                                        ⭐ 5 (3948)
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="workplace">
-                                Working in <strong>${doctor.institutionName || 'Medical Center'}</strong>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="consultation-box">
-                        <div class="consultation-label">Consultation Fee</div>
-                        <div class="consultation-fee">৳${doctor.consultationFee || '500'}</div>
-                        <div class="vat-text">(inc. VAT)</div>
-                        <a href="booking.html?doctor=${doctorId}" class="see-doctor-btn">
-                            📅 See Doctor Now
-                        </a>
-                    </div>
+        <div class="doctor-details">
+            <h1 class="doctor-name">${doctor.name}</h1>
+            <div class="doctor-degree">${degrees}</div>
+            <span class="specialty-badge">${doctor.specialty || 'Medical Specialist'}</span>
+            
+            <div class="doctor-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Total Experience</div>
+                    <div class="stat-value">${experienceYears}</div>
                 </div>
+                <div class="stat-item">
+                    <div class="stat-label">BMDC Number</div>
+                    <div class="stat-value">${doctor.bmdcRegNo || 'N/A'}</div>
+                </div>
+            </div>
 
+            <div class="workplace">
+                Working in <strong>${doctor.institutionName || 'Medical Center'}</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="consultation-box">
+        <div class="consultation-label">Consultation Fee</div>
+        <div class="consultation-fee">৳${doctor.consultationFee || '500'}</div>
+        <div class="vat-text">(inc. VAT)</div>
+        <a href="booking.html?doctor=${doctorId}" class="see-doctor-btn">
+            📅 See Doctor Now
+        </a>
+    </div>
+</div>
                 <!-- Tabs -->
                 <div class="tabs">
                     <div class="tab active">ℹ️ Info</div>
