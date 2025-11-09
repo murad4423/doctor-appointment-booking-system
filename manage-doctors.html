@@ -313,6 +313,8 @@
                 <form id="doctorForm">
                     <input type="hidden" id="doctorId" value="">
                     <input type="hidden" id="editMode" value="false">
+                    
+                    <!-- Basic Information -->
                     <div class="form-row">
                         <div class="form-group">
                             <label>Doctor Name *</label>
@@ -323,20 +325,24 @@
                             <input type="text" id="specialty" required placeholder="e.g., Cardiologist">
                         </div>
                     </div>
-
+                
+                    <!-- Professional Information -->
+                    <h3 style="color: #667eea; margin: 25px 0 15px 0; font-size: 18px;">📋 Professional Information</h3>
+                    
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Education</label>
-                            <input type="text" id="education" placeholder="MBBS, MD">
+                            <label>BMDC Reg. No</label>
+                            <input type="text" id="bmdcRegNo" placeholder="e.g., A-12345">
                         </div>
                         <div class="form-group">
                             <label>Experience</label>
                             <input type="text" id="experience" placeholder="e.g., 15 years">
                         </div>
                     </div>
+                
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Institution Name</label>
+                            <label>Current Workplace (Institution)</label>
                             <input type="text" id="institutionName" placeholder="e.g., Square Hospital">
                         </div>
                         <div class="form-group">
@@ -344,90 +350,62 @@
                             <input type="text" id="designation" placeholder="e.g., Senior Consultant">
                         </div>
                     </div>
-<!-- Medical Registration & Blood Group -->
-<div class="form-row">
-    <div class="form-group">
-        <label>BMDC Reg. No</label>
-        <input type="text" id="bmdcRegNo" placeholder="e.g., A-12345">
-    </div>
-    <div class="form-group">
-        <label>Blood Group</label>
-        <select id="bloodGroup">
-            <option value="">Select Blood Group</option>
-            <option value="A+">A+</option>
-            <option value="A-">A-</option>
-            <option value="B+">B+</option>
-            <option value="B-">B-</option>
-            <option value="O+">O+</option>
-            <option value="O-">O-</option>
-            <option value="AB+">AB+</option>
-            <option value="AB-">AB-</option>
-        </select>
-    </div>
-</div>
-
-<!-- Academic Qualifications -->
-<div class="form-group">
-    <label>Degrees (comma separated)</label>
-    <input type="text" id="degrees" placeholder="e.g., MBBS, BCS (Health), FCPS (Medicine)">
-</div>
-
-<div class="form-group">
-    <label>Post Graduations</label>
-    <input type="text" id="postGraduations" placeholder="e.g., MD (Internal Medicine)">
-</div>
-
-<div class="form-group">
-    <label>Fellowships</label>
-    <input type="text" id="fellowships" placeholder="e.g., Fellow of American College of Physicians">
-</div>
-
-<div class="form-group">
-    <label>Trainings</label>
-    <textarea id="trainings" placeholder="List training certifications..." rows="3"></textarea>
-</div>
-
-<!-- Specializations & Work -->
-<div class="form-group">
-    <label>Specialized In</label>
-    <input type="text" id="specialized" placeholder="e.g., Diabetes, Hypertension, Thyroid">
-</div>
-
-<div class="form-group">
-    <label>Currently Working At</label>
-    <input type="text" id="working" placeholder="e.g., Dhaka Medical College Hospital">
-</div>                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Phone</label>
-                            <input type="tel" id="phone" placeholder="01XXXXXXXXX">
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" id="emailDoctor" placeholder="doctor@example.com">
-                        </div>
+                
+                    <div class="form-group">
+                        <label>About Doctor</label>
+                        <textarea id="about" placeholder="Brief description about the doctor..." rows="3"></textarea>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Maximum Patients Per Day</label>
-                            <input type="number" id="maxPatients" placeholder="e.g., 30" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label>Facebook Profile Link</label>
-                            <input type="url" id="facebookLink" placeholder="https://facebook.com/...">
-                        </div>
+                
+                    <!-- Academic Qualifications -->
+                    <h3 style="color: #667eea; margin: 25px 0 15px 0; font-size: 18px;">🎓 Academic Qualifications</h3>
+                
+                    <div class="form-group">
+                        <label>Degrees (comma separated)</label>
+                        <input type="text" id="degrees" placeholder="e.g., MBBS, BCS (Health), FCPS (Medicine)">
                     </div>
+                
+                    <div class="form-group">
+                        <label>Fellowships</label>
+                        <input type="text" id="fellowships" placeholder="e.g., Fellow of American College of Physicians">
+                    </div>
+                
+                    <div class="form-group">
+                        <label>Trainings</label>
+                        <textarea id="trainings" placeholder="List training certifications..." rows="3"></textarea>
+                    </div>
+                
+                    <!-- Specialization & Work -->
+                    <h3 style="color: #667eea; margin: 25px 0 15px 0; font-size: 18px;">💼 Specialization & Work</h3>
+                
+                    <div class="form-group">
+                        <label>Areas of Specialization</label>
+                        <input type="text" id="specialized" placeholder="e.g., Diabetes, Hypertension, Thyroid">
+                    </div>
+                
+                    <div class="form-group">
+                        <label>Field of Concentration</label>
+                        <input type="text" id="fieldOfConcentration" placeholder="e.g., Interventional Cardiology">
+                    </div>
+                
+                    <!-- Chamber Information -->
+                    <h3 style="color: #667eea; margin: 25px 0 15px 0; font-size: 18px;">🏥 Chamber Information</h3>
+                
                     <div class="form-row">
                         <div class="form-group">
                             <label>Chamber Name</label>
                             <input type="text" id="chamberName" placeholder="e.g., Square Hospital">
                         </div>
                         <div class="form-group">
-                            <label>Chamber Address</label>
-                            <input type="text" id="chamberAddress" placeholder="Full address">
+                            <label>Chamber Phone</label>
+                            <input type="tel" id="chamberPhone" placeholder="01XXXXXXXXX">
                         </div>
                     </div>
-
+                
+                    <div class="form-group">
+                        <label>Chamber Address</label>
+                        <input type="text" id="chamberAddress" placeholder="Full address">
+                    </div>
+                
                     <div class="form-row">
                         <div class="form-group">
                             <label>Chamber Time</label>
@@ -438,13 +416,33 @@
                             <input type="text" id="consultationFee" placeholder="1500 BDT">
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label>Available Days (comma separated)</label>
-                        <input type="text" id="availableDays" placeholder="Saturday, Sunday, Monday">
+                
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Maximum Patients Per Day</label>
+                            <input type="number" id="maxPatients" placeholder="e.g., 30" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Available Days (comma separated)</label>
+                            <input type="text" id="availableDays" placeholder="Saturday, Sunday, Monday">
+                        </div>
                     </div>
-
-                    <div style="display: flex; gap: 10px;">
+                
+                    <!-- Contact Information -->
+                    <h3 style="color: #667eea; margin: 25px 0 15px 0; font-size: 18px;">📞 Contact & Social Media</h3>
+                
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="emailDoctor" placeholder="doctor@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Facebook Profile Link</label>
+                            <input type="url" id="facebookLink" placeholder="https://facebook.com/...">
+                        </div>
+                    </div>
+                
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
                         <button type="submit" class="btn btn-primary" id="submitBtn">Save Doctor</button>
                         <button type="button" class="btn btn-secondary" onclick="toggleAddForm()">Cancel</button>
                     </div>
@@ -532,33 +530,43 @@ window.editDoctor = async function(doctorId) {
         }
         
         const doctor = docSnap.data();
-        
-        // Fill form with doctor data
-        document.getElementById('doctorId').value = doctorId;
-        document.getElementById('editMode').value = 'true';
-        document.getElementById('name').value = doctor.name || '';
-        document.getElementById('specialty').value = doctor.specialty || '';
-        document.getElementById('education').value = doctor.education || '';
-        document.getElementById('experience').value = doctor.experience || '';
-        document.getElementById('institutionName').value = doctor.institutionName || '';
-        document.getElementById('designation').value = doctor.designation || '';
-        document.getElementById('bmdcRegNo').value = doctor.bmdcRegNo || '';
-document.getElementById('bloodGroup').value = doctor.bloodGroup || '';
+
+// Fill form with doctor data
+document.getElementById('doctorId').value = doctorId;
+document.getElementById('editMode').value = 'true';
+
+// Basic
+document.getElementById('name').value = doctor.name || '';
+document.getElementById('specialty').value = doctor.specialty || '';
+
+// Professional Information
+document.getElementById('bmdcRegNo').value = doctor.bmdcRegNo || '';
+document.getElementById('experience').value = doctor.experience || '';
+document.getElementById('institutionName').value = doctor.institutionName || '';
+document.getElementById('designation').value = doctor.designation || '';
+document.getElementById('about').value = doctor.about || '';
+
+// Academic Qualifications
 document.getElementById('degrees').value = doctor.degrees || '';
-document.getElementById('postGraduations').value = doctor.postGraduations || '';
 document.getElementById('fellowships').value = doctor.fellowships || '';
 document.getElementById('trainings').value = doctor.trainings || '';
+
+// Specialization & Work
 document.getElementById('specialized').value = doctor.specialized || '';
-document.getElementById('working').value = doctor.working || '';
-        document.getElementById('phone').value = doctor.phone || '';
-        document.getElementById('emailDoctor').value = doctor.email || '';
-        document.getElementById('maxPatients').value = doctor.maxPatients || '';
-        document.getElementById('facebookLink').value = doctor.facebookLink || '';
-        document.getElementById('chamberName').value = doctor.chamberName || '';
-        document.getElementById('chamberAddress').value = doctor.chamberAddress || '';
-        document.getElementById('chamberTime').value = doctor.chamberTime || '';
-        document.getElementById('consultationFee').value = doctor.consultationFee || '';
-        document.getElementById('availableDays').value = doctor.availableDays ? doctor.availableDays.join(', ') : '';
+document.getElementById('fieldOfConcentration').value = doctor.fieldOfConcentration || '';
+
+// Chamber Information
+document.getElementById('chamberName').value = doctor.chamberName || '';
+document.getElementById('chamberAddress').value = doctor.chamberAddress || '';
+document.getElementById('chamberPhone').value = doctor.chamberPhone || '';
+document.getElementById('chamberTime').value = doctor.chamberTime || '';
+document.getElementById('consultationFee').value = doctor.consultationFee || '';
+document.getElementById('maxPatients').value = doctor.maxPatients || '';
+document.getElementById('availableDays').value = doctor.availableDays ? doctor.availableDays.join(', ') : '';
+
+// Contact & Social Media
+document.getElementById('emailDoctor').value = doctor.email || '';
+document.getElementById('facebookLink').value = doctor.facebookLink || ''; 
         
         // Change form title and button
         document.getElementById('formTitle').textContent = 'Edit Doctor';
@@ -584,30 +592,39 @@ document.getElementById('doctorForm').addEventListener('submit', async (e) => {
     const editMode = document.getElementById('editMode').value === 'true';
     const doctorId = document.getElementById('doctorId').value;
 
-const doctorData = {
+    const doctorData = {
     name: document.getElementById('name').value,
     specialty: document.getElementById('specialty').value,
-    education: document.getElementById('education').value,
+    
+    // Professional Information
+    bmdcRegNo: document.getElementById('bmdcRegNo').value,
     experience: document.getElementById('experience').value,
     institutionName: document.getElementById('institutionName').value,
     designation: document.getElementById('designation').value,
-    bmdcRegNo: document.getElementById('bmdcRegNo').value,
-    bloodGroup: document.getElementById('bloodGroup').value,
+    about: document.getElementById('about').value,
+    
+    // Academic Qualifications
     degrees: document.getElementById('degrees').value,
-    postGraduations: document.getElementById('postGraduations').value,
     fellowships: document.getElementById('fellowships').value,
     trainings: document.getElementById('trainings').value,
+    
+    // Specialization & Work
     specialized: document.getElementById('specialized').value,
-    working: document.getElementById('working').value,
-    phone: document.getElementById('phone').value,
-    email: document.getElementById('emailDoctor').value,
-    maxPatients: document.getElementById('maxPatients').value,
-    facebookLink: document.getElementById('facebookLink').value,
+    fieldOfConcentration: document.getElementById('fieldOfConcentration').value,
+    
+    // Chamber Information
     chamberName: document.getElementById('chamberName').value,
     chamberAddress: document.getElementById('chamberAddress').value,
+    chamberPhone: document.getElementById('chamberPhone').value,
     chamberTime: document.getElementById('chamberTime').value,
     consultationFee: document.getElementById('consultationFee').value,
+    maxPatients: document.getElementById('maxPatients').value,
     availableDays: availableDaysInput ? availableDaysInput.split(',').map(d => d.trim()) : [],
+    
+    // Contact & Social Media
+    email: document.getElementById('emailDoctor').value,
+    facebookLink: document.getElementById('facebookLink').value,
+    
     status: 'Active'
 };
 
