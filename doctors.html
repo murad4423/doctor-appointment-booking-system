@@ -12,324 +12,284 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background: #f8f9fa;
             line-height: 1.6;
+            color: #333;
         }
 
         .navbar {
             background: white;
-            padding: 15px 30px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            padding: 16px 40px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .navbar h1 {
-            color: #333;
-            font-size: 20px;
+            color: #2c3e50;
+            font-size: 22px;
             font-weight: 600;
         }
 
         .back-btn {
-            color: #0066ff;
+            color: #3498db;
             text-decoration: none;
             font-weight: 500;
-            padding: 8px 20px;
-            border: 1px solid #0066ff;
-            border-radius: 5px;
-            transition: all 0.3s;
+            padding: 8px 18px;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+            transition: all 0.2s;
             font-size: 14px;
         }
 
         .back-btn:hover {
-            background: #0066ff;
+            background: #3498db;
             color: white;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1140px;
             margin: 0 auto;
             padding: 0 20px;
         }
 
+        .profile-wrapper {
+            margin: 30px 0;
+        }
+
         .profile-header {
             background: white;
-            margin: 20px 0;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            margin-bottom: 24px;
+        }
+
+        .doctor-main {
             display: flex;
-            justify-content: space-between;
+            gap: 40px;
             align-items: flex-start;
-            gap: 30px;
-            position: relative;
+            margin-bottom: 30px;
         }
 
-        .share-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: white;
-            border: 1px solid #ddd;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .share-btn:hover {
-            background: #f5f5f5;
-        }
-
-        .doctor-main-info {
-            display: flex;
-            gap: 25px;
-            flex: 1;
-        }
-
-        .doctor-image-container {
-            position: relative;
+        .doctor-image-wrapper {
+            flex-shrink: 0;
         }
 
         .doctor-image {
-            width: 160px;
-            height: 180px;
-            border-radius: 12px;
+            width: 140px;
+            height: 140px;
+            border-radius: 8px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 56px;
-            font-weight: bold;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .online-badge {
-            position: absolute;
-            bottom: 8px;
-            left: 8px;
-            background: #10b981;
-            color: white;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: 12px;
+            font-size: 52px;
             font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .doctor-details {
+        .doctor-info {
             flex: 1;
         }
 
         .doctor-name {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 5px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .doctor-specialty {
+            color: #3498db;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
         }
 
         .doctor-degree {
             color: #666;
-            font-size: 15px;
-            margin-bottom: 3px;
-        }
-
-        .doctor-training {
-            color: #0066ff;
             font-size: 14px;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
+            line-height: 1.6;
         }
 
-        .specialty-badge {
-            display: inline-block;
-            background: #0066ff;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 4px;
-            font-size: 13px;
+        .doctor-workplace {
+            color: #555;
+            font-size: 14px;
+            margin-top: 12px;
             font-weight: 500;
-            margin-bottom: 15px;
         }
 
-        .doctor-stats {
-            display: flex;
-            gap: 30px;
-            margin-top: 15px;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 24px;
+            padding: 24px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 24px;
         }
 
-        .stat-item {
-            display: flex;
-            flex-direction: column;
+        .stat-box {
+            text-align: center;
         }
 
         .stat-label {
             color: #666;
             font-size: 13px;
-            margin-bottom: 3px;
+            margin-bottom: 6px;
+            font-weight: 500;
         }
 
         .stat-value {
-            color: #1a1a1a;
-            font-size: 15px;
+            color: #2c3e50;
+            font-size: 18px;
             font-weight: 600;
         }
 
-        .rating-value {
-            color: #ffa500;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .workplace {
-            color: #666;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-
-        .workplace strong {
-            color: #1a1a1a;
-        }
-
-        .consultation-box {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
+        .consultation-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 32px;
+            border-radius: 8px;
             text-align: center;
-            min-width: 220px;
+            color: white;
+            margin-top: 24px;
         }
 
         .consultation-label {
-            color: #666;
             font-size: 14px;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            opacity: 0.9;
         }
 
         .consultation-fee {
-            color: #0066ff;
-            font-size: 32px;
+            font-size: 40px;
             font-weight: 700;
-            margin-bottom: 3px;
+            margin-bottom: 16px;
         }
 
-        .vat-text {
-            color: #999;
-            font-size: 12px;
-            margin-bottom: 15px;
-        }
-
-        .see-doctor-btn {
-            background: #10b981;
-            color: white;
+        .book-btn {
+            background: white;
+            color: #667eea;
             border: none;
-            padding: 12px 25px;
+            padding: 14px 32px;
             border-radius: 6px;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
             text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
         }
 
-        .see-doctor-btn:hover {
-            background: #0ea573;
+        .book-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .tabs {
             background: white;
-            padding: 0 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
             display: flex;
-            gap: 30px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            overflow-x: auto;
         }
 
         .tab {
-            padding: 15px 5px;
+            flex: 1;
+            padding: 18px 24px;
             color: #666;
             font-size: 15px;
             font-weight: 500;
             cursor: pointer;
             border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            transition: all 0.2s;
+            text-align: center;
+            white-space: nowrap;
         }
 
         .tab.active {
-            color: #0066ff;
-            border-bottom-color: #0066ff;
+            color: #3498db;
+            border-bottom-color: #3498db;
+            background: #f8f9fa;
         }
 
-        .content-section {
-            display: flex;
-            gap: 25px;
-            margin-bottom: 30px;
+        .tab:hover:not(.active) {
+            background: #fafafa;
         }
 
-        .about-section {
-            flex: 1;
+        .content-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .main-content {
             background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 32px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
         }
 
-        .section-title {
-            color: #0066ff;
+        .section-heading {
+            color: #2c3e50;
             font-size: 20px;
             font-weight: 600;
             margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
         }
 
         .about-text {
-            color: #4a4a4a;
-            font-size: 14px;
+            color: #555;
+            font-size: 15px;
             line-height: 1.8;
-            text-align: justify;
+            margin-bottom: 24px;
         }
 
-        .info-group {
-            margin-bottom: 25px;
+        .info-section {
+            margin-bottom: 28px;
         }
 
-        .info-group-title {
-            color: #1a1a1a;
+        .info-title {
+            color: #2c3e50;
             font-size: 16px;
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
-        .info-text {
-            color: #4a4a4a;
+        .info-content {
+            color: #555;
             font-size: 14px;
             line-height: 1.7;
+            white-space: pre-line;
         }
 
-        .glance-section {
-            width: 380px;
+        .sidebar {
             background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 32px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
             height: fit-content;
+            position: sticky;
+            top: 90px;
         }
 
         .glance-item {
             display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
+            gap: 14px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
             border-bottom: 1px solid #f0f0f0;
         }
 
@@ -340,50 +300,45 @@
         }
 
         .glance-icon {
-            color: #0066ff;
-            font-size: 18px;
-            margin-top: 2px;
+            font-size: 22px;
+            width: 32px;
+            text-align: center;
         }
 
-        .glance-content {
+        .glance-details {
             flex: 1;
         }
 
         .glance-label {
             color: #666;
             font-size: 13px;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
+            font-weight: 500;
         }
 
         .glance-value {
-            color: #1a1a1a;
-            font-size: 14px;
+            color: #2c3e50;
+            font-size: 15px;
             font-weight: 600;
         }
 
         .glance-subtext {
             color: #999;
             font-size: 12px;
-            margin-top: 2px;
+            margin-top: 4px;
         }
 
-        .time-slot {
-            color: #4a4a4a;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .days-list {
+        .days-grid {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             margin-top: 10px;
         }
 
-        .day-badge {
+        .day-tag {
             background: #e3f2fd;
             color: #1976d2;
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: 4px;
             font-size: 12px;
             font-weight: 500;
@@ -391,7 +346,7 @@
 
         .loading, .error {
             text-align: center;
-            padding: 60px 20px;
+            padding: 80px 20px;
             color: #666;
             font-size: 16px;
         }
@@ -401,32 +356,31 @@
         }
 
         @media (max-width: 1024px) {
-            .content-section {
-                flex-direction: column;
+            .content-layout {
+                grid-template-columns: 1fr;
             }
 
-            .glance-section {
-                width: 100%;
+            .sidebar {
+                position: static;
             }
         }
 
         @media (max-width: 768px) {
             .navbar {
-                padding: 12px 15px;
+                padding: 12px 16px;
             }
 
             .container {
-                padding: 0 15px;
+                padding: 0 12px;
             }
 
             .profile-header {
-                flex-direction: column;
-                padding: 20px;
+                padding: 24px;
             }
 
-            .doctor-main-info {
+            .doctor-main {
                 flex-direction: column;
-                width: 100%;
+                gap: 20px;
             }
 
             .doctor-image {
@@ -435,31 +389,25 @@
                 font-size: 40px;
             }
 
-            .doctor-stats {
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-
-            .consultation-box {
-                width: 100%;
-                min-width: unset;
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                padding: 16px;
             }
 
             .tabs {
-                padding: 0 15px;
-                gap: 20px;
-                overflow-x: auto;
+                border-radius: 0;
+                margin-left: -12px;
+                margin-right: -12px;
             }
 
-            .about-section, .glance-section {
+            .tab {
+                padding: 14px 16px;
+                font-size: 14px;
+            }
+
+            .main-content, .sidebar {
                 padding: 20px;
-            }
-
-            .share-btn {
-                position: relative;
-                top: 0;
-                right: 0;
-                margin-bottom: 15px;
             }
         }
     </style>
@@ -524,225 +472,204 @@
         }
 
         function displayProfile(doctor, doctorId) {
-            // Calculate years of experience
             const experienceYears = doctor.experience || 'N/A';
-            
-            // Format degrees
-            const degrees = doctor.degrees || 'N/A';
-            const trainingCourses = doctor.trainings ? `Training/Courses: ${doctor.trainings.split('\n')[0]}` : '';
+            const degrees = doctor.degrees || 'MBBS';
 
             document.getElementById('profileContent').innerHTML = `
-                <!-- Profile Header -->
-                <div class="profile-header">
-                    <button class="share-btn">🔗 Share</button>
-                    
-                    <div class="doctor-main-info">
-                        <div class="doctor-image-container">
-                            <div class="doctor-image">${doctor.name.charAt(0)}</div>
-                            <div class="online-badge">Online</div>
+                <div class="profile-wrapper">
+                    <div class="profile-header">
+                        <div class="doctor-main">
+                            <div class="doctor-image-wrapper">
+                                <div class="doctor-image">${doctor.name.charAt(0)}</div>
+                            </div>
+
+                            <div class="doctor-info">
+                                <h1 class="doctor-name">${doctor.name}</h1>
+                                <div class="doctor-specialty">${doctor.specialty || 'Medical Specialist'}</div>
+                                <div class="doctor-degree">${degrees}</div>
+                                <div class="doctor-workplace">Working in <strong>${doctor.institutionName || 'Medical Center'}</strong></div>
+                            </div>
                         </div>
 
-                        <div class="doctor-details">
-                            <h1 class="doctor-name">${doctor.name}</h1>
-                            <div class="doctor-degree">${degrees}</div>
-                            ${trainingCourses ? `<div class="doctor-training">${trainingCourses}</div>` : ''}
-                            <span class="specialty-badge">${doctor.specialty || 'Medical Specialist'}</span>
-                            
-                            <div class="doctor-stats">
-                                <div class="stat-item">
-                                    <div class="stat-label">Total Experience</div>
-                                    <div class="stat-value">${experienceYears}</div>
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <div class="stat-label">Total Experience</div>
+                                <div class="stat-value">${experienceYears}</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">BMDC Number</div>
+                                <div class="stat-value">${doctor.bmdcRegNo || 'N/A'}</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">Patients Attended</div>
+                                <div class="stat-value">${doctor.patientsAttended || '1500+'}</div>
+                            </div>
+                        </div>
+
+                        <div class="consultation-card">
+                            <div class="consultation-label">Consultation Fee</div>
+                            <div class="consultation-fee">৳${doctor.consultationFee || '500'}</div>
+                            <a href="booking.html?doctor=${doctorId}" class="book-btn">
+                                Book Appointment Now
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="tabs">
+                        <div class="tab active" data-tab="info">ℹ️ Information</div>
+                        <div class="tab" data-tab="education">🎓 Education</div>
+                    </div>
+
+                    <div class="content-layout">
+                        <div class="main-content">
+                            <div id="infoTab" class="tab-content">
+                                <h2 class="section-heading">About Doctor</h2>
+                                <div class="about-text">
+                                    ${doctor.about || `${doctor.name} is a highly qualified ${doctor.specialty || 'medical specialist'} with extensive experience in providing quality healthcare services. Currently practicing at ${doctor.institutionName || 'a reputed medical center'}, dedicated to patient care and well-being.`}
                                 </div>
-                                <div class="stat-item">
-                                    <div class="stat-label">BMDC Number</div>
-                                    <div class="stat-value">${doctor.bmdcRegNo || 'N/A'}</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-label">Total Rating</div>
-                                    <div class="stat-value rating-value">
-                                        ⭐ 5 (3948)
+
+                                ${doctor.specialized ? `
+                                    <div class="info-section">
+                                        <h3 class="info-title">Areas of Specialization</h3>
+                                        <div class="info-content">${doctor.specialized}</div>
                                     </div>
-                                </div>
+                                ` : ''}
+
+                                ${doctor.fieldOfConcentration ? `
+                                    <div class="info-section">
+                                        <h3 class="info-title">Field of Concentration</h3>
+                                        <div class="info-content">${doctor.fieldOfConcentration}</div>
+                                    </div>
+                                ` : ''}
                             </div>
 
-                            <div class="workplace">
-                                Working in <strong>${doctor.institutionName || 'Medical Center'}</strong>
-                            </div>
-                        </div>
-                    </div>
+                            <div id="educationTab" class="tab-content" style="display: none;">
+                                <h2 class="section-heading">Educational Qualifications</h2>
+                                
+                                ${doctor.degrees ? `
+                                    <div class="info-section">
+                                        <h3 class="info-title">Academic Degrees</h3>
+                                        <div class="info-content">${doctor.degrees}</div>
+                                    </div>
+                                ` : ''}
 
-                    <div class="consultation-box">
-                        <div class="consultation-label">Consultation Fee</div>
-                        <div class="consultation-fee">৳${doctor.consultationFee || '500'}</div>
-                        <div class="vat-text">(inc. VAT)</div>
-                        <a href="booking.html?doctor=${doctorId}" class="see-doctor-btn">
-                            📅 See Doctor Now
-                        </a>
-                    </div>
-                </div>
+                                ${doctor.fellowships ? `
+                                    <div class="info-section">
+                                        <h3 class="info-title">Fellowships</h3>
+                                        <div class="info-content">${doctor.fellowships}</div>
+                                    </div>
+                                ` : ''}
 
-                <!-- Tabs -->
-                <div class="tabs">
-                    <div class="tab active">ℹ️ Info</div>
-                    <div class="tab">💼 Experience</div>
-                    <div class="tab">⭐ Reviews</div>
-                </div>
-
-                <!-- Content Section -->
-                <div class="content-section">
-                    <!-- About Doctor -->
-                    <div class="about-section">
-                        <h2 class="section-title">About Doctor</h2>
-                        <div class="about-text">
-                            ${doctor.about || `${doctor.name} is a highly qualified ${doctor.specialty || 'medical specialist'} with extensive experience in the field. Currently working at ${doctor.institutionName || 'a reputed medical center'}, providing quality healthcare services to patients.`}
-                        </div>
-
-                        ${doctor.degrees ? `
-                            <div class="info-group">
-                                <h3 class="info-group-title">Academic Qualifications</h3>
-                                <div class="info-text">${doctor.degrees}</div>
-                            </div>
-                        ` : ''}
-
-                        ${doctor.fellowships ? `
-                            <div class="info-group">
-                                <h3 class="info-group-title">Fellowships</h3>
-                                <div class="info-text">${doctor.fellowships}</div>
-                            </div>
-                        ` : ''}
-
-                        ${doctor.trainings ? `
-                            <div class="info-group">
-                                <h3 class="info-group-title">Training & Courses</h3>
-                                <div class="info-text" style="white-space: pre-line;">${doctor.trainings}</div>
-                            </div>
-                        ` : ''}
-
-                        ${doctor.specialized ? `
-                            <div class="info-group">
-                                <h3 class="info-group-title">Areas of Specialization</h3>
-                                <div class="info-text">${doctor.specialized}</div>
-                            </div>
-                        ` : ''}
-
-                        ${doctor.fieldOfConcentration ? `
-                            <div class="info-group">
-                                <h3 class="info-group-title">Field of Concentration</h3>
-                                <div class="info-text">${doctor.fieldOfConcentration}</div>
-                            </div>
-                        ` : ''}
-                    </div>
-
-                    <!-- At a Glance -->
-                    <div class="glance-section">
-                        <h2 class="section-title">At a Glance</h2>
-
-                        <div class="glance-item">
-                            <div class="glance-icon">⏰</div>
-                            <div class="glance-content">
-                                <div class="glance-label">Instant Consultation Time</div>
-                                <div class="time-slot">${doctor.chamberTime || 'Contact for timing'}</div>
-                            </div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-icon">📅</div>
-                            <div class="glance-content">
-                                <div class="glance-label">Appointment Consultation Time</div>
-                                <div class="time-slot">${doctor.chamberTime || 'Contact for timing'}</div>
-                                ${doctor.availableDays && doctor.availableDays.length > 0 ? `
-                                    <div class="days-list">
-                                        ${doctor.availableDays.map(day => `<span class="day-badge">${day}</span>`).join('')}
+                                ${doctor.trainings ? `
+                                    <div class="info-section">
+                                        <h3 class="info-title">Training & Courses</h3>
+                                        <div class="info-content">${doctor.trainings}</div>
                                     </div>
                                 ` : ''}
                             </div>
                         </div>
 
-                        <div class="glance-item">
-                            <div class="glance-icon">💰</div>
-                            <div class="glance-content">
-                                <div class="glance-label">Consultation Fee</div>
-                                <div class="glance-value">৳${doctor.consultationFee || '500'} <span class="glance-subtext">(inc. VAT)</span></div>
-                            </div>
-                        </div>
+                        <div class="sidebar">
+                            <h2 class="section-heading">At a Glance</h2>
 
-                        <div class="glance-item">
-                            <div class="glance-icon">🔄</div>
-                            <div class="glance-content">
-                                <div class="glance-label">Follow-Up Fee</div>
-                                <div class="glance-value">৳${doctor.followUpFee || '400'} <span class="glance-subtext">(inc. VAT)</span></div>
-                                <div class="glance-subtext">(Within 90 days)</div>
-                            </div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-icon">👥</div>
-                            <div class="glance-content">
-                                <div class="glance-label">Patient Attended</div>
-                                <div class="glance-value">${doctor.patientsAttended || '14573'}</div>
-                            </div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-icon">📍</div>
-                            <div class="glance-content">
-                                <div class="glance-label">Chamber Location</div>
-                                <div class="glance-value">${doctor.chamberName || 'Not specified'}</div>
-                                <div class="glance-subtext">${doctor.chamberAddress || ''}</div>
-                            </div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-icon">⏱️</div>
-                            <div class="glance-content">
-                                <div class="glance-label">Avg. Consultation Time</div>
-                                <div class="glance-value">15 minutes</div>
-                            </div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-icon">🔢</div>
-                            <div class="glance-content">
-                                <div class="glance-label">Doctor Code</div>
-                                <div class="glance-value">${doctor.doctorCode || doctorId.substring(0, 6).toUpperCase()}</div>
-                            </div>
-                        </div>
-
-                        ${doctor.email ? `
                             <div class="glance-item">
-                                <div class="glance-icon">📧</div>
-                                <div class="glance-content">
-                                    <div class="glance-label">Email</div>
-                                    <div class="glance-value" style="word-break: break-all;">${doctor.email}</div>
+                                <div class="glance-icon">⏰</div>
+                                <div class="glance-details">
+                                    <div class="glance-label">Instant Consultation Time</div>
+                                    <div class="glance-value">${doctor.chamberTime || 'Contact for timing'}</div>
                                 </div>
                             </div>
-                        ` : ''}
 
-                        ${doctor.chamberPhone ? `
                             <div class="glance-item">
-                                <div class="glance-icon">📞</div>
-                                <div class="glance-content">
-                                    <div class="glance-label">Chamber Phone</div>
-                                    <div class="glance-value">${doctor.chamberPhone}</div>
+                                <div class="glance-icon">📅</div>
+                                <div class="glance-details">
+                                    <div class="glance-label">Appointment Consultation Time</div>
+                                    <div class="glance-value">${doctor.chamberTime || 'Contact for timing'}</div>
+                                    ${doctor.availableDays && doctor.availableDays.length > 0 ? `
+                                        <div class="days-grid">
+                                            ${doctor.availableDays.map(day => `<span class="day-tag">${day}</span>`).join('')}
+                                        </div>
+                                    ` : ''}
                                 </div>
                             </div>
-                        ` : ''}
+
+                            <div class="glance-item">
+                                <div class="glance-icon">💰</div>
+                                <div class="glance-details">
+                                    <div class="glance-label">Consultation Fee</div>
+                                    <div class="glance-value">৳${doctor.consultationFee || '500'}</div>
+                                </div>
+                            </div>
+
+                            <div class="glance-item">
+                                <div class="glance-icon">🔄</div>
+                                <div class="glance-details">
+                                    <div class="glance-label">Follow-Up Fee</div>
+                                    <div class="glance-value">৳${doctor.followUpFee || '400'}</div>
+                                    <div class="glance-subtext">(Within 90 days)</div>
+                                </div>
+                            </div>
+
+                            <div class="glance-item">
+                                <div class="glance-icon">👥</div>
+                                <div class="glance-details">
+                                    <div class="glance-label">Patients Attended</div>
+                                    <div class="glance-value">${doctor.patientsAttended || '1500+'}</div>
+                                </div>
+                            </div>
+
+                            <div class="glance-item">
+                                <div class="glance-icon">📍</div>
+                                <div class="glance-details">
+                                    <div class="glance-label">Chamber Location</div>
+                                    <div class="glance-value">${doctor.chamberName || 'Not specified'}</div>
+                                    ${doctor.chamberAddress ? `<div class="glance-subtext">${doctor.chamberAddress}</div>` : ''}
+                                </div>
+                            </div>
+
+                            <div class="glance-item">
+                                <div class="glance-icon">🔢</div>
+                                <div class="glance-details">
+                                    <div class="glance-label">Doctor Code</div>
+                                    <div class="glance-value">${doctor.doctorCode || doctorId.substring(0, 6).toUpperCase()}</div>
+                                </div>
+                            </div>
+
+                            ${doctor.email ? `
+                                <div class="glance-item">
+                                    <div class="glance-icon">📧</div>
+                                    <div class="glance-details">
+                                        <div class="glance-label">Email</div>
+                                        <div class="glance-value" style="word-break: break-all; font-size: 13px;">${doctor.email}</div>
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${doctor.chamberPhone ? `
+                                <div class="glance-item">
+                                    <div class="glance-icon">📞</div>
+                                    <div class="glance-details">
+                                        <div class="glance-label">Chamber Phone</div>
+                                        <div class="glance-value">${doctor.chamberPhone}</div>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
                     </div>
                 </div>
             `;
 
-            // Add share button functionality
-            document.querySelector('.share-btn').addEventListener('click', () => {
-                if (navigator.share) {
-                    navigator.share({
-                        title: `Dr. ${doctor.name}`,
-                        text: `Check out Dr. ${doctor.name}'s profile`,
-                        url: window.location.href
-                    });
-                } else {
-                    navigator.clipboard.writeText(window.location.href);
-                    alert('Profile link copied to clipboard!');
-                }
+            // Tab switching functionality
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    const tabName = tab.getAttribute('data-tab');
+                    document.getElementById('infoTab').style.display = tabName === 'info' ? 'block' : 'none';
+                    document.getElementById('educationTab').style.display = tabName === 'education' ? 'block' : 'none';
+                });
             });
         }
     </script>
