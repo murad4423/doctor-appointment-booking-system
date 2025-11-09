@@ -309,36 +309,79 @@
                     </div>
 
                     <div class="profile-body">
-                        <div class="info-section">
-                            <h2>📋 Professional Information</h2>
-     
-<div class="info-grid">
-    <div class="info-item">
-        <label>Education</label>
-        <p>${doctor.education || 'Not specified'}</p>
-    </div>
-    <div class="info-item">
-        <label>Experience</label>
-        <p>${doctor.experience || 'Not specified'}</p>
-    </div>
-    <div class="info-item">
-        <label>Institution</label>
-        <p>${doctor.institutionName || 'Not specified'}</p>
-    </div>
-    <div class="info-item">
-        <label>Designation</label>
-        <p>${doctor.designation || 'Not specified'}</p>
-    </div>
-    <div class="info-item">
-        <label>Consultation Fee</label>
-        <p>${doctor.consultationFee || 'Contact for details'}</p>
-    </div>
-    <div class="info-item">
-        <label>Max Patients/Day</label>
-        <p>${doctor.maxPatients || 'Not specified'}</p>
+ <div class="info-section">
+    <h2>📋 Professional Information</h2>
+    <div class="info-grid">
+        <div class="info-item">
+            <label>BMDC Reg. No</label>
+            <p>${doctor.bmdcRegNo || 'Not specified'}</p>
+        </div>
+        <div class="info-item">
+            <label>Blood Group</label>
+            <p>${doctor.bloodGroup || 'Not specified'}</p>
+        </div>
+        <div class="info-item">
+            <label>Education</label>
+            <p>${doctor.education || 'Not specified'}</p>
+        </div>
+        <div class="info-item">
+            <label>Experience</label>
+            <p>${doctor.experience || 'Not specified'}</p>
+        </div>
+        <div class="info-item">
+            <label>Institution</label>
+            <p>${doctor.institutionName || 'Not specified'}</p>
+        </div>
+        <div class="info-item">
+            <label>Designation</label>
+            <p>${doctor.designation || 'Not specified'}</p>
+        </div>
+        <div class="info-item">
+            <label>Consultation Fee</label>
+            <p>${doctor.consultationFee || 'Contact for details'}</p>
+        </div>
+        <div class="info-item">
+            <label>Max Patients/Day</label>
+            <p>${doctor.maxPatients || 'Not specified'}</p>
+        </div>
     </div>
 </div>
-                        </div>
+
+<div class="info-section">
+    <h2>🎓 Academic Qualifications</h2>
+    <div class="info-grid">
+        <div class="info-item" style="grid-column: 1 / -1;">
+            <label>Degrees</label>
+            <p>${doctor.degrees || 'Not specified'}</p>
+        </div>
+        <div class="info-item" style="grid-column: 1 / -1;">
+            <label>Post Graduations</label>
+            <p>${doctor.postGraduations || 'Not specified'}</p>
+        </div>
+        <div class="info-item" style="grid-column: 1 / -1;">
+            <label>Fellowships</label>
+            <p>${doctor.fellowships || 'Not specified'}</p>
+        </div>
+        <div class="info-item" style="grid-column: 1 / -1;">
+            <label>Trainings</label>
+            <p>${doctor.trainings || 'Not specified'}</p>
+        </div>
+    </div>
+</div>
+
+<div class="info-section">
+    <h2>💼 Specialization & Work</h2>
+    <div class="info-grid">
+        <div class="info-item" style="grid-column: 1 / -1;">
+            <label>Specialized In</label>
+            <p>${doctor.specialized || 'Not specified'}</p>
+        </div>
+        <div class="info-item" style="grid-column: 1 / -1;">
+            <label>Currently Working At</label>
+            <p>${doctor.working || 'Not specified'}</p>
+        </div>
+    </div>
+</div>
 
                         <div class="info-section">
                             <h2>📍 Chamber Information</h2>
