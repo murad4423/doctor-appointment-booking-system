@@ -12,8 +12,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-            background: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f5f5f5;
             line-height: 1.6;
             color: #333;
         }
@@ -21,255 +21,319 @@
         .navbar {
             background: white;
             padding: 16px 40px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
 
         .navbar h1 {
-            color: #2c3e50;
-            font-size: 22px;
+            color: #333;
+            font-size: 20px;
             font-weight: 600;
         }
 
         .back-btn {
-            color: #3498db;
+            color: #2563eb;
             text-decoration: none;
             font-weight: 500;
-            padding: 8px 18px;
-            border: 1px solid #3498db;
-            border-radius: 4px;
+            padding: 8px 16px;
+            border: 1px solid #2563eb;
+            border-radius: 6px;
             transition: all 0.2s;
             font-size: 14px;
         }
 
         .back-btn:hover {
-            background: #3498db;
+            background: #2563eb;
             color: white;
         }
 
         .container {
-            max-width: 1140px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 24px 20px;
         }
 
-        .profile-wrapper {
-            margin: 30px 0;
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .profile-header {
-            background: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-            margin-bottom: 24px;
-        }
-
-        .doctor-main {
             display: flex;
-            gap: 40px;
-            align-items: flex-start;
-            margin-bottom: 30px;
+            gap: 32px;
+            margin-bottom: 24px;
+            position: relative;
         }
 
-        .doctor-image-wrapper {
+        .share-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 20px;
+            padding: 4px;
+        }
+
+        .doctor-image-section {
             flex-shrink: 0;
+            position: relative;
         }
 
         .doctor-image {
-            width: 140px;
-            height: 140px;
-            border-radius: 8px;
+            width: 180px;
+            height: 200px;
+            border-radius: 12px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 52px;
+            font-size: 64px;
             font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
-        .doctor-info {
+        .appointment-badge {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2563eb;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .doctor-details {
             flex: 1;
         }
 
         .doctor-name {
             font-size: 28px;
             font-weight: 600;
-            color: #2c3e50;
+            color: #1a1a1a;
             margin-bottom: 8px;
         }
 
-        .doctor-specialty {
-            color: #3498db;
-            font-size: 16px;
-            font-weight: 500;
+        .doctor-qualifications {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .doctor-training {
+            color: #666;
+            font-size: 13px;
             margin-bottom: 12px;
         }
 
-        .doctor-degree {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 6px;
-            line-height: 1.6;
+        .specialty-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
         }
 
-        .doctor-workplace {
-            color: #555;
-            font-size: 14px;
-            margin-top: 12px;
+        .specialty-tag {
+            background: #2563eb;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
             font-weight: 500;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 24px;
-            padding: 24px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin-top: 24px;
+        .secondary-tag {
+            background: #e5e7eb;
+            color: #4b5563;
         }
 
-        .stat-box {
-            text-align: center;
+        .stats-row {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
         }
 
         .stat-label {
-            color: #666;
-            font-size: 13px;
-            margin-bottom: 6px;
-            font-weight: 500;
+            color: #6b7280;
+            font-size: 12px;
+            margin-bottom: 4px;
         }
 
         .stat-value {
-            color: #2c3e50;
-            font-size: 18px;
+            color: #1a1a1a;
+            font-size: 15px;
             font-weight: 600;
         }
 
-        .consultation-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 32px;
-            border-radius: 8px;
-            text-align: center;
-            color: white;
-            margin-top: 24px;
-        }
-
-        .consultation-label {
+        .workplace-info {
+            color: #4b5563;
             font-size: 14px;
-            margin-bottom: 8px;
-            opacity: 0.9;
         }
 
-        .consultation-fee {
-            font-size: 40px;
+        .workplace-info strong {
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+
+        .fee-card {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            min-width: 240px;
+        }
+
+        .fee-label {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .fee-amount {
+            color: #2563eb;
+            font-size: 36px;
             font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .fee-vat {
+            color: #9ca3af;
+            font-size: 12px;
             margin-bottom: 16px;
         }
 
         .book-btn {
-            background: white;
-            color: #667eea;
+            background: #2563eb;
+            color: white;
             border: none;
-            padding: 14px 32px;
-            border-radius: 6px;
-            font-size: 16px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             text-decoration: none;
-            display: inline-block;
-            transition: all 0.2s;
+            transition: background 0.2s;
         }
 
         .book-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            background: #1d4ed8;
+        }
+
+        .tabs-container {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .tabs {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
             display: flex;
-            margin-bottom: 24px;
-            overflow-x: auto;
+            border-bottom: 1px solid #e5e7eb;
         }
 
         .tab {
             flex: 1;
-            padding: 18px 24px;
-            color: #666;
-            font-size: 15px;
+            padding: 16px 24px;
+            color: #6b7280;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             border-bottom: 3px solid transparent;
             transition: all 0.2s;
-            text-align: center;
-            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: transparent;
+            border-left: none;
+            border-right: none;
+            border-top: none;
         }
 
         .tab.active {
-            color: #3498db;
-            border-bottom-color: #3498db;
-            background: #f8f9fa;
+            color: #2563eb;
+            border-bottom-color: #2563eb;
         }
 
         .tab:hover:not(.active) {
-            background: #fafafa;
+            color: #4b5563;
         }
 
-        .content-layout {
+        .content-grid {
             display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 24px;
-            margin-bottom: 40px;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
         }
 
         .main-content {
             background: white;
+            border-radius: 12px;
             padding: 32px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
-        .section-heading {
-            color: #2c3e50;
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .content-title {
+            color: #2563eb;
             font-size: 20px;
             font-weight: 600;
             margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #f0f0f0;
         }
 
         .about-text {
-            color: #555;
-            font-size: 15px;
+            color: #4b5563;
+            font-size: 14px;
             line-height: 1.8;
             margin-bottom: 24px;
         }
 
         .info-section {
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
 
-        .info-title {
-            color: #2c3e50;
+        .info-section-title {
+            color: #1a1a1a;
             font-size: 16px;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
-        .info-content {
-            color: #555;
+        .info-text {
+            color: #4b5563;
             font-size: 14px;
             line-height: 1.7;
             white-space: pre-line;
@@ -277,20 +341,16 @@
 
         .sidebar {
             background: white;
+            border-radius: 12px;
             padding: 32px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             height: fit-content;
-            position: sticky;
-            top: 90px;
         }
 
         .glance-item {
-            display: flex;
-            gap: 14px;
             margin-bottom: 24px;
             padding-bottom: 24px;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f3f4f6;
         }
 
         .glance-item:last-child {
@@ -299,69 +359,114 @@
             padding-bottom: 0;
         }
 
-        .glance-icon {
-            font-size: 22px;
-            width: 32px;
-            text-align: center;
+        .glance-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
         }
 
-        .glance-details {
-            flex: 1;
+        .glance-icon {
+            font-size: 18px;
         }
 
         .glance-label {
-            color: #666;
+            color: #6b7280;
             font-size: 13px;
-            margin-bottom: 4px;
             font-weight: 500;
         }
 
         .glance-value {
-            color: #2c3e50;
-            font-size: 15px;
+            color: #1a1a1a;
+            font-size: 14px;
             font-weight: 600;
+            margin-left: 28px;
         }
 
         .glance-subtext {
-            color: #999;
+            color: #9ca3af;
             font-size: 12px;
-            margin-top: 4px;
+            margin-left: 28px;
+            margin-top: 2px;
         }
 
-        .days-grid {
+        .time-range {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 28px;
+            color: #4b5563;
+            font-size: 13px;
+        }
+
+        .days-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
+            gap: 6px;
+            margin-left: 28px;
+            margin-top: 8px;
         }
 
-        .day-tag {
-            background: #e3f2fd;
-            color: #1976d2;
-            padding: 6px 12px;
+        .day-badge {
+            background: #eff6ff;
+            color: #2563eb;
+            padding: 4px 10px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 500;
+        }
+
+        .fee-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-left: 28px;
+            margin-top: 12px;
+        }
+
+        .fee-item {
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .fee-item-label {
+            color: #6b7280;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .fee-item-value {
+            color: #1a1a1a;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .fee-item-note {
+            color: #9ca3af;
+            font-size: 11px;
+            margin-top: 2px;
         }
 
         .loading, .error {
             text-align: center;
-            padding: 80px 20px;
-            color: #666;
+            padding: 60px 20px;
+            color: #6b7280;
             font-size: 16px;
         }
 
         .error {
-            color: #e74c3c;
+            color: #ef4444;
         }
 
         @media (max-width: 1024px) {
-            .content-layout {
+            .content-grid {
                 grid-template-columns: 1fr;
             }
 
-            .sidebar {
+            .fee-card {
                 position: static;
+                margin-top: 24px;
             }
         }
 
@@ -371,43 +476,45 @@
             }
 
             .container {
-                padding: 0 12px;
+                padding: 16px 12px;
+            }
+
+            .profile-card {
+                padding: 20px;
             }
 
             .profile-header {
-                padding: 24px;
-            }
-
-            .doctor-main {
                 flex-direction: column;
                 gap: 20px;
             }
 
             .doctor-image {
-                width: 100px;
-                height: 100px;
-                font-size: 40px;
+                width: 120px;
+                height: 140px;
+                font-size: 48px;
             }
 
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 16px;
-                padding: 16px;
+            .stats-row {
+                flex-wrap: wrap;
+                gap: 20px;
             }
 
             .tabs {
-                border-radius: 0;
-                margin-left: -12px;
-                margin-right: -12px;
+                overflow-x: auto;
             }
 
             .tab {
-                padding: 14px 16px;
-                font-size: 14px;
+                flex: none;
+                min-width: 120px;
             }
 
             .main-content, .sidebar {
                 padding: 20px;
+            }
+
+            .share-btn {
+                position: static;
+                margin-bottom: 12px;
             }
         }
     </style>
@@ -474,202 +581,228 @@
         function displayProfile(doctor, doctorId) {
             const experienceYears = doctor.experience || 'N/A';
             const degrees = doctor.degrees || 'MBBS';
+            const training = doctor.trainings ? doctor.trainings.split('\n')[0] : '';
 
             document.getElementById('profileContent').innerHTML = `
-                <div class="profile-wrapper">
+                <div class="profile-card">
+                    <button class="share-btn">🔗</button>
+                    
                     <div class="profile-header">
-                        <div class="doctor-main">
-                            <div class="doctor-image-wrapper">
-                                <div class="doctor-image">${doctor.name.charAt(0)}</div>
+                        <div class="doctor-image-section">
+                            <div class="doctor-image">${doctor.name.charAt(0)}</div>
+                            <div class="appointment-badge">Appointment</div>
+                        </div>
+
+                        <div class="doctor-details">
+                            <h1 class="doctor-name">${doctor.name}</h1>
+                            <div class="doctor-qualifications">${degrees}</div>
+                            ${training ? `<div class="doctor-training">Training/Courses: ${training}</div>` : ''}
+                            
+                            <div class="specialty-tags">
+                                <span class="specialty-tag">${doctor.specialty || 'Medical Specialist'}</span>
+                                <span class="specialty-tag secondary-tag">Internal Medicine</span>
                             </div>
 
-                            <div class="doctor-info">
-                                <h1 class="doctor-name">${doctor.name}</h1>
-                                <div class="doctor-specialty">${doctor.specialty || 'Medical Specialist'}</div>
-                                <div class="doctor-degree">${degrees}</div>
-                                <div class="doctor-workplace">Working in <strong>${doctor.institutionName || 'Medical Center'}</strong></div>
+                            <div class="stats-row">
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Experience</span>
+                                    <span class="stat-value">${experienceYears}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">BMDC Number</span>
+                                    <span class="stat-value">${doctor.bmdcRegNo || 'N/A'}</span>
+                                </div>
+                            </div>
+
+                            <div class="workplace-info">
+                                Working in <strong>${doctor.institutionName || 'Medical Center'}</strong>
                             </div>
                         </div>
 
-                        <div class="stats-grid">
-                            <div class="stat-box">
-                                <div class="stat-label">Total Experience</div>
-                                <div class="stat-value">${experienceYears}</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-label">BMDC Number</div>
-                                <div class="stat-value">${doctor.bmdcRegNo || 'N/A'}</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-label">Patients Attended</div>
-                                <div class="stat-value">${doctor.patientsAttended || '1500+'}</div>
-                            </div>
-                        </div>
-
-                        <div class="consultation-card">
-                            <div class="consultation-label">Consultation Fee</div>
-                            <div class="consultation-fee">৳${doctor.consultationFee || '500'}</div>
+                        <div class="fee-card">
+                            <div class="fee-label">Consultation Fee</div>
+                            <div class="fee-amount">৳${doctor.consultationFee || '500'}</div>
+                            <div class="fee-vat">(inc. VAT)</div>
                             <a href="booking.html?doctor=${doctorId}" class="book-btn">
-                                Book Appointment Now
+                                📅 Book Appointment
                             </a>
                         </div>
                     </div>
+                </div>
 
+                <div class="tabs-container">
                     <div class="tabs">
-                        <div class="tab active" data-tab="info">ℹ️ Information</div>
-                        <div class="tab" data-tab="education">🎓 Education</div>
+                        <button class="tab active" data-tab="info">
+                            <span>ℹ️</span> Info
+                        </button>
+                        <button class="tab" data-tab="education">
+                            <span>🎓</span> Education
+                        </button>
                     </div>
+                </div>
 
-                    <div class="content-layout">
-                        <div class="main-content">
-                            <div id="infoTab" class="tab-content">
-                                <h2 class="section-heading">About Doctor</h2>
-                                <div class="about-text">
-                                    ${doctor.about || `${doctor.name} is a highly qualified ${doctor.specialty || 'medical specialist'} with extensive experience in providing quality healthcare services. Currently practicing at ${doctor.institutionName || 'a reputed medical center'}, dedicated to patient care and well-being.`}
-                                </div>
-
-                                ${doctor.specialized ? `
-                                    <div class="info-section">
-                                        <h3 class="info-title">Areas of Specialization</h3>
-                                        <div class="info-content">${doctor.specialized}</div>
-                                    </div>
-                                ` : ''}
-
-                                ${doctor.fieldOfConcentration ? `
-                                    <div class="info-section">
-                                        <h3 class="info-title">Field of Concentration</h3>
-                                        <div class="info-content">${doctor.fieldOfConcentration}</div>
-                                    </div>
-                                ` : ''}
+                <div class="content-grid">
+                    <div class="main-content">
+                        <div id="infoTab" class="tab-content active">
+                            <h2 class="content-title">About Doctor</h2>
+                            <div class="about-text">
+                                ${doctor.about || `${doctor.name}, ${degrees}. National Gastroliver Institute and Hospital, Dhaka. Currently practicing at ${doctor.institutionName || 'Medical Center'}. Dedicated to providing quality healthcare services to patients with extensive experience in the field of ${doctor.specialty || 'medicine'}.`}
                             </div>
 
-                            <div id="educationTab" class="tab-content" style="display: none;">
-                                <h2 class="section-heading">Educational Qualifications</h2>
-                                
-                                ${doctor.degrees ? `
-                                    <div class="info-section">
-                                        <h3 class="info-title">Academic Degrees</h3>
-                                        <div class="info-content">${doctor.degrees}</div>
-                                    </div>
-                                ` : ''}
+                            ${doctor.specialized ? `
+                                <div class="info-section">
+                                    <h3 class="info-section-title">Areas of Specialization</h3>
+                                    <div class="info-text">${doctor.specialized}</div>
+                                </div>
+                            ` : ''}
 
-                                ${doctor.fellowships ? `
-                                    <div class="info-section">
-                                        <h3 class="info-title">Fellowships</h3>
-                                        <div class="info-content">${doctor.fellowships}</div>
-                                    </div>
-                                ` : ''}
+                            ${doctor.fieldOfConcentration ? `
+                                <div class="info-section">
+                                    <h3 class="info-section-title">Field of Concentration</h3>
+                                    <div class="info-text">${doctor.fieldOfConcentration}</div>
+                                </div>
+                            ` : ''}
+                        </div>
 
-                                ${doctor.trainings ? `
-                                    <div class="info-section">
-                                        <h3 class="info-title">Training & Courses</h3>
-                                        <div class="info-content">${doctor.trainings}</div>
-                                    </div>
-                                ` : ''}
+                        <div id="educationTab" class="tab-content">
+                            <h2 class="content-title">Educational Qualifications</h2>
+                            
+                            ${doctor.degrees ? `
+                                <div class="info-section">
+                                    <h3 class="info-section-title">Academic Degrees</h3>
+                                    <div class="info-text">${doctor.degrees}</div>
+                                </div>
+                            ` : ''}
+
+                            ${doctor.fellowships ? `
+                                <div class="info-section">
+                                    <h3 class="info-section-title">Fellowships</h3>
+                                    <div class="info-text">${doctor.fellowships}</div>
+                                </div>
+                            ` : ''}
+
+                            ${doctor.trainings ? `
+                                <div class="info-section">
+                                    <h3 class="info-section-title">Training & Courses</h3>
+                                    <div class="info-text">${doctor.trainings}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <div class="sidebar">
+                        <h2 class="content-title">At a Glance</h2>
+
+                        <div class="glance-item">
+                            <div class="glance-header">
+                                <span class="glance-icon">⏰</span>
+                                <span class="glance-label">Instant Consultation Time</span>
+                            </div>
+                            <div class="time-range">
+                                ${doctor.chamberTime || 'Mon - Sat (7 PM - 10 PM)'}
                             </div>
                         </div>
 
-                        <div class="sidebar">
-                            <h2 class="section-heading">At a Glance</h2>
-
-                            <div class="glance-item">
-                                <div class="glance-icon">⏰</div>
-                                <div class="glance-details">
-                                    <div class="glance-label">Instant Consultation Time</div>
-                                    <div class="glance-value">${doctor.chamberTime || 'Contact for timing'}</div>
-                                </div>
+                        <div class="glance-item">
+                            <div class="glance-header">
+                                <span class="glance-icon">📅</span>
+                                <span class="glance-label">Appointment Consultation Time</span>
                             </div>
-
-                            <div class="glance-item">
-                                <div class="glance-icon">📅</div>
-                                <div class="glance-details">
-                                    <div class="glance-label">Appointment Consultation Time</div>
-                                    <div class="glance-value">${doctor.chamberTime || 'Contact for timing'}</div>
-                                    ${doctor.availableDays && doctor.availableDays.length > 0 ? `
-                                        <div class="days-grid">
-                                            ${doctor.availableDays.map(day => `<span class="day-tag">${day}</span>`).join('')}
-                                        </div>
-                                    ` : ''}
-                                </div>
+                            <div class="time-range">
+                                ${doctor.chamberTime || 'Sat - Thu (7 PM - 10 PM)'}
                             </div>
-
-                            <div class="glance-item">
-                                <div class="glance-icon">💰</div>
-                                <div class="glance-details">
-                                    <div class="glance-label">Consultation Fee</div>
-                                    <div class="glance-value">৳${doctor.consultationFee || '500'}</div>
-                                </div>
-                            </div>
-
-                            <div class="glance-item">
-                                <div class="glance-icon">🔄</div>
-                                <div class="glance-details">
-                                    <div class="glance-label">Follow-Up Fee</div>
-                                    <div class="glance-value">৳${doctor.followUpFee || '400'}</div>
-                                    <div class="glance-subtext">(Within 90 days)</div>
-                                </div>
-                            </div>
-
-                            <div class="glance-item">
-                                <div class="glance-icon">👥</div>
-                                <div class="glance-details">
-                                    <div class="glance-label">Patients Attended</div>
-                                    <div class="glance-value">${doctor.patientsAttended || '1500+'}</div>
-                                </div>
-                            </div>
-
-                            <div class="glance-item">
-                                <div class="glance-icon">📍</div>
-                                <div class="glance-details">
-                                    <div class="glance-label">Chamber Location</div>
-                                    <div class="glance-value">${doctor.chamberName || 'Not specified'}</div>
-                                    ${doctor.chamberAddress ? `<div class="glance-subtext">${doctor.chamberAddress}</div>` : ''}
-                                </div>
-                            </div>
-
-                            <div class="glance-item">
-                                <div class="glance-icon">🔢</div>
-                                <div class="glance-details">
-                                    <div class="glance-label">Doctor Code</div>
-                                    <div class="glance-value">${doctor.doctorCode || doctorId.substring(0, 6).toUpperCase()}</div>
-                                </div>
-                            </div>
-
-                            ${doctor.email ? `
-                                <div class="glance-item">
-                                    <div class="glance-icon">📧</div>
-                                    <div class="glance-details">
-                                        <div class="glance-label">Email</div>
-                                        <div class="glance-value" style="word-break: break-all; font-size: 13px;">${doctor.email}</div>
-                                    </div>
+                            ${doctor.availableDays && doctor.availableDays.length > 0 ? `
+                                <div class="days-list">
+                                    ${doctor.availableDays.map(day => `<span class="day-badge">${day}</span>`).join('')}
                                 </div>
                             ` : ''}
+                        </div>
 
-                            ${doctor.chamberPhone ? `
-                                <div class="glance-item">
-                                    <div class="glance-icon">📞</div>
-                                    <div class="glance-details">
-                                        <div class="glance-label">Chamber Phone</div>
-                                        <div class="glance-value">${doctor.chamberPhone}</div>
-                                    </div>
+                        <div class="glance-item">
+                            <div class="glance-header">
+                                <span class="glance-icon">💰</span>
+                                <span class="glance-label">Fees</span>
+                            </div>
+                            <div class="fee-grid">
+                                <div class="fee-item">
+                                    <div class="fee-item-label">Consultation Fee</div>
+                                    <div class="fee-item-value">৳${doctor.consultationFee || '500'}</div>
+                                    <div class="fee-item-note">(inc. VAT)</div>
                                 </div>
-                            ` : ''}
+                                <div class="fee-item">
+                                    <div class="fee-item-label">Follow-Up Fee</div>
+                                    <div class="fee-item-value">৳${doctor.followUpFee || '400'}</div>
+                                    <div class="fee-item-note">(Within 14 days)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glance-item">
+                            <div class="glance-header">
+                                <span class="glance-icon">👥</span>
+                                <span class="glance-label">Patient Attended</span>
+                            </div>
+                            <div class="glance-value">${doctor.patientsAttended || '1541'}</div>
+                        </div>
+
+                        <div class="glance-item">
+                            <div class="glance-header">
+                                <span class="glance-icon">📍</span>
+                                <span class="glance-label">Joined DocTime</span>
+                            </div>
+                            <div class="glance-value">August 01, 2021</div>
+                        </div>
+
+                        <div class="glance-item">
+                            <div class="glance-header">
+                                <span class="glance-icon">⏱️</span>
+                                <span class="glance-label">Avg. Consultation Time</span>
+                            </div>
+                            <div class="glance-value">5 minutes</div>
+                        </div>
+
+                        <div class="glance-item">
+                            <div class="glance-header">
+                                <span class="glance-icon">🔢</span>
+                                <span class="glance-label">Doctor Code</span>
+                            </div>
+                            <div class="glance-value">${doctor.doctorCode || 'DT' + doctorId.substring(0, 4).toUpperCase()}</div>
                         </div>
                     </div>
                 </div>
             `;
 
-            // Tab switching functionality
+            // Tab switching
             const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
+                    const targetTab = tab.getAttribute('data-tab');
+                    
                     tabs.forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
-
-                    const tabName = tab.getAttribute('data-tab');
-                    document.getElementById('infoTab').style.display = tabName === 'info' ? 'block' : 'none';
-                    document.getElementById('educationTab').style.display = tabName === 'education' ? 'block' : 'none';
+                    
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    document.getElementById(targetTab + 'Tab').classList.add('active');
                 });
+            });
+
+            // Share button
+            document.querySelector('.share-btn').addEventListener('click', () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: doctor.name,
+                        text: `Check out ${doctor.name}'s profile`,
+                        url: window.location.href
+                    });
+                } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert('Profile link copied to clipboard!');
+                }
             });
         }
     </script>
