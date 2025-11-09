@@ -301,144 +301,165 @@
                 : '<p style="color: #666;">Available days not specified</p>';
 
             document.getElementById('profileContent').innerHTML = `
-                <div class="profile-card">
-                    <div class="profile-header">
-                        <div class="doctor-avatar">${doctor.name.charAt(0)}</div>
-                        <h1>${doctor.name}</h1>
-                        <p>${doctor.specialty || 'Medical Specialist'}</p>
+ 
+ <div class="profile-card">
+    <div class="profile-header">
+        <div class="doctor-avatar">${doctor.name.charAt(0)}</div>
+        <h1>${doctor.name}</h1>
+        <p>${doctor.specialty || 'Medical Specialist'}</p>
+    </div>
+
+    <div class="profile-body">
+        <!-- Professional Information -->
+        <div class="info-section">
+            <h2>📋 Professional Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>BMDC Reg. No</label>
+                    <p>${doctor.bmdcRegNo || 'Not specified'}</p>
+                </div>
+                <div class="info-item">
+                    <label>Experience</label>
+                    <p>${doctor.experience || 'Not specified'}</p>
+                </div>
+                <div class="info-item">
+                    <label>Current Workplace</label>
+                    <p>${doctor.institutionName || 'Not specified'}</p>
+                </div>
+                <div class="info-item">
+                    <label>Designation</label>
+                    <p>${doctor.designation || 'Not specified'}</p>
+                </div>
+            </div>
+            ${doctor.about ? `
+                <div class="info-item" style="margin-top: 15px; grid-column: 1 / -1;">
+                    <label>About</label>
+                    <p style="line-height: 1.6;">${doctor.about}</p>
+                </div>
+            ` : ''}
+        </div>
+
+        <!-- Academic Qualifications -->
+        <div class="info-section">
+            <h2>🎓 Academic Qualifications</h2>
+            <div class="info-grid">
+                ${doctor.degrees ? `
+                    <div class="info-item" style="grid-column: 1 / -1;">
+                        <label>Degrees</label>
+                        <p>${doctor.degrees}</p>
                     </div>
+                ` : ''}
+                ${doctor.fellowships ? `
+                    <div class="info-item" style="grid-column: 1 / -1;">
+                        <label>Fellowships</label>
+                        <p>${doctor.fellowships}</p>
+                    </div>
+                ` : ''}
+                ${doctor.trainings ? `
+                    <div class="info-item" style="grid-column: 1 / -1;">
+                        <label>Trainings</label>
+                        <p style="white-space: pre-line;">${doctor.trainings}</p>
+                    </div>
+                ` : ''}
+                ${!doctor.degrees && !doctor.fellowships && !doctor.trainings ? '<p style="color: #666; padding: 20px; text-align: center;">No academic qualifications specified</p>' : ''}
+            </div>
+        </div>
 
-                    <div class="profile-body">
- <div class="info-section">
-    <h2>📋 Professional Information</h2>
-    <div class="info-grid">
-        <div class="info-item">
-            <label>BMDC Reg. No</label>
-            <p>${doctor.bmdcRegNo || 'Not specified'}</p>
+        <!-- Specialization & Work -->
+        <div class="info-section">
+            <h2>💼 Specialization & Work</h2>
+            <div class="info-grid">
+                ${doctor.specialized ? `
+                    <div class="info-item" style="grid-column: 1 / -1;">
+                        <label>Areas of Specialization</label>
+                        <p>${doctor.specialized}</p>
+                    </div>
+                ` : ''}
+                ${doctor.fieldOfConcentration ? `
+                    <div class="info-item" style="grid-column: 1 / -1;">
+                        <label>Field of Concentration</label>
+                        <p>${doctor.fieldOfConcentration}</p>
+                    </div>
+                ` : ''}
+                ${!doctor.specialized && !doctor.fieldOfConcentration ? '<p style="color: #666; padding: 20px; text-align: center;">No specialization details specified</p>' : ''}
+            </div>
         </div>
-        <div class="info-item">
-            <label>Blood Group</label>
-            <p>${doctor.bloodGroup || 'Not specified'}</p>
-        </div>
-        <div class="info-item">
-            <label>Education</label>
-            <p>${doctor.education || 'Not specified'}</p>
-        </div>
-        <div class="info-item">
-            <label>Experience</label>
-            <p>${doctor.experience || 'Not specified'}</p>
-        </div>
-        <div class="info-item">
-            <label>Institution</label>
-            <p>${doctor.institutionName || 'Not specified'}</p>
-        </div>
-        <div class="info-item">
-            <label>Designation</label>
-            <p>${doctor.designation || 'Not specified'}</p>
-        </div>
-        <div class="info-item">
-            <label>Consultation Fee</label>
-            <p>${doctor.consultationFee || 'Contact for details'}</p>
-        </div>
-        <div class="info-item">
-            <label>Max Patients/Day</label>
-            <p>${doctor.maxPatients || 'Not specified'}</p>
-        </div>
-    </div>
-</div>
 
-<div class="info-section">
-    <h2>🎓 Academic Qualifications</h2>
-    <div class="info-grid">
-        <div class="info-item" style="grid-column: 1 / -1;">
-            <label>Degrees</label>
-            <p>${doctor.degrees || 'Not specified'}</p>
+        <!-- Chamber Information -->
+        <div class="info-section">
+            <h2>🏥 Chamber Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Chamber Name</label>
+                    <p>${doctor.chamberName || 'Not specified'}</p>
+                </div>
+                <div class="info-item">
+                    <label>Chamber Address</label>
+                    <p>${doctor.chamberAddress || 'Not specified'}</p>
+                </div>
+                <div class="info-item">
+                    <label>Chamber Time</label>
+                    <p>${doctor.chamberTime || 'Not specified'}</p>
+                </div>
+                <div class="info-item">
+                    <label>Consultation Fee</label>
+                    <p>${doctor.consultationFee || 'Contact for details'}</p>
+                </div>
+                <div class="info-item">
+                    <label>Max Patients/Day</label>
+                    <p>${doctor.maxPatients || 'Not specified'}</p>
+                </div>
+                <div class="info-item">
+                    <label>Chamber Phone</label>
+                    <p>${doctor.chamberPhone || 'Not specified'}</p>
+                </div>
+            </div>
         </div>
-        <div class="info-item" style="grid-column: 1 / -1;">
-            <label>Post Graduations</label>
-            <p>${doctor.postGraduations || 'Not specified'}</p>
-        </div>
-        <div class="info-item" style="grid-column: 1 / -1;">
-            <label>Fellowships</label>
-            <p>${doctor.fellowships || 'Not specified'}</p>
-        </div>
-        <div class="info-item" style="grid-column: 1 / -1;">
-            <label>Trainings</label>
-            <p>${doctor.trainings || 'Not specified'}</p>
-        </div>
-    </div>
-</div>
 
-<div class="info-section">
-    <h2>💼 Specialization & Work</h2>
-    <div class="info-grid">
-        <div class="info-item" style="grid-column: 1 / -1;">
-            <label>Specialized In</label>
-            <p>${doctor.specialized || 'Not specified'}</p>
+        <!-- Available Days -->
+        <div class="info-section">
+            <h2>📅 Available Days</h2>
+            <div class="days-available">
+                ${doctor.availableDays && doctor.availableDays.length > 0 
+                    ? doctor.availableDays.map(day => `<span class="day-badge">${day}</span>`).join('') 
+                    : '<p style="color: #666;">Available days not specified</p>'}
+            </div>
         </div>
-        <div class="info-item" style="grid-column: 1 / -1;">
-            <label>Currently Working At</label>
-            <p>${doctor.working || 'Not specified'}</p>
+
+        <!-- Contact Information -->
+        <div class="info-section">
+            <h2>📞 Contact Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Email</label>
+                    <p>${doctor.email || 'Not specified'}</p>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
-                        <div class="info-section">
-                            <h2>📍 Chamber Information</h2>
-           <div class="info-grid">
-    <div class="info-item">
-        <label>Chamber Name</label>
-        <p>${doctor.chamberName || 'Not specified'}</p>
-    </div>
-    <div class="info-item">
-        <label>Chamber Address</label>
-        <p>${doctor.chamberAddress || 'Not specified'}</p>
-    </div>
-    <div class="info-item">
-        <label>Chamber Time</label>
-        <p>${doctor.chamberTime || 'Not specified'}</p>
-    </div>
-</div>
-                        </div>
-
-                        <div class="info-section">
-                            <h2>📞 Contact Information</h2>
-                            <div class="info-grid">
-                                <div class="info-item">
-                                    <label>Phone</label>
-                                    <p>${doctor.phone || 'Not specified'}</p>
-                                </div>
-                                <div class="info-item">
-                                    <label>Email</label>
-                                    <p>${doctor.email || 'Not specified'}</p>
-                                </div>
-                            </div>
-                        </div>
-<div class="info-section">
-    <h2>🔗 Social Media</h2>
-    <div class="info-grid">
-        <div class="info-item">
-            <label>Facebook Profile</label>
-            <p>${doctor.facebookLink ? `<a href="${doctor.facebookLink}" target="_blank" style="color: #667eea; text-decoration: none;">Visit Profile →</a>` : 'Not provided'}</p>
-        </div>
-    </div>
-</div>
-                        <div class="info-section">
-                            <h2>🕒 Available Days</h2>
-                            <div class="days-available">
-                                ${daysHTML}
-                            </div>
-                        </div>
-
-                        <div class="appointment-section">
-                            <h2>Ready to Book an Appointment?</h2>
-                            <p>Schedule your visit with ${doctor.name}</p>
-                            <a href="booking.html?doctor=${doctorId}" class="btn-appointment">
-                                📅 Book Appointment
-                            </a>
-                        </div>
+        <!-- Social Media -->
+        ${doctor.facebookLink ? `
+            <div class="info-section">
+                <h2>🔗 Social Media</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Facebook Profile</label>
+                        <p><a href="${doctor.facebookLink}" target="_blank" style="color: #667eea; text-decoration: none; font-weight: 600;">Visit Profile →</a></p>
                     </div>
                 </div>
+            </div>
+        ` : ''}
+
+        <!-- Appointment Button -->
+        <div class="appointment-section">
+            <h2>Ready to Book an Appointment?</h2>
+            <p>Schedule your visit with ${doctor.name}</p>
+            <a href="booking.html?doctor=${doctorId}" class="btn-appointment">
+                📅 Book Appointment
+            </a>
+        </div>
+    </div>
+</div>
             `;
         }
     </script>
