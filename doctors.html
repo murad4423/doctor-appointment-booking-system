@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doctor Profile</title>
     <style>
+        /* ========================================
+           GLOBAL STYLES & RESET
+           ======================================== */
         * {
             margin: 0;
             padding: 0;
@@ -12,291 +15,493 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
             line-height: 1.6;
             color: #333;
+            min-height: 100vh;
         }
 
+        /* Background decoration overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ========================================
+           NAVIGATION BAR
+           Customize: Change background color, padding, shadow
+           ======================================== */
         .navbar {
-            background: white;
-            padding: 16px 40px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 40px; /* Adjust padding: top/bottom left/right */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: slideDown 0.5s ease-out;
         }
 
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Navigation title - Customize font size, color, weight */
         .navbar h1 {
-            color: #333;
-            font-size: 20px;
-            font-weight: 600;
+            color: #1a1a1a; /* Text color */
+            font-size: 24px; /* Title size */
+            font-weight: 700; /* Boldness (100-900) */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
+        /* Back button - Customize colors, size, border radius */
         .back-btn {
-            color: #2563eb;
+            color: #667eea; /* Button text color */
             text-decoration: none;
-            font-weight: 500;
-            padding: 8px 16px;
-            border: 1px solid #2563eb;
-            border-radius: 6px;
-            transition: all 0.2s;
+            font-weight: 600;
+            padding: 10px 24px; /* Adjust button size */
+            border: 2px solid #667eea; /* Border color and thickness */
+            border-radius: 25px; /* Roundness of corners */
+            transition: all 0.3s ease;
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .back-btn:hover {
-            background: #2563eb;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            transform: translateX(-5px); /* Slide effect on hover */
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
+        /* ========================================
+           MAIN CONTAINER
+           Customize: max-width, padding, margins
+           ======================================== */
         .container {
-            max-width: 1200px;
+            max-width: 1400px; /* Maximum width of content */
             margin: 0 auto;
-            padding: 24px 20px;
+            padding: 40px 20px; /* Spacing around content */
+            position: relative;
+            z-index: 1;
         }
 
+        /* ========================================
+           PROFILE CARD - Main doctor information card
+           Customize: background, border-radius, padding, shadow
+           ======================================== */
         .profile-card {
-            background: white;
-            border-radius: 12px;
-            padding: 32px;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 24px; /* Card corner roundness */
+            padding: 40px; /* Internal spacing */
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            animation: fadeInUp 0.6s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Profile header layout */
         .profile-header {
             display: flex;
-            gap: 32px;
-            margin-bottom: 24px;
+            gap: 40px;
+            margin-bottom: 30px;
             position: relative;
+            align-items: flex-start;
         }
 
+        /* Share button - Customize position, colors, size */
         .share-btn {
             position: absolute;
-            top: 0;
-            right: 0;
-            background: transparent;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
-            color: #666;
+            color: white;
             cursor: pointer;
             font-size: 20px;
-            padding: 4px;
+            padding: 12px;
+            border-radius: 50%; /* Makes it circular */
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
 
+        .share-btn:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        /* ========================================
+           DOCTOR IMAGE SECTION
+           Customize: size, colors, border-radius
+           ======================================== */
         .doctor-image-section {
             flex-shrink: 0;
             position: relative;
+            animation: fadeIn 0.8s ease-out 0.2s both;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Doctor avatar - Customize width, height, gradient colors */
         .doctor-image {
-            width: 180px;
-            height: 200px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 200px; /* Avatar width */
+            height: 240px; /* Avatar height */
+            border-radius: 20px; /* Corner roundness */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Gradient colors */
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 64px;
-            font-weight: 600;
+            font-size: 72px; /* Initial letter size */
+            font-weight: 700;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            border: 4px solid rgba(255, 255, 255, 0.9);
+            transition: transform 0.3s ease;
         }
 
+        .doctor-image:hover {
+            transform: scale(1.05);
+        }
+
+        /* Appointment badge - Customize position, colors, size */
         .appointment-badge {
             position: absolute;
-            bottom: 10px;
+            bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
-            background: #2563eb;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 8px 20px; /* Badge size */
+            border-radius: 25px; /* Roundness */
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+        }
+
+        /* ========================================
+           DOCTOR DETAILS SECTION
+           Customize: text sizes, colors, spacing
+           ======================================== */
+        .doctor-details {
+            flex: 1;
+            animation: fadeIn 0.8s ease-out 0.3s both;
+        }
+
+        /* Doctor name - Customize size, color, weight */
+        .doctor-name {
+            font-size: 36px; /* Name size */
+            font-weight: 700; /* Boldness */
+            color: #1a1a1a; /* Text color */
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #667eea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Qualifications text - Customize size, color */
+        .doctor-qualifications {
+            color: #6b7280; /* Text color */
+            font-size: 16px; /* Font size */
+            margin-bottom: 6px;
             font-weight: 500;
         }
 
-        .doctor-details {
-            flex: 1;
-        }
-
-        .doctor-name {
-            font-size: 28px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 8px;
-        }
-
-        .doctor-qualifications {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-
+        /* Training text - Customize size, color */
         .doctor-training {
-            color: #666;
-            font-size: 13px;
-            margin-bottom: 12px;
+            color: #9ca3af;
+            font-size: 14px;
+            margin-bottom: 16px;
+            font-style: italic;
         }
 
+        /* ========================================
+           SPECIALTY TAGS
+           Customize: colors, size, spacing
+           ======================================== */
         .specialty-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 24px;
         }
 
+        /* Primary specialty tag - Customize colors */
         .specialty-tag {
-            background: #2563eb;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
+            padding: 8px 20px; /* Tag size */
+            border-radius: 25px; /* Roundness */
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
         }
 
+        .specialty-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Secondary specialty tag - Customize colors */
         .secondary-tag {
-            background: #e5e7eb;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
             color: #4b5563;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
+        /* ========================================
+           STATS ROW - Experience and BMDC info
+           Customize: spacing, borders
+           ======================================== */
         .stats-row {
             display: flex;
-            gap: 40px;
-            margin-bottom: 16px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #e5e7eb;
+            gap: 50px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f3f4f6; /* Border color and thickness */
         }
 
         .stat-item {
             display: flex;
             flex-direction: column;
+            gap: 6px;
         }
 
+        /* Stat label - Customize size, color */
         .stat-label {
-            color: #6b7280;
-            font-size: 12px;
-            margin-bottom: 4px;
+            color: #9ca3af; /* Label color */
+            font-size: 13px; /* Label size */
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
+        /* Stat value - Customize size, color */
         .stat-value {
-            color: #1a1a1a;
-            font-size: 15px;
-            font-weight: 600;
+            color: #1a1a1a; /* Value color */
+            font-size: 20px; /* Value size */
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
+        /* Workplace info - Customize size, color */
         .workplace-info {
             color: #4b5563;
-            font-size: 14px;
+            font-size: 15px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
         }
 
         .workplace-info strong {
             color: #1a1a1a;
-            font-weight: 500;
+            font-weight: 600;
         }
 
+        /* ========================================
+           FEE CARD - Consultation fee display
+           Customize: position, size, colors
+           ======================================== */
         .fee-card {
             position: absolute;
             top: 0;
             right: 0;
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 24px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 20px; /* Card roundness */
+            padding: 30px; /* Internal spacing */
             text-align: center;
-            min-width: 240px;
+            min-width: 260px; /* Card width */
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            animation: fadeIn 0.8s ease-out 0.4s both;
         }
 
+        /* Fee label - Customize size, color */
         .fee-label {
             color: #6b7280;
-            font-size: 13px;
-            margin-bottom: 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
+        /* Fee amount - Customize size, color */
         .fee-amount {
-            color: #2563eb;
-            font-size: 36px;
-            font-weight: 700;
-            margin-bottom: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 48px; /* Fee number size */
+            font-weight: 800;
+            margin-bottom: 6px;
         }
 
+        /* VAT text - Customize size, color */
         .fee-vat {
             color: #9ca3af;
             font-size: 12px;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
+        /* Book appointment button - Customize colors, size */
         .book-btn {
-            background: #2563eb;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
+            padding: 14px 28px; /* Button size */
+            border-radius: 12px; /* Button roundness */
+            font-size: 16px;
+            font-weight: 700;
             cursor: pointer;
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             text-decoration: none;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
         .book-btn:hover {
-            background: #1d4ed8;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
         }
 
+        .book-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* ========================================
+           TABS CONTAINER
+           Customize: background, borders, spacing
+           ======================================== */
         .tabs-container {
-            background: white;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
         .tabs {
             display: flex;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 2px solid #f3f4f6;
         }
 
+        /* Individual tab button - Customize colors, size */
         .tab {
             flex: 1;
-            padding: 16px 24px;
-            color: #6b7280;
-            font-size: 14px;
-            font-weight: 500;
+            padding: 18px 28px; /* Tab size */
+            color: #6b7280; /* Inactive tab color */
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
             border-bottom: 3px solid transparent;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             background: transparent;
             border-left: none;
             border-right: none;
             border-top: none;
         }
 
+        /* Active tab - Customize colors */
         .tab.active {
-            color: #2563eb;
-            border-bottom-color: #2563eb;
+            color: #667eea; /* Active tab color */
+            border-bottom-color: #667eea;
+            background: linear-gradient(180deg, rgba(102, 126, 234, 0.05) 0%, transparent 100%);
         }
 
         .tab:hover:not(.active) {
             color: #4b5563;
+            background: rgba(102, 126, 234, 0.03);
         }
 
+        /* ========================================
+           CONTENT GRID - Main layout structure
+           Customize: columns, gap
+           ======================================== */
         .content-grid {
             display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 20px;
+            grid-template-columns: 1fr 450px; /* Left content : Right sidebar ratio */
+            gap: 30px; /* Space between columns */
         }
 
+        /* Main content area - Customize background, padding */
         .main-content {
-            background: white;
-            border-radius: 12px;
-            padding: 32px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px; /* Internal spacing */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.6s ease-out 0.3s both;
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
         .tab-content {
@@ -305,52 +510,100 @@
 
         .tab-content.active {
             display: block;
+            animation: fadeIn 0.4s ease-out;
         }
 
+        /* Content title - Customize size, color */
         .content-title {
-            color: #2563eb;
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 26px; /* Title size */
+            font-weight: 700;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #f3f4f6;
         }
 
+        /* About text - Customize size, color, line height */
         .about-text {
-            color: #4b5563;
-            font-size: 14px;
-            line-height: 1.8;
-            margin-bottom: 24px;
+            color: #4b5563; /* Text color */
+            font-size: 15px; /* Text size */
+            line-height: 1.8; /* Line spacing */
+            margin-bottom: 28px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
         }
 
+        /* Info sections - Customize spacing */
         .info-section {
-            margin-bottom: 24px;
+            margin-bottom: 28px;
+            padding: 20px;
+            background: rgba(249, 250, 251, 0.5);
+            border-radius: 12px;
+            transition: all 0.3s ease;
         }
 
+        .info-section:hover {
+            background: rgba(249, 250, 251, 0.8);
+            transform: translateX(5px);
+        }
+
+        /* Section title - Customize size, color */
         .info-section-title {
             color: #1a1a1a;
-            font-size: 16px;
+            font-size: 18px; /* Section title size */
             font-weight: 600;
             margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
+        .info-section-title::before {
+            content: '▶';
+            color: #667eea;
+            font-size: 12px;
+        }
+
+        /* Info text - Customize size, color */
         .info-text {
             color: #4b5563;
             font-size: 14px;
-            line-height: 1.7;
+            line-height: 1.8;
             white-space: pre-line;
         }
 
+        /* ========================================
+           SIDEBAR - "At a Glance" section
+           Customize: background, padding, spacing
+           ======================================== */
         .sidebar {
-            background: white;
-            border-radius: 12px;
-            padding: 32px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px; /* Internal spacing */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
             height: fit-content;
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            position: sticky;
+            top: 100px; /* Distance from top when scrolling */
         }
 
+        /* Glance item - Individual info blocks */
         .glance-item {
-            margin-bottom: 24px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid #f3f4f6;
+            margin-bottom: 28px;
+            padding-bottom: 28px;
+            border-bottom: 2px solid #f3f4f6;
+            transition: all 0.3s ease;
+        }
+
+        .glance-item:hover {
+            transform: translateX(5px);
         }
 
         .glance-item:last-child {
@@ -362,449 +615,349 @@
         .glance-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
+            gap: 12px;
+            margin-bottom: 10px;
         }
 
+        /* Glance icon - Customize size */
         .glance-icon {
-            font-size: 18px;
+            font-size: 20px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
         }
 
+        /* Glance label - Customize size, color */
         .glance-label {
             color: #6b7280;
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
+        /* Glance value - Customize size, color */
         .glance-value {
             color: #1a1a1a;
-            font-size: 14px;
-            font-weight: 600;
-            margin-left: 28px;
+            font-size: 16px; /* Value size */
+            font-weight: 700;
+            margin-left: 44px;
         }
 
         .glance-subtext {
             color: #9ca3af;
             font-size: 12px;
-            margin-left: 28px;
-            margin-top: 2px;
+            margin-left: 44px;
+            margin-top: 4px;
         }
 
         .time-range {
             display: flex;
             align-items: center;
-            gap: 4px;
-            margin-left: 28px;
-            color: #4b5563;
-            font-size: 13px;
-        }
-
-        .days-list {
-            display: flex;
-            flex-wrap: wrap;
             gap: 6px;
-            margin-left: 28px;
-            margin-top: 8px;
-        }
-
-        .day-badge {
-            background: #eff6ff;
-            color: #2563eb;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 11px;
+            margin-left: 44px;
+            color: #4b5563;
+            font-size: 14px;
             font-weight: 500;
         }
 
+        /* Available days badges */
+        .days-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-left: 44px;
+            margin-top: 10px;
+        }
+
+        .day-badge {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            color: #2563eb;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .day-badge:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Fee grid in sidebar */
         .fee-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-left: 28px;
-            margin-top: 12px;
+            gap: 12px;
+            margin-left: 44px;
+            margin-top: 14px;
         }
 
         .fee-item {
-            background: #f9fafb;
-            padding: 12px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .fee-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .fee-item-label {
             color: #6b7280;
-            font-size: 12px;
-            margin-bottom: 4px;
+            font-size: 11px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .fee-item-value {
             color: #1a1a1a;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
         }
 
         .fee-item-note {
             color: #9ca3af;
-            font-size: 11px;
-            margin-top: 2px;
+            font-size: 10px;
+            margin-top: 4px;
         }
 
+        /* ========================================
+           LOADING & ERROR STATES
+           Customize: colors, sizes
+           ======================================== */
         .loading, .error {
             text-align: center;
-            padding: 60px 20px;
-            color: #6b7280;
-            font-size: 16px;
+            padding: 80px 20px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            animation: pulse 1.5s ease-in-out infinite;
         }
 
         .error {
             color: #ef4444;
+            background: rgba(255, 255, 255, 0.95);
         }
 
+        .error a {
+            color: #667eea;
+            text-decoration: underline;
+        }
+
+        /* ========================================
+           RESPONSIVE DESIGN - Tablet & Mobile
+           Customize breakpoints and adjustments
+           ======================================== */
+        
+        /* Tablet view (1024px and below) */
         @media (max-width: 1024px) {
             .content-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr; /* Stack columns vertically */
             }
 
             .fee-card {
-                position: static;
-                margin-top: 24px;
+                position: static; /* Move fee card below profile */
+                margin-top: 30px;
+                max-width: 100%;
+            }
+
+            .sidebar {
+                position: static; /* Remove sticky positioning */
             }
         }
 
+        /* Mobile view (768px and below) */
         @media (max-width: 768px) {
+            /* Adjust navbar for mobile */
             .navbar {
-                padding: 12px 16px;
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 12px;
             }
 
+            .navbar h1 {
+                font-size: 20px;
+            }
+
+            /* Adjust container padding */
             .container {
-                padding: 16px 12px;
+                padding: 24px 16px;
             }
 
+            /* Adjust profile card */
             .profile-card {
-                padding: 20px;
+                padding: 24px;
             }
 
+            /* Stack profile header vertically */
             .profile-header {
                 flex-direction: column;
-                gap: 20px;
+                gap: 24px;
             }
 
+            /* Adjust doctor image for mobile */
             .doctor-image {
-                width: 120px;
-                height: 140px;
-                font-size: 48px;
+                width: 140px;
+                height: 180px;
+                font-size: 56px;
+                margin: 0 auto;
             }
 
+            /* Adjust doctor name size */
+            .doctor-name {
+                font-size: 28px;
+                text-align: center;
+            }
+
+            .doctor-qualifications,
+            .doctor-training {
+                text-align: center;
+            }
+
+            /* Center specialty tags */
+            .specialty-tags {
+                justify-content: center;
+            }
+
+            /* Stack stats vertically */
             .stats-row {
                 flex-wrap: wrap;
-                gap: 20px;
+                gap: 24px;
+                justify-content: center;
             }
 
+            .stat-item {
+                text-align: center;
+                min-width: 120px;
+            }
+
+            /* Make tabs scrollable on mobile */
             .tabs {
                 overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
             }
 
             .tab {
                 flex: none;
-                min-width: 120px;
+                min-width: 140px;
+                font-size: 14px;
+                padding: 16px 20px;
             }
 
+            /* Adjust content padding */
             .main-content, .sidebar {
-                padding: 20px;
+                padding: 24px;
             }
 
+            /* Adjust text sizes */
+            .content-title {
+                font-size: 22px;
+            }
+
+            .about-text {
+                font-size: 14px;
+            }
+
+            /* Move share button */
             .share-btn {
                 position: static;
-                margin-bottom: 12px;
+                margin: 0 auto 16px;
             }
-        }
-    </style>
-</head>
-<body>
-    <div class="navbar">
-        <h1>Doctor Profile</h1>
-        <a href="index.html" class="back-btn">← Back to Home</a>
-    </div>
 
-    <div class="container">
-        <div id="profileContent" class="loading">
-            Loading doctor information...
-        </div>
-    </div>
+            /* Adjust fee card */
+            .fee-card {
+                min-width: auto;
+            }
 
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+            .fee-amount {
+                font-size: 40px;
+            }
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBgL3nTaBFS1789IwrsFb1SN4T7GIas3Jk",
-            authDomain: "doctor-booking-b556e.firebaseapp.com",
-            projectId: "doctor-booking-b556e",
-            storageBucket: "doctor-booking-b556e.firebasestorage.app",
-            messagingSenderId: "573037462071",
-            appId: "1:573037462071:web:a21ae3786e8b8a3758b5b2",
-            measurementId: "G-NQ9BK8LFJM"
-        };
+            /* Adjust glance items */
+            .glance-value,
+            .time-range,
+            .days-list,
+            .fee-grid {
+                margin-left: 0;
+            }
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const doctorId = urlParams.get('id');
-
-        if (!doctorId) {
-            document.getElementById('profileContent').innerHTML = 
-                '<div class="error">Invalid doctor ID. <a href="index.html">Go back to home</a></div>';
-        } else {
-            loadDoctorProfile(doctorId);
-        }
-
-        async function loadDoctorProfile(id) {
-            try {
-                const docRef = doc(db, 'doctors', id);
-                const docSnap = await getDoc(docRef);
-
-                if (!docSnap.exists()) {
-                    document.getElementById('profileContent').innerHTML = 
-                        '<div class="error">Doctor not found. <a href="index.html">Go back to home</a></div>';
-                    return;
-                }
-
-                const doctor = docSnap.data();
-                displayProfile(doctor, id);
-            } catch (error) {
-                console.error('Error loading doctor:', error);
-                document.getElementById('profileContent').innerHTML = 
-                    '<div class="error">Failed to load doctor profile. Please try again.</div>';
+            .fee-grid {
+                grid-template-columns: 1fr;
             }
         }
 
-        function displayProfile(doctor, doctorId) {
-            const experienceYears = doctor.experience || 'N/A';
-            const degrees = doctor.degrees || 'MBBS';
-            const training = doctor.trainings ? doctor.trainings.split('\n')[0] : '';
+        /* Small mobile (480px and below) */
+        @media (max-width: 480px) {
+            .doctor-name {
+                font-size: 24px;
+            }
 
-            document.getElementById('profileContent').innerHTML = `
-                <div class="profile-card">
-                    <button class="share-btn">🔗</button>
-                    
-                    <div class="profile-header">
-                        <div class="doctor-image-section">
-                            <div class="doctor-image">${doctor.name.charAt(0)}</div>
-                            <div class="appointment-badge">Appointment</div>
-                        </div>
+            .specialty-tag {
+                font-size: 12px;
+                padding: 6px 16px;
+            }
 
-                        <div class="doctor-details">
-                            <h1 class="doctor-name">${doctor.name}</h1>
-                            <div class="doctor-qualifications">${degrees}</div>
-                            ${training ? `<div class="doctor-training">Training/Courses: ${training}</div>` : ''}
-                            
-                            <div class="specialty-tags">
-                                <span class="specialty-tag">${doctor.specialty || 'Medical Specialist'}</span>
-                                <span class="specialty-tag secondary-tag">Internal Medicine</span>
-                            </div>
-
-                            <div class="stats-row">
-                                <div class="stat-item">
-                                    <span class="stat-label">Total Experience</span>
-                                    <span class="stat-value">${experienceYears}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">BMDC Number</span>
-                                    <span class="stat-value">${doctor.bmdcRegNo || 'N/A'}</span>
-                                </div>
-                            </div>
-
-                            <div class="workplace-info">
-                                Working in <strong>${doctor.institutionName || 'Medical Center'}</strong>
-                            </div>
-                        </div>
-
-                        <div class="fee-card">
-                            <div class="fee-label">Consultation Fee</div>
-                            <div class="fee-amount">৳${doctor.consultationFee || '500'}</div>
-                            <div class="fee-vat">(inc. VAT)</div>
-                            <a href="booking.html?doctor=${doctorId}" class="book-btn">
-                                📅 Book Appointment
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tabs-container">
-                    <div class="tabs">
-                        <button class="tab active" data-tab="info">
-                            <span>ℹ️</span> Info
-                        </button>
-                        <button class="tab" data-tab="education">
-                            <span>🎓</span> Education
-                        </button>
-                    </div>
-                </div>
-
-                <div class="content-grid">
-                    <div class="main-content">
-                        <div id="infoTab" class="tab-content active">
-                            <h2 class="content-title">About Doctor</h2>
-                            <div class="about-text">
-                                ${doctor.about || `${doctor.name}, ${degrees}. National Gastroliver Institute and Hospital, Dhaka. Currently practicing at ${doctor.institutionName || 'Medical Center'}. Dedicated to providing quality healthcare services to patients with extensive experience in the field of ${doctor.specialty || 'medicine'}.`}
-                            </div>
-
-                            ${doctor.specialized ? `
-                                <div class="info-section">
-                                    <h3 class="info-section-title">Areas of Specialization</h3>
-                                    <div class="info-text">${doctor.specialized}</div>
-                                </div>
-                            ` : ''}
-
-                            ${doctor.fieldOfConcentration ? `
-                                <div class="info-section">
-                                    <h3 class="info-section-title">Field of Concentration</h3>
-                                    <div class="info-text">${doctor.fieldOfConcentration}</div>
-                                </div>
-                            ` : ''}
-                        </div>
-
-                        <div id="educationTab" class="tab-content">
-                            <h2 class="content-title">Educational Qualifications</h2>
-                            
-                            ${doctor.degrees ? `
-                                <div class="info-section">
-                                    <h3 class="info-section-title">Academic Degrees</h3>
-                                    <div class="info-text">${doctor.degrees}</div>
-                                </div>
-                            ` : ''}
-
-                            ${doctor.fellowships ? `
-                                <div class="info-section">
-                                    <h3 class="info-section-title">Fellowships</h3>
-                                    <div class="info-text">${doctor.fellowships}</div>
-                                </div>
-                            ` : ''}
-
-                            ${doctor.trainings ? `
-                                <div class="info-section">
-                                    <h3 class="info-section-title">Training & Courses</h3>
-                                    <div class="info-text">${doctor.trainings}</div>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-
-                    <div class="sidebar">
-                        <h2 class="content-title">At a Glance</h2>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">⏰</span>
-                                <span class="glance-label">Instant Consultation Time</span>
-                            </div>
-                            <div class="time-range">
-                                ${doctor.chamberTime || 'Mon - Sat (7 PM - 10 PM)'}
-                            </div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">📅</span>
-                                <span class="glance-label">Appointment Consultation Time</span>
-                            </div>
-                            <div class="time-range">
-                                ${doctor.chamberTime || 'Sat - Thu (7 PM - 10 PM)'}
-                            </div>
-                            ${doctor.availableDays && doctor.availableDays.length > 0 ? `
-                                <div class="days-list">
-                                    ${doctor.availableDays.map(day => `<span class="day-badge">${day}</span>`).join('')}
-                                </div>
-                            ` : ''}
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">💰</span>
-                                <span class="glance-label">Fees</span>
-                            </div>
-                            <div class="fee-grid">
-                                <div class="fee-item">
-                                    <div class="fee-item-label">Consultation Fee</div>
-                                    <div class="fee-item-value">৳${doctor.consultationFee || '500'}</div>
-                                    <div class="fee-item-note">(inc. VAT)</div>
-                                </div>
-                                <div class="fee-item">
-                                    <div class="fee-item-label">Follow-Up Fee</div>
-                                    <div class="fee-item-value">৳${doctor.followUpFee || '400'}</div>
-                                    <div class="fee-item-note">(Within 14 days)</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">👥</span>
-                                <span class="glance-label">Patient Attended</span>
-                            </div>
-                            <div class="glance-value">${doctor.patientsAttended || '1541'}</div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">📍</span>
-                                <span class="glance-label">Joined DocTime</span>
-                            </div>
-                            <div class="glance-value">August 01, 2021</div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">⏱️</span>
-                                <span class="glance-label">Avg. Consultation Time</span>
-                            </div>
-                            <div class="glance-value">5 minutes</div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">🔢</span>
-                                <span class="glance-label">Doctor Code</span>
-                            </div>
-                            <div class="glance-value">${doctor.doctorCode || 'DT' + doctorId.substring(0, 4).toUpperCase()}</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Tab switching
-            const tabs = document.querySelectorAll('.tab');
-            const tabContents = document.querySelectorAll('.tab-content');
-
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const targetTab = tab.getAttribute('data-tab');
-                    
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    
-                    tabContents.forEach(content => {
-                        content.classList.remove('active');
-                    });
-                    
-                    document.getElementById(targetTab + 'Tab').classList.add('active');
-                });
-            });
-
-            // Share button
-            document.querySelector('.share-btn').addEventListener('click', () => {
-                if (navigator.share) {
-                    navigator.share({
-                        title: doctor.name,
-                        text: `Check out ${doctor.name}'s profile`,
-                        url: window.location.href
-                    });
-                } else {
-                    navigator.clipboard.writeText(window.location.href);
-                    alert('Profile link copied to clipboard!');
-                }
-            });
+            .book-btn {
+                font-size: 14px;
+                padding: 12px 20px;
+            }
         }
-    </script>
-</body>
-</html>
+
+        /* ========================================
+           PRINT STYLES (Optional)
+           Customize for printing the page
+           ======================================== */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .navbar,
+            .share-btn,
+            .book-btn {
+                display: none;
+            }
+            
+            .profile-card,
+            .main-content,
+            .sidebar {
+                box-shadow: none;
+                page-break-inside: avoid;
+            }
+        }
+
+        /* ========================================
+           SCROLLBAR CUSTOMIZATION
+           Customize scrollbar appearance
+           ======================================== */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
