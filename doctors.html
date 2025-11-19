@@ -6,126 +6,110 @@
     <title>Doctor Profile</title>
     <style>
         /* ============================================
-           EASY EDIT SECTION - এখানে সব value change করুন
+           এখানে সহজে Edit করুন - CSS Variables
            ============================================ */
+        :root {
+            /* NAVBAR SETTINGS - নেভবার সেটিংস */
+            --navbar-bg: white;                    /* নেভবার ব্যাকগ্রাউন্ড কালার */
+            --navbar-padding-top: 16px;            /* উপরের স্পেস */
+            --navbar-padding-bottom: 16px;         /* নিচের স্পেস */
+            --navbar-padding-left: 40px;           /* বামের স্পেস */
+            --navbar-padding-right: 40px;          /* ডানের স্পেস */
+            
+            /* NAVBAR TITLE - নেভবার টাইটেল (Doctor Profile) */
+            --navbar-title-size: 20px;             /* টাইটেল সাইজ */
+            --navbar-title-color: #333;            /* টাইটেল কালার */
+            --navbar-title-weight: 600;            /* টাইটেল মোটা পাতলা (400-900) */
+            --navbar-title-align: left;            /* টাইটেল align (left/center/right) */
+            
+            /* BACK BUTTON - ব্যাক বাটন */
+            --back-btn-size: 14px;                 /* ব্যাক বাটন টেক্সট সাইজ */
+            --back-btn-color: #2563eb;             /* ব্যাক বাটন কালার */
+            --back-btn-bg: transparent;            /* ব্যাক বাটন ব্যাকগ্রাউন্ড */
+            --back-btn-border: #2563eb;            /* ব্যাক বাটন বর্ডার কালার */
+            
+            /* DOCTOR NAME - ডাক্তারের নাম */
+            --doctor-name-size: 28px;              /* নামের সাইজ */
+            --doctor-name-color: #1a1a1a;          /* নামের কালার */
+            --doctor-name-weight: 600;             /* নামের মোটা পাতলা */
+            --doctor-name-align: left;             /* নাম align (left/center/right) */
+            --doctor-name-margin-left: -20px;      /* বামে স্পেস */
+            
+            /* QUALIFICATIONS - যোগ্যতা (MBBS etc) */
+            --qualifications-size: 14px;           /* যোগ্যতা টেক্সট সাইজ */
+            --qualifications-color: #666;          /* যোগ্যতা কালার */
+            --qualifications-align: left;          /* যোগ্যতা align */
+            
+            /* TRAINING TEXT - ট্রেনিং টেক্সট */
+            --training-size: 13px;                 /* ট্রেনিং সাইজ */
+            --training-color: #666;                /* ট্রেনিং কালার */
+            
+            /* SPECIALTY TAGS - বিশেষত্ব ট্যাগ */
+            --specialty-tag-size: 13px;            /* ট্যাগ টেক্সট সাইজ */
+            --specialty-tag-bg: #2563eb;           /* প্রধান ট্যাগ ব্যাকগ্রাউন্ড */
+            --specialty-tag-color: white;          /* প্রধান ট্যাগ টেক্সট কালার */
+            --secondary-tag-bg: #e5e7eb;           /* সেকেন্ডারি ট্যাগ ব্যাকগ্রাউন্ড */
+            --secondary-tag-color: #4b5563;        /* সেকেন্ডারি ট্যাগ টেক্সট কালার */
+            
+            /* STATS (Experience, BMDC) - স্ট্যাট্স */
+            --stat-label-size: 12px;               /* স্ট্যাট লেবেল সাইজ */
+            --stat-label-color: #6b7280;           /* স্ট্যাট লেবেল কালার */
+            --stat-value-size: 15px;               /* স্ট্যাট ভ্যালু সাইজ */
+            --stat-value-color: #1a1a1a;           /* স্ট্যাট ভ্যালু কালার */
+            --stat-value-weight: 600;              /* স্ট্যাট ভ্যালু মোটা পাতলা */
+            
+            /* WORKPLACE INFO - কর্মস্থল তথ্য */
+            --workplace-size: 14px;                /* কর্মস্থল টেক্সট সাইজ */
+            --workplace-color: #4b5563;            /* কর্মস্থল টেক্সট কালার */
+            
+            /* FEE CARD - ফি কার্ড */
+            --fee-label-size: 13px;                /* ফি লেবেল সাইজ */
+            --fee-label-color: #6b7280;            /* ফি লেবেল কালার */
+            --fee-amount-size: 36px;               /* ফি অ্যামাউন্ট সাইজ */
+            --fee-amount-color: #2563eb;           /* ফি অ্যামাউন্ট কালার */
+            --fee-amount-weight: 700;              /* ফি অ্যামাউন্ট মোটা পাতলা */
+            
+            /* BOOK BUTTON - বুক বাটন */
+            --book-btn-size: 15px;                 /* বুক বাটন টেক্সট সাইজ */
+            --book-btn-bg: #2563eb;                /* বুক বাটন ব্যাকগ্রাউন্ড */
+            --book-btn-color: white;               /* বুক বাটন টেক্সট কালার */
+            --book-btn-weight: 600;                /* বুক বাটন টেক্সট মোটা পাতলা */
+            
+            /* TABS - ট্যাব */
+            --tab-size: 14px;                      /* ট্যাব টেক্সট সাইজ */
+            --tab-color: #6b7280;                  /* ট্যাব টেক্সট কালার */
+            --tab-active-color: #2563eb;           /* একটিভ ট্যাব কালার */
+            --tab-weight: 500;                     /* ট্যাব টেক্সট মোটা পাতলা */
+            
+            /* CONTENT TITLE - কন্টেন্ট টাইটেল */
+            --content-title-size: 20px;            /* কন্টেন্ট টাইটেল সাইজ */
+            --content-title-color: #2563eb;        /* কন্টেন্ট টাইটেল কালার */
+            --content-title-weight: 600;           /* কন্টেন্ট টাইটেল মোটা পাতলা */
+            --content-title-align: left;           /* কন্টেন্ট টাইটেল align */
+            
+            /* ABOUT TEXT - সম্পর্কে টেক্সট */
+            --about-text-size: 14px;               /* সম্পর্কে টেক্সট সাইজ */
+            --about-text-color: #4b5563;           /* সম্পর্কে টেক্সট কালার */
+            
+            /* SECTION TITLE - সেকশন টাইটেল */
+            --section-title-size: 16px;            /* সেকশন টাইটেল সাইজ */
+            --section-title-color: #1a1a1a;        /* সেকশন টাইটেল কালার */
+            --section-title-weight: 600;           /* সেকশন টাইটেল মোটা পাতলা */
+            
+            /* INFO TEXT - ইনফো টেক্সট */
+            --info-text-size: 14px;                /* ইনফো টেক্সট সাইজ */
+            --info-text-color: #4b5563;            /* ইনফো টেক্সট কালার */
+            
+            /* GLANCE LABELS - সাইডবার লেবেল */
+            --glance-label-size: 13px;             /* গ্ল্যান্স লেবেল সাইজ */
+            --glance-label-color: #6b7280;         /* গ্ল্যান্স লেবেল কালার */
+            --glance-value-size: 14px;             /* গ্ল্যান্স ভ্যালু সাইজ */
+            --glance-value-color: #1a1a1a;         /* গ্ল্যান্স ভ্যালু কালার */
+            --glance-value-weight: 600;            /* গ্ল্যান্স ভ্যালু মোটা পাতলা */
+        }
         
-        /* Doctor Name Settings */
-        .doctor-name {
-            font-size: 32px;              /* নামের Size: 24px, 32px, 36px */
-            font-weight: 600;             /* Bold: 500, 700, 800 */
-            color: #1a1a1a;              /* Color: #2563eb, #000 */
-            margin-bottom: 8px;           /* নিচের Space: 4px, 12px, 16px */
-            margin-left: -10px;             /* বামে সরাতে: -10px, -20px */
-        }
-
-        /* Qualifications (MBBS, FCPS) Settings */
-        .doctor-qualifications {
-            font-size: 14px;              /* Size: 12px, 16px, 18px */
-            color: #666;                  /* Color: #4b5563, #2563eb */
-            margin-bottom: 4px;           /* Space: 6px, 8px, 12px */
-        }
-
-        /* Training/Courses Settings */
-        .doctor-training {
-            font-size: 13px;              /* Size: 11px, 14px, 16px */
-            color: #666;                  /* Color */
-            margin-bottom: 12px;          /* Space: 8px, 16px, 20px */
-        }
-
-        /* Specialty Tags (Ophthalmologist, Internal Medicine) */
-        .specialty-tag {
-            background: #2563eb;          /* Background: #10b981, #8b5cf6 */
-            color: white;                 /* Text Color */
-            padding: 6px 16px;            /* Size: 4px 12px (ছোট), 8px 20px (বড়) */
-            border-radius: 20px;          /* Corner: 10px, 15px, 25px */
-            font-size: 13px;              /* Text Size: 11px, 14px, 16px */
-            font-weight: 500;             /* Bold: 400, 600, 700 */
-        }
-
-        .specialty-tags {
-            gap: 8px;                     /* Tags এর মধ্যে Space: 10px, 12px, 16px */
-            margin-bottom: 20px;          /* নিচের Space: 16px, 24px, 30px */
-        }
-
-        .secondary-tag {
-            background: #e5e7eb;          /* Secondary Tag Background */
-            color: #4b5563;              /* Secondary Tag Text Color */
-        }
-
-        /* Experience & BMDC Number Settings */
-        .stat-label {
-            font-size: 12px;              /* Label Size: 10px, 13px, 14px */
-            color: #6b7280;              /* Label Color */
-            margin-bottom: 4px;
-        }
-
-        .stat-value {
-            font-size: 15px;              /* Value Size: 13px, 16px, 18px, 20px */
-            color: #1a1a1a;              /* Value Color: #2563eb */
-            font-weight: 600;             /* Bold: 500, 700, 800 */
-        }
-
-        .stats-row {
-            gap: 40px;                    /* Stats এর মধ্যে Space: 30px, 50px, 60px */
-            margin-bottom: 16px;
-            padding-bottom: 16px;
-        }
-
-        /* Working in Institution Settings */
-        .workplace-info {
-            font-size: 14px;              /* Size: 12px, 15px, 16px */
-            color: #4b5563;              /* Text Color */
-        }
-
-        .workplace-info strong {
-            color: #1a1a1a;              /* Institution Name Color: #2563eb */
-            font-weight: 500;             /* Bold: 600, 700 */
-        }
-
-        /* Profile Header Layout - ছবি ও Text এর মধ্যে Space */
-        .profile-header {
-            gap: 15px;                    /* ছবি থেকে Text এর দূরত্ব: 0px, 10px, 20px, 32px */
-            margin-bottom: 24px;
-        }
-
-        .doctor-details {
-            padding-left: 0px;            /* Text Section বামে সরাতে: 0px, 10px, 20px */
-        }
-
-        /* Doctor Image Settings */
-        .doctor-image {
-            width: 180px;                 /* ছবির Width: 150px, 200px, 220px */
-            height: 200px;                /* ছবির Height: 180px, 220px, 250px */
-            font-size: 64px;              /* Initial Letter Size: 48px, 72px, 80px */
-            border-radius: 12px;          /* Corner: 8px, 15px, 20px */
-        }
-
-        /* Fee Card Settings */
-        .fee-amount {
-            font-size: 36px;              /* Fee Size: 30px, 40px, 48px */
-            color: #2563eb;              /* Fee Color: #10b981, #8b5cf6 */
-            font-weight: 700;
-        }
-
-        .fee-label {
-            font-size: 13px;              /* Label Size: 11px, 14px, 15px */
-            color: #6b7280;
-        }
-
-        /* Book Appointment Button */
-        .book-btn {
-            background: #2563eb;          /* Button Color: #10b981, #8b5cf6 */
-            font-size: 15px;              /* Text Size: 13px, 16px, 18px */
-            padding: 12px 24px;           /* Button Size: 10px 20px, 14px 28px */
-            border-radius: 8px;           /* Corner: 6px, 10px, 12px */
-        }
-
-        .book-btn:hover {
-            background: #1d4ed8;          /* Hover Color */
-        }
-
         /* ============================================
-           এখানে আর কিছু edit করার দরকার নেই
+           নিচের কোড এডিট করার দরকার নেই
            ============================================ */
 
         * {
@@ -142,8 +126,8 @@
         }
 
         .navbar {
-            background: white;
-            padding: 16px 40px;
+            background: var(--navbar-bg);
+            padding: var(--navbar-padding-top) var(--navbar-padding-right) var(--navbar-padding-bottom) var(--navbar-padding-left);
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
@@ -151,24 +135,26 @@
         }
 
         .navbar h1 {
-            color: #333;
-            font-size: 20px;
-            font-weight: 600;
+            color: var(--navbar-title-color);
+            font-size: var(--navbar-title-size);
+            font-weight: var(--navbar-title-weight);
+            text-align: var(--navbar-title-align);
         }
 
         .back-btn {
-            color: #2563eb;
+            color: var(--back-btn-color);
             text-decoration: none;
             font-weight: 500;
             padding: 8px 16px;
-            border: 1px solid #2563eb;
+            border: 1px solid var(--back-btn-border);
+            background: var(--back-btn-bg);
             border-radius: 6px;
             transition: all 0.2s;
-            font-size: 14px;
+            font-size: var(--back-btn-size);
         }
 
         .back-btn:hover {
-            background: #2563eb;
+            background: var(--back-btn-color);
             color: white;
         }
 
@@ -188,6 +174,8 @@
 
         .profile-header {
             display: flex;
+            gap: 32px;
+            margin-bottom: 24px;
             position: relative;
         }
 
@@ -209,11 +197,15 @@
         }
 
         .doctor-image {
+            width: 180px;
+            height: 200px;
+            border-radius: 12px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
+            font-size: 64px;
             font-weight: 600;
             overflow: hidden;
         }
@@ -235,19 +227,82 @@
             flex: 1;
         }
 
+        .doctor-name {
+            font-size: var(--doctor-name-size);
+            font-weight: var(--doctor-name-weight);
+            color: var(--doctor-name-color);
+            margin-bottom: 8px;
+            margin-left: var(--doctor-name-margin-left);
+            text-align: var(--doctor-name-align);
+        }
+
+        .doctor-qualifications {
+            color: var(--qualifications-color);
+            font-size: var(--qualifications-size);
+            margin-bottom: 4px;
+            text-align: var(--qualifications-align);
+        }
+
+        .doctor-training {
+            color: var(--training-color);
+            font-size: var(--training-size);
+            margin-bottom: 12px;
+        }
+
         .specialty-tags {
             display: flex;
             flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .specialty-tag {
+            background: var(--specialty-tag-bg);
+            color: var(--specialty-tag-color);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: var(--specialty-tag-size);
+            font-weight: 500;
+        }
+
+        .secondary-tag {
+            background: var(--secondary-tag-bg);
+            color: var(--secondary-tag-color);
         }
 
         .stats-row {
             display: flex;
+            gap: 40px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
             border-bottom: 1px solid #e5e7eb;
         }
 
         .stat-item {
             display: flex;
             flex-direction: column;
+        }
+
+        .stat-label {
+            color: var(--stat-label-color);
+            font-size: var(--stat-label-size);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            color: var(--stat-value-color);
+            font-size: var(--stat-value-size);
+            font-weight: var(--stat-value-weight);
+        }
+
+        .workplace-info {
+            color: var(--workplace-color);
+            font-size: var(--workplace-size);
+        }
+
+        .workplace-info strong {
+            color: #1a1a1a;
+            font-weight: 500;
         }
 
         .fee-card {
@@ -262,6 +317,19 @@
             min-width: 240px;
         }
 
+        .fee-label {
+            color: var(--fee-label-color);
+            font-size: var(--fee-label-size);
+            margin-bottom: 8px;
+        }
+
+        .fee-amount {
+            color: var(--fee-amount-color);
+            font-size: var(--fee-amount-size);
+            font-weight: var(--fee-amount-weight);
+            margin-bottom: 4px;
+        }
+
         .fee-vat {
             color: #9ca3af;
             font-size: 12px;
@@ -269,8 +337,13 @@
         }
 
         .book-btn {
-            color: white;
+            background: var(--book-btn-bg);
+            color: var(--book-btn-color);
             border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: var(--book-btn-size);
+            font-weight: var(--book-btn-weight);
             cursor: pointer;
             width: 100%;
             display: flex;
@@ -279,7 +352,10 @@
             gap: 8px;
             text-decoration: none;
             transition: background 0.2s;
-            font-weight: 600;
+        }
+
+        .book-btn:hover {
+            background: #1d4ed8;
         }
 
         .tabs-container {
@@ -297,9 +373,9 @@
         .tab {
             flex: 1;
             padding: 16px 24px;
-            color: #6b7280;
-            font-size: 14px;
-            font-weight: 500;
+            color: var(--tab-color);
+            font-size: var(--tab-size);
+            font-weight: var(--tab-weight);
             cursor: pointer;
             border-bottom: 3px solid transparent;
             transition: all 0.2s;
@@ -314,8 +390,8 @@
         }
 
         .tab.active {
-            color: #2563eb;
-            border-bottom-color: #2563eb;
+            color: var(--tab-active-color);
+            border-bottom-color: var(--tab-active-color);
         }
 
         .tab:hover:not(.active) {
@@ -344,15 +420,16 @@
         }
 
         .content-title {
-            color: #2563eb;
-            font-size: 20px;
-            font-weight: 600;
+            color: var(--content-title-color);
+            font-size: var(--content-title-size);
+            font-weight: var(--content-title-weight);
             margin-bottom: 20px;
+            text-align: var(--content-title-align);
         }
 
         .about-text {
-            color: #4b5563;
-            font-size: 14px;
+            color: var(--about-text-color);
+            font-size: var(--about-text-size);
             line-height: 1.8;
             margin-bottom: 24px;
         }
@@ -362,15 +439,15 @@
         }
 
         .info-section-title {
-            color: #1a1a1a;
-            font-size: 16px;
-            font-weight: 600;
+            color: var(--section-title-color);
+            font-size: var(--section-title-size);
+            font-weight: var(--section-title-weight);
             margin-bottom: 12px;
         }
 
         .info-text {
-            color: #4b5563;
-            font-size: 14px;
+            color: var(--info-text-color);
+            font-size: var(--info-text-size);
             line-height: 1.7;
             white-space: pre-line;
         }
@@ -407,15 +484,15 @@
         }
 
         .glance-label {
-            color: #6b7280;
-            font-size: 13px;
+            color: var(--glance-label-color);
+            font-size: var(--glance-label-size);
             font-weight: 500;
         }
 
         .glance-value {
-            color: #1a1a1a;
-            font-size: 14px;
-            font-weight: 600;
+            color: var(--glance-value-color);
+            font-size: var(--glance-value-size);
+            font-weight: var(--glance-value-weight);
             margin-left: 28px;
         }
 
@@ -682,165 +759,4 @@
                         <div id="infoTab" class="tab-content active">
                             <h2 class="content-title">About Doctor</h2>
                             <div class="about-text">
-                                ${doctor.about || `${doctor.name}, ${degrees}. National Gastroliver Institute and Hospital, Dhaka. Currently practicing at ${doctor.institutionName || 'Medical Center'}. Dedicated to providing quality healthcare services to patients with extensive experience in the field of ${doctor.specialty || 'medicine'}.`}
-                            </div>
-
-                            ${doctor.specialized ? `
-                                <div class="info-section">
-                                    <h3 class="info-section-title">Areas of Specialization</h3>
-                                    <div class="info-text">${doctor.specialized}</div>
-                                </div>
-                            ` : ''}
-
-                            ${doctor.fieldOfConcentration ? `
-                                <div class="info-section">
-                                    <h3 class="info-section-title">Field of Concentration</h3>
-                                    <div class="info-text">${doctor.fieldOfConcentration}</div>
-                                </div>
-                            ` : ''}
-                        </div>
-
-                        <div id="educationTab" class="tab-content">
-                            <h2 class="content-title">Educational Qualifications</h2>
-                            
-                            ${doctor.degrees ? `
-                                <div class="info-section">
-                                    <h3 class="info-section-title">Academic Degrees</h3>
-                                    <div class="info-text">${doctor.degrees}</div>
-                                </div>
-                            ` : ''}
-
-                            ${doctor.fellowships ? `
-                                <div class="info-section">
-                                    <h3 class="info-section-title">Fellowships</h3>
-                                    <div class="info-text">${doctor.fellowships}</div>
-                                </div>
-                            ` : ''}
-
-                            ${doctor.trainings ? `
-                                <div class="info-section">
-                                    <h3 class="info-section-title">Training & Courses</h3>
-                                    <div class="info-text">${doctor.trainings}</div>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-
-                    <div class="sidebar">
-                        <h2 class="content-title">At a Glance</h2>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">⏰</span>
-                                <span class="glance-label">Instant Consultation Time</span>
-                            </div>
-                            <div class="time-range">
-                                ${doctor.chamberTime || 'Mon - Sat (7 PM - 10 PM)'}
-                            </div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">📅</span>
-                                <span class="glance-label">Appointment Consultation Time</span>
-                            </div>
-                            <div class="time-range">
-                                ${doctor.chamberTime || 'Sat - Thu (7 PM - 10 PM)'}
-                            </div>
-                            ${doctor.availableDays && doctor.availableDays.length > 0 ? `
-                                <div class="days-list">
-                                    ${doctor.availableDays.map(day => `<span class="day-badge">${day}</span>`).join('')}
-                                </div>
-                            ` : ''}
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">💰</span>
-                                <span class="glance-label">Fees</span>
-                            </div>
-                            <div class="fee-grid">
-                                <div class="fee-item">
-                                    <div class="fee-item-label">Consultation Fee</div>
-                                    <div class="fee-item-value">৳${doctor.consultationFee || '500'}</div>
-                                    <div class="fee-item-note">(inc. VAT)</div>
-                                </div>
-                                <div class="fee-item">
-                                    <div class="fee-item-label">Follow-Up Fee</div>
-                                    <div class="fee-item-value">৳${doctor.followUpFee || '400'}</div>
-                                    <div class="fee-item-note">(Within 14 days)</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">👥</span>
-                                <span class="glance-label">Patient Attended</span>
-                            </div>
-                            <div class="glance-value">${doctor.patientsAttended || '1541'}</div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">📍</span>
-                                <span class="glance-label">Joined DocTime</span>
-                            </div>
-                            <div class="glance-value">August 01, 2021</div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">⏱️</span>
-                                <span class="glance-label">Avg. Consultation Time</span>
-                            </div>
-                            <div class="glance-value">5 minutes</div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">🔢</span>
-                                <span class="glance-label">Doctor Code</span>
-                            </div>
-                            <div class="glance-value">${doctor.doctorCode || 'DT' + doctorId.substring(0, 4).toUpperCase()}</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Tab switching
-            const tabs = document.querySelectorAll('.tab');
-            const tabContents = document.querySelectorAll('.tab-content');
-
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const targetTab = tab.getAttribute('data-tab');
-                    
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    
-                    tabContents.forEach(content => {
-                        content.classList.remove('active');
-                    });
-                    
-                    document.getElementById(targetTab + 'Tab').classList.add('active');
-                });
-            });
-
-            // Share button
-            document.querySelector('.share-btn').addEventListener('click', () => {
-                if (navigator.share) {
-                    navigator.share({
-                        title: doctor.name,
-                        text: `Check out ${doctor.name}'s profile`,
-                        url: window.location.href
-                    });
-                } else {
-                    navigator.clipboard.writeText(window.location.href);
-                    alert('Profile link copied to clipboard!');
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+                                ${doctor.about || `${doctor.name}, ${degrees}. National Gastroliver Institute and Hospital, Dhaka. Currently practicing at ${doctor.institutionName || 'Medical Center'}
