@@ -5,113 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doctor Profile</title>
     <style>
-        /* ============================================
-           এখানে সহজে Edit করুন - CSS Variables
-           ============================================ */
-        :root {
-            /* NAVBAR SETTINGS - নেভবার সেটিংস */
-            --navbar-bg: white;                    /* নেভবার ব্যাকগ্রাউন্ড কালার */
-            --navbar-padding-top: 16px;            /* উপরের স্পেস */
-            --navbar-padding-bottom: 16px;         /* নিচের স্পেস */
-            --navbar-padding-left: 40px;           /* বামের স্পেস */
-            --navbar-padding-right: 40px;          /* ডানের স্পেস */
-            
-            /* NAVBAR TITLE - নেভবার টাইটেল (Doctor Profile) */
-            --navbar-title-size: 20px;             /* টাইটেল সাইজ */
-            --navbar-title-color: #333;            /* টাইটেল কালার */
-            --navbar-title-weight: 600;            /* টাইটেল মোটা পাতলা (400-900) */
-            --navbar-title-align: left;            /* টাইটেল align (left/center/right) */
-            
-            /* BACK BUTTON - ব্যাক বাটন */
-            --back-btn-size: 14px;                 /* ব্যাক বাটন টেক্সট সাইজ */
-            --back-btn-color: #2563eb;             /* ব্যাক বাটন কালার */
-            --back-btn-bg: transparent;            /* ব্যাক বাটন ব্যাকগ্রাউন্ড */
-            --back-btn-border: #2563eb;            /* ব্যাক বাটন বর্ডার কালার */
-            
-            /* DOCTOR NAME - ডাক্তারের নাম */
-            --doctor-name-size: 28px;              /* নামের সাইজ */
-            --doctor-name-color: #1a1a1a;          /* নামের কালার */
-            --doctor-name-weight: 600;             /* নামের মোটা পাতলা */
-            --doctor-name-align: left;             /* নাম align (left/center/right) */
-            --doctor-name-margin-left: -20px;      /* বামে স্পেস */
-            
-            /* QUALIFICATIONS - যোগ্যতা (MBBS etc) */
-            --qualifications-size: 14px;           /* যোগ্যতা টেক্সট সাইজ */
-            --qualifications-color: #666;          /* যোগ্যতা কালার */
-            --qualifications-align: left;          /* যোগ্যতা align */
-            
-            /* TRAINING TEXT - ট্রেনিং টেক্সট */
-            --training-size: 13px;                 /* ট্রেনিং সাইজ */
-            --training-color: #666;                /* ট্রেনিং কালার */
-            
-            /* SPECIALTY TAGS - বিশেষত্ব ট্যাগ */
-            --specialty-tag-size: 13px;            /* ট্যাগ টেক্সট সাইজ */
-            --specialty-tag-bg: #2563eb;           /* প্রধান ট্যাগ ব্যাকগ্রাউন্ড */
-            --specialty-tag-color: white;          /* প্রধান ট্যাগ টেক্সট কালার */
-            --secondary-tag-bg: #e5e7eb;           /* সেকেন্ডারি ট্যাগ ব্যাকগ্রাউন্ড */
-            --secondary-tag-color: #4b5563;        /* সেকেন্ডারি ট্যাগ টেক্সট কালার */
-            
-            /* STATS (Experience, BMDC) - স্ট্যাট্স */
-            --stat-label-size: 12px;               /* স্ট্যাট লেবেল সাইজ */
-            --stat-label-color: #6b7280;           /* স্ট্যাট লেবেল কালার */
-            --stat-value-size: 15px;               /* স্ট্যাট ভ্যালু সাইজ */
-            --stat-value-color: #1a1a1a;           /* স্ট্যাট ভ্যালু কালার */
-            --stat-value-weight: 600;              /* স্ট্যাট ভ্যালু মোটা পাতলা */
-            
-            /* WORKPLACE INFO - কর্মস্থল তথ্য */
-            --workplace-size: 14px;                /* কর্মস্থল টেক্সট সাইজ */
-            --workplace-color: #4b5563;            /* কর্মস্থল টেক্সট কালার */
-            
-            /* FEE CARD - ফি কার্ড */
-            --fee-label-size: 13px;                /* ফি লেবেল সাইজ */
-            --fee-label-color: #6b7280;            /* ফি লেবেল কালার */
-            --fee-amount-size: 36px;               /* ফি অ্যামাউন্ট সাইজ */
-            --fee-amount-color: #2563eb;           /* ফি অ্যামাউন্ট কালার */
-            --fee-amount-weight: 700;              /* ফি অ্যামাউন্ট মোটা পাতলা */
-            
-            /* BOOK BUTTON - বুক বাটন */
-            --book-btn-size: 15px;                 /* বুক বাটন টেক্সট সাইজ */
-            --book-btn-bg: #2563eb;                /* বুক বাটন ব্যাকগ্রাউন্ড */
-            --book-btn-color: white;               /* বুক বাটন টেক্সট কালার */
-            --book-btn-weight: 600;                /* বুক বাটন টেক্সট মোটা পাতলা */
-            
-            /* TABS - ট্যাব */
-            --tab-size: 14px;                      /* ট্যাব টেক্সট সাইজ */
-            --tab-color: #6b7280;                  /* ট্যাব টেক্সট কালার */
-            --tab-active-color: #2563eb;           /* একটিভ ট্যাব কালার */
-            --tab-weight: 500;                     /* ট্যাব টেক্সট মোটা পাতলা */
-            
-            /* CONTENT TITLE - কন্টেন্ট টাইটেল */
-            --content-title-size: 20px;            /* কন্টেন্ট টাইটেল সাইজ */
-            --content-title-color: #2563eb;        /* কন্টেন্ট টাইটেল কালার */
-            --content-title-weight: 600;           /* কন্টেন্ট টাইটেল মোটা পাতলা */
-            --content-title-align: left;           /* কন্টেন্ট টাইটেল align */
-            
-            /* ABOUT TEXT - সম্পর্কে টেক্সট */
-            --about-text-size: 14px;               /* সম্পর্কে টেক্সট সাইজ */
-            --about-text-color: #4b5563;           /* সম্পর্কে টেক্সট কালার */
-            
-            /* SECTION TITLE - সেকশন টাইটেল */
-            --section-title-size: 16px;            /* সেকশন টাইটেল সাইজ */
-            --section-title-color: #1a1a1a;        /* সেকশন টাইটেল কালার */
-            --section-title-weight: 600;           /* সেকশন টাইটেল মোটা পাতলা */
-            
-            /* INFO TEXT - ইনফো টেক্সট */
-            --info-text-size: 14px;                /* ইনফো টেক্সট সাইজ */
-            --info-text-color: #4b5563;            /* ইনফো টেক্সট কালার */
-            
-            /* GLANCE LABELS - সাইডবার লেবেল */
-            --glance-label-size: 13px;             /* গ্ল্যান্স লেবেল সাইজ */
-            --glance-label-color: #6b7280;         /* গ্ল্যান্স লেবেল কালার */
-            --glance-value-size: 14px;             /* গ্ল্যান্স ভ্যালু সাইজ */
-            --glance-value-color: #1a1a1a;         /* গ্ল্যান্স ভ্যালু কালার */
-            --glance-value-weight: 600;            /* গ্ল্যান্স ভ্যালু মোটা পাতলা */
-        }
-        
-        /* ============================================
-           নিচের কোড এডিট করার দরকার নেই
-           ============================================ */
-
         * {
             margin: 0;
             padding: 0;
@@ -126,8 +19,8 @@
         }
 
         .navbar {
-            background: var(--navbar-bg);
-            padding: var(--navbar-padding-top) var(--navbar-padding-right) var(--navbar-padding-bottom) var(--navbar-padding-left);
+            background: white;
+            padding: 16px 40px;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
@@ -135,26 +28,24 @@
         }
 
         .navbar h1 {
-            color: var(--navbar-title-color);
-            font-size: var(--navbar-title-size);
-            font-weight: var(--navbar-title-weight);
-            text-align: var(--navbar-title-align);
+            color: #333;
+            font-size: 20px;
+            font-weight: 600;
         }
 
         .back-btn {
-            color: var(--back-btn-color);
+            color: #2563eb;
             text-decoration: none;
             font-weight: 500;
             padding: 8px 16px;
-            border: 1px solid var(--back-btn-border);
-            background: var(--back-btn-bg);
+            border: 1px solid #2563eb;
             border-radius: 6px;
             transition: all 0.2s;
-            font-size: var(--back-btn-size);
+            font-size: 14px;
         }
 
         .back-btn:hover {
-            background: var(--back-btn-color);
+            background: #2563eb;
             color: white;
         }
 
@@ -228,24 +119,22 @@
         }
 
         .doctor-name {
-            font-size: var(--doctor-name-size);
-            font-weight: var(--doctor-name-weight);
-            color: var(--doctor-name-color);
+            font-size: 28px;
+            font-weight: 600;
+            color: #1a1a1a;
             margin-bottom: 8px;
-            margin-left: var(--doctor-name-margin-left);
-            text-align: var(--doctor-name-align);
+            margin-left: -20px;
         }
 
         .doctor-qualifications {
-            color: var(--qualifications-color);
-            font-size: var(--qualifications-size);
+            color: #666;
+            font-size: 14px;
             margin-bottom: 4px;
-            text-align: var(--qualifications-align);
         }
 
         .doctor-training {
-            color: var(--training-color);
-            font-size: var(--training-size);
+            color: #666;
+            font-size: 13px;
             margin-bottom: 12px;
         }
 
@@ -257,17 +146,17 @@
         }
 
         .specialty-tag {
-            background: var(--specialty-tag-bg);
-            color: var(--specialty-tag-color);
+            background: #2563eb;
+            color: white;
             padding: 6px 16px;
             border-radius: 20px;
-            font-size: var(--specialty-tag-size);
+            font-size: 13px;
             font-weight: 500;
         }
 
         .secondary-tag {
-            background: var(--secondary-tag-bg);
-            color: var(--secondary-tag-color);
+            background: #e5e7eb;
+            color: #4b5563;
         }
 
         .stats-row {
@@ -284,20 +173,20 @@
         }
 
         .stat-label {
-            color: var(--stat-label-color);
-            font-size: var(--stat-label-size);
+            color: #6b7280;
+            font-size: 12px;
             margin-bottom: 4px;
         }
 
         .stat-value {
-            color: var(--stat-value-color);
-            font-size: var(--stat-value-size);
-            font-weight: var(--stat-value-weight);
+            color: #1a1a1a;
+            font-size: 15px;
+            font-weight: 600;
         }
 
         .workplace-info {
-            color: var(--workplace-color);
-            font-size: var(--workplace-size);
+            color: #4b5563;
+            font-size: 14px;
         }
 
         .workplace-info strong {
@@ -318,15 +207,15 @@
         }
 
         .fee-label {
-            color: var(--fee-label-color);
-            font-size: var(--fee-label-size);
+            color: #6b7280;
+            font-size: 13px;
             margin-bottom: 8px;
         }
 
         .fee-amount {
-            color: var(--fee-amount-color);
-            font-size: var(--fee-amount-size);
-            font-weight: var(--fee-amount-weight);
+            color: #2563eb;
+            font-size: 36px;
+            font-weight: 700;
             margin-bottom: 4px;
         }
 
@@ -337,13 +226,13 @@
         }
 
         .book-btn {
-            background: var(--book-btn-bg);
-            color: var(--book-btn-color);
+            background: #2563eb;
+            color: white;
             border: none;
             padding: 12px 24px;
             border-radius: 8px;
-            font-size: var(--book-btn-size);
-            font-weight: var(--book-btn-weight);
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
             width: 100%;
             display: flex;
@@ -373,9 +262,9 @@
         .tab {
             flex: 1;
             padding: 16px 24px;
-            color: var(--tab-color);
-            font-size: var(--tab-size);
-            font-weight: var(--tab-weight);
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
             border-bottom: 3px solid transparent;
             transition: all 0.2s;
@@ -390,8 +279,8 @@
         }
 
         .tab.active {
-            color: var(--tab-active-color);
-            border-bottom-color: var(--tab-active-color);
+            color: #2563eb;
+            border-bottom-color: #2563eb;
         }
 
         .tab:hover:not(.active) {
@@ -420,16 +309,15 @@
         }
 
         .content-title {
-            color: var(--content-title-color);
-            font-size: var(--content-title-size);
-            font-weight: var(--content-title-weight);
+            color: #2563eb;
+            font-size: 20px;
+            font-weight: 600;
             margin-bottom: 20px;
-            text-align: var(--content-title-align);
         }
 
         .about-text {
-            color: var(--about-text-color);
-            font-size: var(--about-text-size);
+            color: #4b5563;
+            font-size: 14px;
             line-height: 1.8;
             margin-bottom: 24px;
         }
@@ -439,15 +327,15 @@
         }
 
         .info-section-title {
-            color: var(--section-title-color);
-            font-size: var(--section-title-size);
-            font-weight: var(--section-title-weight);
+            color: #1a1a1a;
+            font-size: 16px;
+            font-weight: 600;
             margin-bottom: 12px;
         }
 
         .info-text {
-            color: var(--info-text-color);
-            font-size: var(--info-text-size);
+            color: #4b5563;
+            font-size: 14px;
             line-height: 1.7;
             white-space: pre-line;
         }
@@ -484,15 +372,15 @@
         }
 
         .glance-label {
-            color: var(--glance-label-color);
-            font-size: var(--glance-label-size);
+            color: #6b7280;
+            font-size: 13px;
             font-weight: 500;
         }
 
         .glance-value {
-            color: var(--glance-value-color);
-            font-size: var(--glance-value-size);
-            font-weight: var(--glance-value-weight);
+            color: #1a1a1a;
+            font-size: 14px;
+            font-weight: 600;
             margin-left: 28px;
         }
 
@@ -635,7 +523,7 @@
 <body>
     <div class="navbar">
         <h1>Doctor Profile</h1>
-        <a href="index.html" class="back-btn">← Back to Home</a>
+        <a href="index.html" class="back-btn">â† Back to Home</a>
     </div>
 
     <div class="container">
@@ -698,7 +586,7 @@
 
             document.getElementById('profileContent').innerHTML = `
                 <div class="profile-card">
-                    <button class="share-btn">🔗</button>
+                    <button class="share-btn">ðŸ”—</button>
                     
                     <div class="profile-header">
                         <div class="doctor-image-section">
@@ -734,10 +622,10 @@
 
                         <div class="fee-card">
                             <div class="fee-label">Consultation Fee</div>
-                            <div class="fee-amount">৳${doctor.consultationFee || '500'}</div>
+                            <div class="fee-amount">à§³${doctor.consultationFee || '500'}</div>
                             <div class="fee-vat">(inc. VAT)</div>
                             <a href="booking.html?doctor=${doctorId}" class="book-btn">
-                                📅 Book Appointment
+                                ðŸ“… Book Appointment
                             </a>
                         </div>
                     </div>
@@ -746,10 +634,10 @@
                 <div class="tabs-container">
                     <div class="tabs">
                         <button class="tab active" data-tab="info">
-                            <span>ℹ️</span> Info
+                            <span>â„¹ï¸</span> Info
                         </button>
                         <button class="tab" data-tab="education">
-                            <span>🎓</span> Education
+                            <span>ðŸŽ“</span> Education
                         </button>
                     </div>
                 </div>
@@ -759,4 +647,165 @@
                         <div id="infoTab" class="tab-content active">
                             <h2 class="content-title">About Doctor</h2>
                             <div class="about-text">
-                                ${doctor.about || `${doctor.name}, ${degrees}. National Gastroliver Institute and Hospital, Dhaka. Currently practicing at ${doctor.institutionName || 'Medical Center'}
+                                ${doctor.about || `${doctor.name}, ${degrees}. National Gastroliver Institute and Hospital, Dhaka. Currently practicing at ${doctor.institutionName || 'Medical Center'}. Dedicated to providing quality healthcare services to patients with extensive experience in the field of ${doctor.specialty || 'medicine'}.`}
+                            </div>
+
+                            ${doctor.specialized ? `
+                                <div class="info-section">
+                                    <h3 class="info-section-title">Areas of Specialization</h3>
+                                    <div class="info-text">${doctor.specialized}</div>
+                                </div>
+                            ` : ''}
+
+                            ${doctor.fieldOfConcentration ? `
+                                <div class="info-section">
+                                    <h3 class="info-section-title">Field of Concentration</h3>
+                                    <div class="info-text">${doctor.fieldOfConcentration}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div id="educationTab" class="tab-content">
+                            <h2 class="content-title">Educational Qualifications</h2>
+                            
+                            ${doctor.degrees ? `
+                                <div class="info-section">
+                                    <h3 class="info-section-title">Academic Degrees</h3>
+                                    <div class="info-text">${doctor.degrees}</div>
+                                </div>
+                            ` : ''}
+
+                            ${doctor.fellowships ? `
+                                <div class="info-section">
+                                    <h3 class="info-section-title">Fellowships</h3>
+                                    <div class="info-text">${doctor.fellowships}</div>
+                                </div>
+                            ` : ''}
+
+                            ${doctor.trainings ? `
+                                <div class="info-section">
+                                    <h3 class="info-section-title">Training & Courses</h3>
+                                    <div class="info-text">${doctor.trainings}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <div class="sidebar">
+                        <h2 class="content-title">At a Glance</h2>
+
+                        <div class="glance-item">
+                            <div class="glance-header">
+                                <span class="glance-icon">â°</span>
+                                <span class="glance-label">Instant Consultation Time</span>
+                            </div>
+                            <div class="time-range">
+                                ${doctor.chamberTime || 'Mon - Sat (7 PM - 10 PM)'}
+                            </div>
+                        </div>
+
+                        <div class="glance-item">
+                            <div class="glance-header">
+                                <span class="glance-icon">ðŸ“…</span>
+                                <span class="glance-label">Appointment Consultation Time</span>
+                            </div>
+                            <div class="time-range">
+                                ${doctor.chamberTime || 'Sat - Thu (7 PM - 10 PM)'}
+                            </div>
+                            ${doctor.availableDays && doctor.availableDays.length > 0 ? `
+                                <div class="days-list">
+                                    ${doctor.availableDays.map(day => `<span class="day-badge">${day}</span>`).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div class="glance-item">
+                            <div class="glance-header">
+                                <span class="glance-icon">ðŸ’°</span>
+                                <span class="glance-label">Fees</span>
+                            </div>
+                            <div class="fee-grid">
+                                <div class="fee-item">
+                                    <div class="fee-item-label">Consultation Fee</div>
+                                    <div class="fee-item-value">à§³${doctor.consultationFee || '500'}</div>
+                                    <div class="fee-item-note">(inc. VAT)</div>
+                                </div>
+                                <div class="fee-item">
+                                    <div class="fee-item-label">Follow-Up Fee</div>
+                                    <div class="fee-item-value">à§³${doctor.followUpFee || '400'}</div>
+                                    <div class="fee-item-note">(Within 14 days)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glance-item">
+                            <div class="glance-header">
+                                <span class="glance-icon">ðŸ‘¥</span>
+                                <span class="glance-label">Patient Attended</span>
+                            </div>
+                            <div class="glance-value">${doctor.patientsAttended || '1541'}</div>
+                        </div>
+
+                        <div class="glance-item">
+                            <div class="glance-header">
+                                <span class="glance-icon">ðŸ“</span>
+                                <span class="glance-label">Joined DocTime</span>
+                            </div>
+                            <div class="glance-value">August 01, 2021</div>
+                        </div>
+
+                        <div class="glance-item">
+                            <div class="glance-header">
+                                <span class="glance-icon">â±ï¸</span>
+                                <span class="glance-label">Avg. Consultation Time</span>
+                            </div>
+                            <div class="glance-value">5 minutes</div>
+                        </div>
+
+                        <div class="glance-item">
+                            <div class="glance-header">
+                                <span class="glance-icon">ðŸ”¢</span>
+                                <span class="glance-label">Doctor Code</span>
+                            </div>
+                            <div class="glance-value">${doctor.doctorCode || 'DT' + doctorId.substring(0, 4).toUpperCase()}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Tab switching
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetTab = tab.getAttribute('data-tab');
+                    
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    document.getElementById(targetTab + 'Tab').classList.add('active');
+                });
+            });
+
+            // Share button
+            document.querySelector('.share-btn').addEventListener('click', () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: doctor.name,
+                        text: `Check out ${doctor.name}'s profile`,
+                        url: window.location.href
+                    });
+                } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert('Profile link copied to clipboard!');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
