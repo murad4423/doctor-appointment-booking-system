@@ -5,6 +5,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doctor Profile</title>
     <style>
+        /* ============================================
+           EASY EDIT SECTION - এখানে সব value change করুন
+           ============================================ */
+        
+        /* Doctor Name Settings */
+        .doctor-name {
+            font-size: 28px;              /* নামের Size: 24px, 32px, 36px */
+            font-weight: 600;             /* Bold: 500, 700, 800 */
+            color: #1a1a1a;              /* Color: #2563eb, #000 */
+            margin-bottom: 8px;           /* নিচের Space: 4px, 12px, 16px */
+            margin-left: 0px;             /* বামে সরাতে: -10px, -20px */
+        }
+
+        /* Qualifications (MBBS, FCPS) Settings */
+        .doctor-qualifications {
+            font-size: 14px;              /* Size: 12px, 16px, 18px */
+            color: #666;                  /* Color: #4b5563, #2563eb */
+            margin-bottom: 4px;           /* Space: 6px, 8px, 12px */
+        }
+
+        /* Training/Courses Settings */
+        .doctor-training {
+            font-size: 13px;              /* Size: 11px, 14px, 16px */
+            color: #666;                  /* Color */
+            margin-bottom: 12px;          /* Space: 8px, 16px, 20px */
+        }
+
+        /* Specialty Tags (Ophthalmologist, Internal Medicine) */
+        .specialty-tag {
+            background: #2563eb;          /* Background: #10b981, #8b5cf6 */
+            color: white;                 /* Text Color */
+            padding: 6px 16px;            /* Size: 4px 12px (ছোট), 8px 20px (বড়) */
+            border-radius: 20px;          /* Corner: 10px, 15px, 25px */
+            font-size: 13px;              /* Text Size: 11px, 14px, 16px */
+            font-weight: 500;             /* Bold: 400, 600, 700 */
+        }
+
+        .specialty-tags {
+            gap: 8px;                     /* Tags এর মধ্যে Space: 10px, 12px, 16px */
+            margin-bottom: 20px;          /* নিচের Space: 16px, 24px, 30px */
+        }
+
+        .secondary-tag {
+            background: #e5e7eb;          /* Secondary Tag Background */
+            color: #4b5563;              /* Secondary Tag Text Color */
+        }
+
+        /* Experience & BMDC Number Settings */
+        .stat-label {
+            font-size: 12px;              /* Label Size: 10px, 13px, 14px */
+            color: #6b7280;              /* Label Color */
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 15px;              /* Value Size: 13px, 16px, 18px, 20px */
+            color: #1a1a1a;              /* Value Color: #2563eb */
+            font-weight: 600;             /* Bold: 500, 700, 800 */
+        }
+
+        .stats-row {
+            gap: 40px;                    /* Stats এর মধ্যে Space: 30px, 50px, 60px */
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+        }
+
+        /* Working in Institution Settings */
+        .workplace-info {
+            font-size: 14px;              /* Size: 12px, 15px, 16px */
+            color: #4b5563;              /* Text Color */
+        }
+
+        .workplace-info strong {
+            color: #1a1a1a;              /* Institution Name Color: #2563eb */
+            font-weight: 500;             /* Bold: 600, 700 */
+        }
+
+        /* Profile Header Layout - ছবি ও Text এর মধ্যে Space */
+        .profile-header {
+            gap: 15px;                    /* ছবি থেকে Text এর দূরত্ব: 0px, 10px, 20px, 32px */
+            margin-bottom: 24px;
+        }
+
+        .doctor-details {
+            padding-left: 0px;            /* Text Section বামে সরাতে: 0px, 10px, 20px */
+        }
+
+        /* Doctor Image Settings */
+        .doctor-image {
+            width: 180px;                 /* ছবির Width: 150px, 200px, 220px */
+            height: 200px;                /* ছবির Height: 180px, 220px, 250px */
+            font-size: 64px;              /* Initial Letter Size: 48px, 72px, 80px */
+            border-radius: 12px;          /* Corner: 8px, 15px, 20px */
+        }
+
+        /* Fee Card Settings */
+        .fee-amount {
+            font-size: 36px;              /* Fee Size: 30px, 40px, 48px */
+            color: #2563eb;              /* Fee Color: #10b981, #8b5cf6 */
+            font-weight: 700;
+        }
+
+        .fee-label {
+            font-size: 13px;              /* Label Size: 11px, 14px, 15px */
+            color: #6b7280;
+        }
+
+        /* Book Appointment Button */
+        .book-btn {
+            background: #2563eb;          /* Button Color: #10b981, #8b5cf6 */
+            font-size: 15px;              /* Text Size: 13px, 16px, 18px */
+            padding: 12px 24px;           /* Button Size: 10px 20px, 14px 28px */
+            border-radius: 8px;           /* Corner: 6px, 10px, 12px */
+        }
+
+        .book-btn:hover {
+            background: #1d4ed8;          /* Hover Color */
+        }
+
+        /* ============================================
+           এখানে আর কিছু edit করার দরকার নেই
+           ============================================ */
+
         * {
             margin: 0;
             padding: 0;
@@ -65,8 +188,6 @@
 
         .profile-header {
             display: flex;
-            gap: 10px;
-            margin-bottom: 24px;
             position: relative;
         }
 
@@ -88,15 +209,11 @@
         }
 
         .doctor-image {
-            width: 180px;
-            height: 200px;
-            border-radius: 12px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 64px;
             font-weight: 600;
             overflow: hidden;
         }
@@ -118,80 +235,19 @@
             flex: 1;
         }
 
-        .doctor-name {
-            font-size: 28px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 8px;
-            margin-left: -25px;
-        }
-
-        .doctor-qualifications {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-
-        .doctor-training {
-            color: #666;
-            font-size: 13px;
-            margin-bottom: 12px;
-        }
-
         .specialty-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .specialty-tag {
-            background: #2563eb;
-            color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .secondary-tag {
-            background: #e5e7eb;
-            color: #4b5563;
         }
 
         .stats-row {
             display: flex;
-            gap: 40px;
-            margin-bottom: 16px;
-            padding-bottom: 16px;
             border-bottom: 1px solid #e5e7eb;
         }
 
         .stat-item {
             display: flex;
             flex-direction: column;
-        }
-
-        .stat-label {
-            color: #6b7280;
-            font-size: 12px;
-            margin-bottom: 4px;
-        }
-
-        .stat-value {
-            color: #1a1a1a;
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .workplace-info {
-            color: #4b5563;
-            font-size: 14px;
-        }
-
-        .workplace-info strong {
-            color: #1a1a1a;
-            font-weight: 500;
         }
 
         .fee-card {
@@ -206,19 +262,6 @@
             min-width: 240px;
         }
 
-        .fee-label {
-            color: #6b7280;
-            font-size: 13px;
-            margin-bottom: 8px;
-        }
-
-        .fee-amount {
-            color: #2563eb;
-            font-size: 36px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
         .fee-vat {
             color: #9ca3af;
             font-size: 12px;
@@ -226,13 +269,8 @@
         }
 
         .book-btn {
-            background: #2563eb;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
             cursor: pointer;
             width: 100%;
             display: flex;
@@ -241,10 +279,7 @@
             gap: 8px;
             text-decoration: none;
             transition: background 0.2s;
-        }
-
-        .book-btn:hover {
-            background: #1d4ed8;
+            font-weight: 600;
         }
 
         .tabs-container {
