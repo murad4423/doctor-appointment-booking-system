@@ -374,8 +374,18 @@
                 showMessage('Profile created successfully! Redirecting...', 'success');
                 
                 setTimeout(() => {
-                    window.location.href = 'patient-profile.html';
-                }, 1500);
+    const redirect = sessionStorage.getItem('pendingRedirect');
+    const doctorId = sessionStorage.getItem('pendingDoctor');
+    
+    sessionStorage.removeItem('pendingRedirect');
+    sessionStorage.removeItem('pendingDoctor');
+    
+    if (redirect === 'booking' && doctorId) {
+        window.location.href = `booking.html?doctor=${doctorId}`;
+    } else {
+        window.location.href = 'patient-profile.html';
+    }
+}, 1500);
             } catch (error) {
                 console.error('Error creating profile:', error);
                 showMessage('Failed to create profile. Please try again.', 'error');
