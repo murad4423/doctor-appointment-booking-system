@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Profile - Doctor Appointment System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .profile-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .profile-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .profile-form {
+            padding: 40px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+            display: block;
+        }
+
+        .message.success {
+            background: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .profile-form {
+                padding: 30px 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>👤 Complete Your Profile</h1>
+            <p>Please provide your information to continue</p>
+        </div>
+
+        <div class="profile-form">
+            <div id="message" class="message"></div>
+
+            <form id="profileForm" onsubmit="handleSubmit(event)">
+                <!-- Personal Information -->
+                <div class="form-section">
+                    <h2 class="section-title">Personal Information</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">Full Name <span class="required">*</span></label>
+                            <input type="text" id="fullName" required placeholder="Enter your full name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="patientId">Patient ID</label>
+                            <input type="text" id="patientId" readonly placeholder="Auto-generated">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age">Age <span class="required">*</span></label>
+                            <input type="number" id="age" required min="1" max="150" placeholder="Enter your age">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="gender">Gender <span class="required">*</span></label>
+                            <select id="gender" required>
+                                <option value="">Select gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bloodGroup">Blood Group <span class="required">*</span></label>
+                            <select id="bloodGroup" required>
+                                <option value="">Select blood group</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dateOfBirth">Date of Birth</label>
+                            <input type="date" id="dateOfBirth">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="form-section">
+                    <h2 class="section-title">Contact Information</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Phone Number <span class="required">*</span></label>
+                            <input type="tel" id="phone" required placeholder="Enter your phone number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emergencyContact">Emergency Contact</label>
+                            <input type="tel" id="emergencyContact" placeholder="Emergency contact number">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Address <span class="required">*</span></label>
+                        <textarea id="address" required placeholder="Enter your full address"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" id="city" placeholder="City">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="country">Country</label>
+                            <input type="text" id="country" placeholder="Country">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medical Information (Optional) -->
+                <div class="form-section">
+                    <h2 class="section-title">Medical Information (Optional)</h2>
+                    
+                    <div class="form-group">
+                        <label for="allergies">Allergies</label>
+                        <textarea id="allergies" placeholder="List any allergies (e.g., penicillin, peanuts)"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medicalHistory">Medical History</label>
+                        <textarea id="medicalHistory" placeholder="Brief medical history (e.g., diabetes, hypertension)"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="currentMedications">Current Medications</label>
+                        <textarea id="currentMedications" placeholder="List any medications you're currently taking"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">Complete Profile</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgL3nTaBFS1789IwrsFb1SN4T7GIas3Jk",
+            authDomain: "doctor-booking-b556e.firebaseapp.com",
+            projectId: "doctor-booking-b556e",
+            storageBucket: "doctor-booking-b556e.firebasestorage.app",
+            messagingSenderId: "573037462071",
+            appId: "1:573037462071:web:a21ae3786e8b8a3758b5b2",
+            measurementId: "G-NQ9BK8LFJM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+
+        // Check authentication
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                
+                // Generate patient ID
+                const patientId = 'PT' + Date.now().toString().slice(-6);
+                document.getElementById('patientId').value = patientId;
+
+                // Check if profile already exists
+                const docRef = doc(db, 'patients', user.uid);
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    // Profile exists, redirect to profile page
+                    window.location.href = 'patient-profile.html';
+                }
+            } else {
+                // Not logged in, redirect to auth page
+                window.location.href = 'patient-auth.html';
+            }
+        });
+
+        window.handleSubmit = async function(e) {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                showMessage('Please log in first.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            const profileData = {
+                uid: currentUser.uid,
+                email: currentUser.email,
+                fullName: document.getElementById('fullName').value,
+                patientId: document.getElementById('patientId').value,
+                age: parseInt(document.getElementById('age').value),
+                gender: document.getElementById('gender').value,
+                bloodGroup: document.getElementById('bloodGroup').value,
+                dateOfBirth: document.getElementById('dateOfBirth').value || null,
+                phone: document.getElementById('phone').value,
+                emergencyContact: document.getElementById('emergencyContact').value || null,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value || null,
+                country: document.getElementById('country').value || null,
+                allergies: document.getElementById('allergies').value || null,
+                medicalHistory: document.getElementById('medicalHistory').value || null,
+                currentMedications: document.getElementById('currentMedications').value || null,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            try {
+                await setDoc(doc(db, 'patients', currentUser.uid), profileData);
+                
+                showMessage('Profile created successfully! Redirecting...', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'patient-profile.html';
+                }, 1500);
+            } catch (error) {
+                console.error('Error creating profile:', error);
+                showMessage('Failed to create profile. Please try again.', 'error');
+                btn.disabled = false;
+                btn.textContent = 'Complete Profile';
+            }
+        };
+
+        function showMessage(text, type) {
+            const message = document.getElementById('message');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            message.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>
