@@ -620,14 +620,15 @@
                             </div>
                         </div>
 
-                        <div class="fee-card">
-                            <div class="fee-label">Consultation Fee</div>
-                            <div class="fee-amount">à§³${doctor.consultationFee || '500'}</div>
-                            <div class="fee-vat">(inc. VAT)</div>
-                            <a href="booking.html?doctor=${doctorId}" class="book-btn">
-                                ðŸ“… Book Appointment
-                            </a>
-                        </div>
+// Add this in the displayProfile function where the fee-card is created
+<div class="fee-card">
+    <div class="fee-label">Consultation Fee</div>
+    <div class="fee-amount">৳${doctor.consultationFee || '500'}</div>
+    <div class="fee-vat">(inc. VAT)</div>
+    <button onclick="handleBooking('${doctorId}')" class="book-btn" style="background: #2563eb; cursor: pointer;">
+        📅 Book Appointment
+    </button>
+</div>
                     </div>
                 </div>
 
@@ -806,6 +807,25 @@
                 }
             });
         }
+        // Add auth import at top with other imports
+import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+const auth = getAuth(app);
+let isUserAuthenticated = false;
+
+onAuthStateChanged(auth, (user) => {
+    isUserAuthenticated = !!user;
+});
+
+window.handleBooking = function(doctorId) {
+    if (isUserAuthenticated) {
+        window.location.href = `booking.html?doctor=${doctorId}`;
+    } else {
+        if (confirm('You need to login to book an appointment. Would you like to login now?')) {
+            window.location.href = `patient-auth.html?redirect=booking&doctor=${doctorId}`;
+        }
+    }
+};
     </script>
 </body>
 </html>
