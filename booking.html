@@ -520,6 +520,20 @@
                 <label for="email">Email Address</label>
                 <input type="email" id="email" name="email" placeholder="example@email.com">
             </div>
+            
+            <div class="form-group">
+                <label for="bookingFor">Booking For <span class="required">*</span></label>
+                <select id="bookingFor" name="bookingFor" required style="cursor: pointer;">
+                    <option value="self">Self</option>
+                    <option value="family">Family Member</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="alternateNameGroup" style="display: none;">
+                <label for="alternateName">Patient's Actual Name <span class="required">*</span></label>
+                <input type="text" id="alternateName" name="alternateName" placeholder="Enter patient's name if booking for someone else">
+            </div>
 
             <div class="form-group">
                 <label for="serialDisplay">Select Serial Number & Date <span class="required">*</span></label>
@@ -566,6 +580,42 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+const auth = getAuth(app);
+let currentPatient = null;
+let isAuthenticated = false;
+
+// Check authentication status
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        isAuthenticated = true;
+        await loadPatientData(user.uid);
+    } else {
+        isAuthenticated = false;
+    }
+});
+
+// Load patient data and auto-fill form
+async function loadPatientData(uid) {
+    try {
+        const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        const docRef = doc(db, 'patients', uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            currentPatient = { uid, ...docSnap.data() };
+            
+            // Auto-fill form fields
+            document.getElementById('patientName').value = currentPatient.fullName || '';
+            document.getElementById('phone').value = currentPatient.phone || '';
+            document.getElementById('email').value = currentPatient.email || '';
+        }
+    } catch (error) {
+        console.error('Error loading patient data:', error);
+    }
+}
+
         // Get doctor ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const doctorId = urlParams.get('doctor');
@@ -596,45 +646,130 @@
         const errorMessage = document.getElementById('errorMessage');
 
         form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Booking...';
-            successMessage.style.display = 'none';
-            errorMessage.style.display = 'none';
+    e.preventDefault();
+    
+    // Check authentication first
+    if (!isAuthenticated) {
+        showLoginModal();
+        return;
+    }
 
-            try {
-                const formData = {
-                    patientName: document.getElementById('patientName').value,
-                    phone: document.getElementById('phone').value,
-                    email: document.getElementById('email').value || 'Not provided',
-                    serialNumber: document.getElementById('selectedSerial').value,
-                    appointmentDate: document.getElementById('selectedDate').value,
-                    reason: document.getElementById('reason').value,
-                    doctorId: doctorId || 'general',
-                    doctorName: doctorName,
-                    status: 'Pending',
-                    createdAt: serverTimestamp()
-                };
+    // Check if booking for same doctor on same date already exists
+    const selectedDate = document.getElementById('selectedDate').value;
+    const isDuplicate = await checkDuplicateBooking(doctorId, selectedDate);
+    
+    if (isDuplicate) {
+        errorMessage.textContent = '⚠️ You already have a booking with this doctor on this date. You can only book one serial per doctor per day.';
+        errorMessage.style.display = 'block';
+        errorMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return;
+    }
+    
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Booking...';
+    successMessage.style.display = 'none';
+    errorMessage.style.display = 'none';
 
-                await addDoc(collection(db, 'bookings'), formData);
+    try {
+        const bookingData = {
+            patientId: currentPatient.uid,
+            patientUserId: currentPatient.uid,
+            patientProfileName: currentPatient.fullName,
+            patientName: document.getElementById('patientName').value,
+            phone: document.getElementById('phone').value,
+            email: document.getElementById('email').value || 'Not provided',
+            serialNumber: document.getElementById('selectedSerial').value,
+            appointmentDate: selectedDate,
+            reason: document.getElementById('reason').value,
+            doctorId: doctorId || 'general',
+            doctorName: doctorName,
+            doctorSpecialty: currentDoctor?.specialty || 'Specialist',
+            bookingFor: document.getElementById('bookingFor').value, // New field
+            status: 'Pending',
+            createdAt: serverTimestamp(),
+            amount: currentDoctor?.consultationFee || 500,
+            followUpDate: null
+        };
 
-                successMessage.textContent = '✓ Appointment booked successfully! We will contact you soon.';
-                successMessage.style.display = 'block';
-                form.reset();
+        await addDoc(collection(db, 'bookings'), bookingData);
 
-                // Scroll to success message
-                successMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        successMessage.textContent = '✓ Appointment booked successfully! You can view it in your profile.';
+        successMessage.style.display = 'block';
+        form.reset();
+        
+        // Clear serial selection display
+        document.getElementById('serialDisplay').value = '';
+        document.getElementById('selectedSerial').value = '';
+        document.getElementById('selectedDate').value = '';
 
-            } catch (error) {
-                console.error('Error booking appointment:', error);
-                errorMessage.textContent = '✗ Failed to book appointment. Please try again.';
-                errorMessage.style.display = 'block';
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Book Appointment';
+        successMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        // Redirect to profile after 2 seconds
+        setTimeout(() => {
+            if (confirm('Booking successful! Would you like to view your appointments?')) {
+                window.location.href = 'patient-profile.html';
             }
-        });
+        }, 1500);
+
+    } catch (error) {
+        console.error('Error booking appointment:', error);
+        errorMessage.textContent = '✗ Failed to book appointment. Please try again.';
+        errorMessage.style.display = 'block';
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Book Appointment';
+    }
+});
+
+// Check for duplicate bookings
+async function checkDuplicateBooking(doctorId, appointmentDate) {
+    if (!currentPatient) return false;
+    
+    try {
+        const { collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const q = query(
+            collection(db, 'bookings'),
+            where('patientUserId', '==', currentPatient.uid),
+            where('doctorId', '==', doctorId),
+            where('appointmentDate', '==', appointmentDate),
+            where('status', '!=', 'Cancelled')
+        );
+
+        const querySnapshot = await getDocs(q);
+        return !querySnapshot.empty;
+    } catch (error) {
+        console.error('Error checking duplicate:', error);
+        return false;
+    }
+}
+
+// Show login modal
+function showLoginModal() {
+    const modal = document.createElement('div');
+    modal.id = 'authModal';
+    modal.innerHTML = `
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+            <div style="background: white; border-radius: 20px; padding: 40px; max-width: 450px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center;">
+                <h2 style="color: #667eea; margin-bottom: 15px; font-size: 24px;">🔐 Login Required</h2>
+                <p style="color: #666; margin-bottom: 30px; line-height: 1.6;">
+                    You need to log in or create an account to book appointments. This helps us keep track of your appointments and provide better service.
+                </p>
+                <div style="display: flex; gap: 15px; flex-direction: column;">
+                    <a href="patient-auth.html?redirect=booking&doctor=${doctorId}" 
+                       style="padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; font-weight: 600; display: block;">
+                        Login / Register
+                    </a>
+                    <button onclick="document.getElementById('authModal').remove()" 
+                            style="padding: 15px; background: #f0f0f0; color: #666; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
 
         // Global variables for serial selection
       //  let currentDoctor = null;
@@ -866,6 +1001,32 @@
                 closeSerialModal();
             }
         };
+
+        // Handle booking for selection
+document.getElementById('bookingFor').addEventListener('change', function() {
+    const alternateGroup = document.getElementById('alternateNameGroup');
+    const alternateNameInput = document.getElementById('alternateName');
+    const patientNameInput = document.getElementById('patientName');
+    
+    if (this.value === 'self') {
+        alternateGroup.style.display = 'none';
+        alternateNameInput.required = false;
+        if (currentPatient) {
+            patientNameInput.value = currentPatient.fullName;
+        }
+    } else {
+        alternateGroup.style.display = 'block';
+        alternateNameInput.required = true;
+        patientNameInput.value = '';
+    }
+});
+
+// Update patient name when alternate name is entered
+document.getElementById('alternateName').addEventListener('input', function() {
+    if (document.getElementById('bookingFor').value !== 'self') {
+        document.getElementById('patientName').value = this.value;
+    }
+});
 
     </script>
 
