@@ -507,72 +507,82 @@
             document.getElementById('profileGender').textContent = data.gender;
             document.getElementById('profileBloodGroup').textContent = data.bloodGroup;
         }
-
         async function loadAppointments(uid) {
-            try {
-                // Check if appointments collection exists and filter by patient
-                const appointmentsRef = collection(db, 'appointments');
-                const q = query(appointmentsRef, where('patientId', '==', uid));
-                const querySnapshot = await getDocs(q);
+    try {
+        const appointmentsRef = collection(db, 'bookings');
+        const q = query(appointmentsRef, where('patientUserId', '==', uid));
+        const querySnapshot = await getDocs(q);
 
-                if (!querySnapshot.empty) {
-                    const appointments = [];
-                    querySnapshot.forEach((doc) => {
-                        appointments.push({ id: doc.id, ...doc.data() });
-                    });
+        if (!querySnapshot.empty) {
+            const appointments = [];
+            querySnapshot.forEach((doc) => {
+                appointments.push({ id: doc.id, ...doc.data() });
+            });
 
-                    displayAppointments(appointments);
-                } else {
-                    // No appointments found - keep empty state
-                    console.log('No appointments found for this patient');
-                }
-            } catch (error) {
-                console.error('Error loading appointments:', error);
-            }
+            displayAppointments(appointments);
         }
+    } catch (error) {
+        console.error('Error loading appointments:', error);
+    }
+}
 
-        function displayAppointments(appointments) {
-            const container = document.getElementById('appointmentsContent');
-            
-            const sortedAppointments = appointments.sort((a, b) => 
-                new Date(b.appointmentDate || b.bookingDate) - new Date(a.appointmentDate || a.bookingDate)
-            );
+function displayAppointments(appointments) {
+    const container = document.getElementById('appointmentsContent');
+    
+    const sortedAppointments = appointments.sort((a, b) => 
+        new Date(b.appointmentDate) - new Date(a.appointmentDate)
+    );
 
-            container.innerHTML = `
-                <table class="appointments-table">
-                    <thead>
-                        <tr>
-                            <th>Doctor</th>
-                            <th>Appointment Date</th>
-                            <th>Booking Date</th>
-                            <th>Amount</th>
-                            <th>Follow Up</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${sortedAppointments.map(apt => `
-                            <tr>
-                                <td>
-                                    <strong>${apt.doctorName || 'Dr. Unknown'}</strong><br>
-                                    <small style="color: #999;">${apt.doctorSpecialty || 'Specialist'}</small>
-                                </td>
-                                <td>${formatDate(apt.appointmentDate)}<br><small>${apt.appointmentTime || ''}</small></td>
-                                <td>${formatDate(apt.bookingDate)}</td>
-                                <td><strong>$${apt.amount || 0}</strong></td>
-                                <td>${formatDate(apt.followUpDate)}</td>
-                                <td><span class="status-badge status-${apt.status.toLowerCase()}">${apt.status}</span></td>
-                                <td>
-                                    ${apt.status === 'Pending' ? '<button class="btn-action" onclick="cancelAppointment(\'' + apt.id + '\')">Cancel</button>' : 
-                                    apt.status === 'Confirm' ? '<button class="btn-action" onclick="rescheduleAppointment(\'' + apt.id + '\')">Reschedule</button>' : '-'}
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-        }
+    container.innerHTML = `
+        <table class="appointments-table">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Serial #</th>
+                    <th>Date & Time</th>
+                    <th>Booking For</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${sortedAppointments.map(apt => `
+                    <tr>
+                        <td>
+                            <strong>${apt.doctorName || 'Dr. Unknown'}</strong><br>
+                            <small style="color: #999;">${apt.doctorSpecialty || 'Specialist'}</small>
+                        </td>
+                        <td><strong style="color: #667eea;">#${apt.serialNumber}</strong></td>
+                        <td>
+                            ${formatDate(apt.appointmentDate)}<br>
+                            <small style="color: #999;">Booked: ${formatDate(apt.createdAt?.toDate ? apt.createdAt.toDate().toISOString() : apt.createdAt)}</small>
+                        </td>
+                        <td>
+                            ${apt.bookingFor === 'self' ? '<span style="color: #667eea;">👤 Self</span>' : '<span style="color: #f59e0b;">👥 ' + (apt.bookingFor === 'family' ? 'Family' : 'Other') + '</span>'}<br>
+                            <small style="color: #999;">${apt.patientName}</small>
+                        </td>
+                        <td><strong>৳${apt.amount || 0}</strong></td>
+                        <td><span class="status-badge status-${apt.status.toLowerCase()}">${apt.status}</span></td>
+                        <td>
+                            ${apt.status === 'Pending' ? 
+                                `<button class="btn-action" style="background: #ef4444;" onclick="cancelAppointment('${apt.id}', '${apt.doctorName}', '${apt.appointmentDate}')">Cancel</button>` : 
+                            apt.status === 'Confirm' ? 
+                                `<button class="btn-action" onclick="viewDetails('${apt.id}')">View</button>` : 
+                                '-'}
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px; text-align: center;">
+            <p style="color: #666; font-size: 14px; margin-bottom: 10px;">
+                <strong>Note:</strong> You can only book one serial per doctor per day. Book appointments with multiple doctors on the same day if needed.
+            </p>
+        </div>
+    `;
+}
 
         function formatDate(dateString) {
             if (!dateString) return '-';
@@ -615,6 +625,33 @@
         window.rescheduleAppointment = function(appointmentId) {
             alert('Reschedule appointment functionality will be implemented soon.');
         };
+        window.cancelAppointment = async function(appointmentId, doctorName, appointmentDate) {
+    const confirmMsg = `Are you sure you want to cancel your appointment with ${doctorName} on ${formatDate(appointmentDate)}?`;
+    
+    if (!confirm(confirmMsg)) {
+        return;
+    }
+    
+    try {
+        const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        await updateDoc(doc(db, 'bookings', appointmentId), {
+            status: 'Cancelled',
+            cancelledAt: new Date().toISOString()
+        });
+        
+        alert('Appointment cancelled successfully!');
+        location.reload();
+    } catch (error) {
+        console.error('Error cancelling appointment:', error);
+        alert('Failed to cancel appointment. Please try again.');
+    }
+};
+
+window.viewDetails = function(appointmentId) {
+    alert('Detailed view feature coming soon!');
+};
+
     </script>
 </body>
 </html>
