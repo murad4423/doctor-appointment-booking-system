@@ -66,10 +66,12 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .logout-btn:hover {
-            background: #dc2626;
+            opacity: 0.9;
         }
 
         .stats {
@@ -147,52 +149,46 @@
             border-collapse: collapse;
         }
 
-        th {
-            background: #667eea;
-            color: white;
+        th, td {
             padding: 15px;
             text-align: left;
-            font-weight: 600;
+            border-bottom: 1px solid #e0e0e0;
         }
 
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #f0f0f0;
+        th {
+            background: #f8f9fa;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
         }
 
         tr:hover {
             background: #f8f9fa;
         }
 
-        .serial {
-            font-weight: bold;
-            color: #667eea;
-        }
-
         .status {
-            padding: 5px 12px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
-            display: inline-block;
         }
 
-        .status.pending {
+        .status-pending {
             background: #fef3c7;
             color: #92400e;
         }
 
-        .status.confirmed {
+        .status-confirmed {
             background: #d1fae5;
             color: #065f46;
         }
 
-        .status.completed {
+        .status-completed {
             background: #dbeafe;
             color: #1e40af;
         }
 
-        .status.cancelled {
+        .status-cancelled {
             background: #fee2e2;
             color: #991b1b;
         }
@@ -324,6 +320,7 @@
             <h1>📊 Doctor Booking Dashboard</h1>
             <div style="display: flex; gap: 10px;">
                 <a href="manage-doctors.html" class="logout-btn" style="background: #667eea; text-decoration: none;">Manage Doctors</a>
+                <a href="manage-patients.html" class="logout-btn" style="background: #10b981; text-decoration: none;">Manage Patients</a>
                 <button class="logout-btn" id="logoutBtn">Logout</button>
             </div>
         </div>
@@ -350,28 +347,24 @@
         <div class="content">
             <div class="filters">
                 <div class="filter-group">
-                    <label>Search by Name/Phone</label>
-                    <input type="text" id="searchInput" placeholder="Search...">
+                    <label for="statusFilter">Filter by Status</label>
+                    <select id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
                 </div>
                 <div class="filter-group">
-                    <label>Filter by Doctor</label>
+                    <label for="dateFilter">Filter by Date</label>
+                    <input type="date" id="dateFilter">
+                </div>
+                <div class="filter-group">
+                    <label for="doctorFilter">Filter by Doctor</label>
                     <select id="doctorFilter">
                         <option value="">All Doctors</option>
                     </select>
-                </div>
-                <div class="filter-group">
-                    <label>Filter by Status</label>
-                    <select id="statusFilter">
-                        <option value="">All Status</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Confirmed">Confirmed</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Cancelled">Cancelled</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Filter by Date</label>
-                    <input type="date" id="dateFilter">
                 </div>
             </div>
 
@@ -379,20 +372,17 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Serial</th>
-                            <th>Doctor</th>
                             <th>Patient Name</th>
-                            <th>Phone</th>
+                            <th>Doctor</th>
                             <th>Date</th>
                             <th>Time</th>
-                            <th>Reason</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="bookingsTableBody">
+                    <tbody id="bookingsTable">
                         <tr>
-                            <td colspan="8" class="no-bookings">Loading bookings...</td>
+                            <td colspan="6" class="no-bookings">Loading bookings...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -403,7 +393,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, getDocs, doc, updateDoc, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, getDocs, updateDoc, doc, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyBgL3nTaBFS1789IwrsFb1SN4T7GIas3Jk",
@@ -419,14 +409,17 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let allBookings = [];
+        // Admin credentials
+        const ADMIN_EMAIL = 'admin@doctorbooking.com';
+        const ADMIN_PASSWORD = 'admin123';
 
         // Auth state observer
         onAuthStateChanged(auth, (user) => {
-            if (user) {
+            if (user && user.email === ADMIN_EMAIL) {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
                 loadBookings();
+                loadDoctorsForFilter();
             } else {
                 document.getElementById('loginScreen').style.display = 'flex';
                 document.getElementById('dashboard').style.display = 'none';
@@ -438,13 +431,15 @@
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('loginError');
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                errorDiv.textContent = '';
+                if (email !== ADMIN_EMAIL) {
+                    await signOut(auth);
+                    document.getElementById('loginError').textContent = 'Access denied. Admin only.';
+                }
             } catch (error) {
-                errorDiv.textContent = 'Invalid credentials. Please try again.';
+                document.getElementById('loginError').textContent = 'Invalid credentials';
             }
         });
 
@@ -456,74 +451,59 @@
         // Load bookings
         async function loadBookings() {
             try {
-                const q = query(collection(db, 'bookings'), orderBy('createdAt', 'desc'));
-                const querySnapshot = await getDocs(q);
+                const bookingsSnapshot = await getDocs(collection(db, 'bookings'));
+                const bookings = [];
                 
-                allBookings = [];
-                const doctorNames = new Set();
-                
-                querySnapshot.forEach((doc) => {
-                    const booking = { id: doc.id, ...doc.data() };
-                    allBookings.push(booking);
-                    if (booking.doctorName) {
-                        doctorNames.add(booking.doctorName);
-                    }
+                bookingsSnapshot.forEach(doc => {
+                    bookings.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Populate doctor filter
-                const doctorFilter = document.getElementById('doctorFilter');
-                doctorFilter.innerHTML = '<option value="">All Doctors</option>';
-                doctorNames.forEach(name => {
-                    doctorFilter.innerHTML += `<option value="${name}">${name}</option>`;
-                });
-
-                updateStats();
-                displayBookings(allBookings);
+                updateStats(bookings);
+                displayBookings(bookings);
             } catch (error) {
                 console.error('Error loading bookings:', error);
+                document.getElementById('bookingsTable').innerHTML = '<tr><td colspan="6" class="no-bookings">Error loading bookings</td></tr>';
             }
         }
 
         // Update statistics
-        function updateStats() {
-            const today = new Date().toISOString().split('T')[0];
-            
-            document.getElementById('totalBookings').textContent = allBookings.length;
-            document.getElementById('pendingBookings').textContent = 
-                allBookings.filter(b => b.status === 'Pending').length;
-            document.getElementById('confirmedBookings').textContent = 
-                allBookings.filter(b => b.status === 'Confirmed').length;
-            document.getElementById('todayBookings').textContent = 
-                allBookings.filter(b => b.appointmentDate === today).length;
+        function updateStats(bookings) {
+            const total = bookings.length;
+            const pending = bookings.filter(b => b.status === 'pending').length;
+            const confirmed = bookings.filter(b => b.status === 'confirmed').length;
+            const today = bookings.filter(b => {
+                const bookingDate = new Date(b.date);
+                const todayDate = new Date();
+                return bookingDate.toDateString() === todayDate.toDateString();
+            }).length;
+
+            document.getElementById('totalBookings').textContent = total;
+            document.getElementById('pendingBookings').textContent = pending;
+            document.getElementById('confirmedBookings').textContent = confirmed;
+            document.getElementById('todayBookings').textContent = today;
         }
 
         // Display bookings
         function displayBookings(bookings) {
-            const tbody = document.getElementById('bookingsTableBody');
+            const tbody = document.getElementById('bookingsTable');
             
             if (bookings.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="no-bookings">No bookings found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="no-bookings">No bookings found</td></tr>';
                 return;
             }
 
-            tbody.innerHTML = bookings.map((booking, index) => `
+            tbody.innerHTML = bookings.map(booking => `
                 <tr>
-                    <td class="serial">#${index + 1}</td>
-                    <td><strong>${booking.doctorName || 'General'}</strong></td>
-                    <td>${booking.patientName}</td>
-                    <td>${booking.phone}</td>
-                    <td>${booking.appointmentDate}</td>
-                    <td>${booking.appointmentTime}</td>
-                    <td>${booking.reason}</td>
-                    <td><span class="status ${booking.status.toLowerCase()}">${booking.status}</span></td>
+                    <td>${booking.patientName || 'N/A'}</td>
+                    <td>${booking.doctorName || 'N/A'}</td>
+                    <td>${booking.date || 'N/A'}</td>
+                    <td>${booking.time || 'N/A'}</td>
+                    <td><span class="status status-${booking.status}">${booking.status}</span></td>
                     <td>
                         <div class="action-btns">
-                            ${booking.status === 'Pending' ? 
-                                `<button class="action-btn btn-confirm" onclick="updateStatus('${booking.id}', 'Confirmed')">Confirm</button>` : ''}
-                            ${booking.status === 'Confirmed' ? 
-                                `<button class="action-btn btn-complete" onclick="updateStatus('${booking.id}', 'Completed')">Complete</button>` : ''}
-                            ${booking.status !== 'Cancelled' && booking.status !== 'Completed' ? 
-                                `<button class="action-btn btn-cancel" onclick="updateStatus('${booking.id}', 'Cancelled')">Cancel</button>` : ''}
+                            ${booking.status === 'pending' ? `<button class="action-btn btn-confirm" onclick="updateBookingStatus('${booking.id}', 'confirmed')">Confirm</button>` : ''}
+                            ${booking.status === 'confirmed' ? `<button class="action-btn btn-complete" onclick="updateBookingStatus('${booking.id}', 'completed')">Complete</button>` : ''}
+                            ${booking.status !== 'cancelled' && booking.status !== 'completed' ? `<button class="action-btn btn-cancel" onclick="updateBookingStatus('${booking.id}', 'cancelled')">Cancel</button>` : ''}
                         </div>
                     </td>
                 </tr>
@@ -531,41 +511,77 @@
         }
 
         // Update booking status
-        window.updateStatus = async function(bookingId, newStatus) {
+        window.updateBookingStatus = async function(bookingId, newStatus) {
             try {
                 await updateDoc(doc(db, 'bookings', bookingId), {
-                    status: newStatus
+                    status: newStatus,
+                    updatedAt: new Date().toISOString()
                 });
-                await loadBookings();
+                loadBookings();
             } catch (error) {
-                console.error('Error updating status:', error);
-                alert('Failed to update status');
+                console.error('Error updating booking:', error);
             }
         };
 
-        // Search and filter
-        document.getElementById('searchInput').addEventListener('input', applyFilters);
-        document.getElementById('doctorFilter').addEventListener('change', applyFilters);
+        // Load doctors for filter
+        async function loadDoctorsForFilter() {
+            try {
+                const doctorsSnapshot = await getDocs(collection(db, 'doctors'));
+                const doctorFilter = document.getElementById('doctorFilter');
+                
+                doctorsSnapshot.forEach(doc => {
+                    const doctor = doc.data();
+                    const option = document.createElement('option');
+                    option.value = doctor.name;
+                    option.textContent = doctor.name;
+                    doctorFilter.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading doctors:', error);
+            }
+        }
+
+        // Filter functionality
         document.getElementById('statusFilter').addEventListener('change', applyFilters);
         document.getElementById('dateFilter').addEventListener('change', applyFilters);
+        document.getElementById('doctorFilter').addEventListener('change', applyFilters);
 
-        function applyFilters() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const doctorFilter = document.getElementById('doctorFilter').value;
+        async function applyFilters() {
             const statusFilter = document.getElementById('statusFilter').value;
             const dateFilter = document.getElementById('dateFilter').value;
+            const doctorFilter = document.getElementById('doctorFilter').value;
 
-            let filtered = allBookings.filter(booking => {
-                const matchesSearch = booking.patientName.toLowerCase().includes(searchTerm) ||
-                                    booking.phone.includes(searchTerm);
-                const matchesDoctor = !doctorFilter || booking.doctorName === doctorFilter;
-                const matchesStatus = !statusFilter || booking.status === statusFilter;
-                const matchesDate = !dateFilter || booking.appointmentDate === dateFilter;
+            let q = collection(db, 'bookings');
+            const constraints = [];
 
-                return matchesSearch && matchesDoctor && matchesStatus && matchesDate;
-            });
+            if (statusFilter) {
+                constraints.push(where('status', '==', statusFilter));
+            }
+            if (dateFilter) {
+                constraints.push(where('date', '==', dateFilter));
+            }
+            if (doctorFilter) {
+                constraints.push(where('doctorName', '==', doctorFilter));
+            }
 
-            displayBookings(filtered);
+            try {
+                let querySnapshot;
+                if (constraints.length > 0) {
+                    const qWithConstraints = query(collection(db, 'bookings'), ...constraints);
+                    querySnapshot = await getDocs(qWithConstraints);
+                } else {
+                    querySnapshot = await getDocs(collection(db, 'bookings'));
+                }
+
+                const bookings = [];
+                querySnapshot.forEach(doc => {
+                    bookings.push({ id: doc.id, ...doc.data() });
+                });
+
+                displayBookings(bookings);
+            } catch (error) {
+                console.error('Error applying filters:', error);
+            }
         }
     </script>
 </body>
