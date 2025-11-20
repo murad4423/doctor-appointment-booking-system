@@ -307,6 +307,29 @@
         <div class="content">
             <div id="message" class="message"></div>
 
+         <!-- Doctor Registration Form -->
+<div id="registrationForm" class="add-form">
+    <h2 style="margin-bottom: 20px; color: #333;">🔐 Create Doctor Account</h2>
+    <form id="doctorRegistrationForm">
+        <div class="form-group">
+            <label>Doctor Email *</label>
+            <input type="email" id="regEmail" required placeholder="doctor@example.com">
+        </div>
+        <div class="form-group">
+            <label>Password *</label>
+            <input type="password" id="regPassword" required placeholder="Minimum 6 characters">
+        </div>
+        <div class="form-group">
+            <label>Confirm Password *</label>
+            <input type="password" id="regConfirmPassword" required placeholder="Re-enter password">
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button type="submit" class="btn btn-primary">Create Account & Continue</button>
+            <button type="button" class="btn btn-secondary" onclick="closeRegistrationForm()">Cancel</button>
+        </div>
+    </form>
+</div>   
+
             <!-- Add/Edit Form -->
             <div id="addForm" class="add-form">
                 <h2 id="formTitle" style="margin-bottom: 20px; color: #333;">Add New Doctor</h2>
@@ -444,7 +467,7 @@
                 
                     <div style="display: flex; gap: 10px; margin-top: 20px;">
                         <button type="submit" class="btn btn-primary" id="submitBtn">Save Doctor</button>
-                        <button type="button" class="btn btn-secondary" onclick="toggleAddForm()">Cancel</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeDetailsForm()">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -502,17 +525,36 @@
         document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
 
         // Toggle add form
-// Toggle add form
+// Toggle add form - এখন registration form খুলবে
 window.toggleAddForm = function() {
-    const form = document.getElementById('addForm');
-    form.classList.toggle('active');
-    if (!form.classList.contains('active')) {
+    const regForm = document.getElementById('registrationForm');
+    const addForm = document.getElementById('addForm');
+    
+    // Registration form দেখান
+    regForm.classList.toggle('active');
+    
+    if (!regForm.classList.contains('active')) {
+        // Cancel করলে সব reset
+        document.getElementById('doctorRegistrationForm').reset();
+        addForm.classList.remove('active');
         document.getElementById('doctorForm').reset();
-        document.getElementById('doctorId').value = '';
-        document.getElementById('editMode').value = 'false';
-        document.getElementById('formTitle').textContent = 'Add New Doctor';
-        document.getElementById('submitBtn').textContent = 'Save Doctor';
     }
+};
+
+// Registration form বন্ধ করার function
+window.closeRegistrationForm = function() {
+    document.getElementById('registrationForm').classList.remove('active');
+    document.getElementById('doctorRegistrationForm').reset();
+};
+
+// Details form বন্ধ করার function
+window.closeDetailsForm = function() {
+    document.getElementById('addForm').classList.remove('active');
+    document.getElementById('doctorForm').reset();
+    document.getElementById('doctorId').value = '';
+    document.getElementById('editMode').value = 'false';
+    document.getElementById('formTitle').textContent = 'Add New Doctor';
+    document.getElementById('submitBtn').textContent = 'Save Doctor';
 };
 
 // NEW: Edit doctor function
@@ -566,6 +608,8 @@ document.getElementById('availableDays').value = doctor.availableDays ? doctor.a
 
 // Contact & Social Media
 document.getElementById('emailDoctor').value = doctor.email || '';
+// Edit mode এ email editable রাখুন
+document.getElementById('emailDoctor').readOnly = false;
 document.getElementById('facebookLink').value = doctor.facebookLink || ''; 
         
         // Change form title and button
@@ -583,6 +627,71 @@ document.getElementById('facebookLink').value = doctor.facebookLink || '';
         showMessage('Failed to load doctor data', 'error');
     }
 };
+
+// Doctor Registration Handler
+document.getElementById('doctorRegistrationForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+    const confirmPassword = document.getElementById('regConfirmPassword').value;
+    
+    // Password validation
+    if (password !== confirmPassword) {
+        showMessage('Passwords do not match!', 'error');
+        return;
+    }
+    
+    if (password.length < 6) {
+        showMessage('Password must be at least 6 characters!', 'error');
+        return;
+    }
+    
+    try {
+        // Admin এর current auth state save করুন
+        const currentUser = auth.currentUser;
+        
+        // নতুন doctor account তৈরি করুন (separate auth instance এ)
+        const { getAuth, createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+        
+        // Temporary app instance for doctor registration
+        const tempApp = initializeApp(firebaseConfig, 'tempApp');
+        const tempAuth = getAuth(tempApp);
+        
+        await createUserWithEmailAndPassword(tempAuth, email, password);
+        
+        // Doctor account created successfully
+        showMessage('Doctor account created successfully! Now fill in the details.', 'success');
+        
+        // Registration form বন্ধ করুন
+        document.getElementById('registrationForm').classList.remove('active');
+        document.getElementById('doctorRegistrationForm').reset();
+        
+        // Doctor details form খুলুন এবং email pre-fill করুন
+        document.getElementById('addForm').classList.add('active');
+        document.getElementById('emailDoctor').value = email;
+        document.getElementById('emailDoctor').readOnly = true; // Email change করা যাবে না
+        
+        // Scroll to details form
+        document.getElementById('addForm').scrollIntoView({ behavior: 'smooth' });
+        
+        // Temporary auth instance delete করুন
+        await tempApp.delete();
+        
+        // IMPORTANT: Admin কে re-authenticate করার দরকার নেই কারণ main auth instance unchanged আছে
+        
+    } catch (error) {
+        console.error('Registration error:', error);
+        if (error.code === 'auth/email-already-in-use') {
+            showMessage('This email is already registered!', 'error');
+        } else if (error.code === 'auth/invalid-email') {
+            showMessage('Invalid email address!', 'error');
+        } else {
+            showMessage('Registration failed: ' + error.message, 'error');
+        }
+    }
+});
 
 // Add or Update doctor
 document.getElementById('doctorForm').addEventListener('submit', async (e) => {
