@@ -709,18 +709,18 @@
 }
 
         // Search functionality
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            
-            const filtered = allPatients.filter(patient => {
-                return (patient.fullName || '').toLowerCase().includes(searchTerm) ||
-                       (patient.email || '').toLowerCase().includes(searchTerm) ||
-                       (patient.phoneNumber || '').includes(searchTerm);
-                (patient.patientId || '').toLowerCase().includes(searchTerm);
-            });
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    
+    const filtered = allPatients.filter(patient => {
+        return (patient.fullName || '').toLowerCase().includes(searchTerm) ||
+               (patient.email || '').toLowerCase().includes(searchTerm) ||
+               (patient.phoneNumber || '').includes(searchTerm) ||
+               (patient.patientId || '').toLowerCase().includes(searchTerm);  // এই লাইন যোগ করুন
+    });
 
-            displayPatients(filtered);
-        });
+    displayPatients(filtered);
+});
 
         // View patient details
         window.viewPatientDetails = function(patientId) {
