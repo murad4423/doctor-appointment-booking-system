@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Profile - Doctor Appointment System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .breadcrumb {
+            background: white;
+            padding: 15px 40px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .breadcrumb-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 40px;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+        }
+
+        .profile-sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+
+        .profile-name {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .profile-name h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .profile-id {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .profile-info {
+            border-top: 2px solid #f0f0f0;
+            padding-top: 20px;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 15px;
+        }
+
+        .btn-edit-profile {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .btn-edit-profile:hover {
+            background: #5568d3;
+        }
+
+        .profile-main {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            margin-bottom: 30px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: #666;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .appointments-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .appointments-table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .appointments-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #666;
+        }
+
+        .appointments-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-confirm {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .btn-action {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-action:hover {
+            background: #5568d3;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        @media (max-width: 1024px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 20px;
+            }
+
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .breadcrumb {
+                padding: 15px 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .appointments-table {
+                font-size: 14px;
+            }
+
+            .appointments-table th,
+            .appointments-table td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-content">
+            <h1>🏥 Doctor Appointment System</h1>
+            <div class="navbar-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <button onclick="handleLogout()" class="btn-logout">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="breadcrumb">
+        <div class="breadcrumb-content">
+            <a href="index.html">Home</a> / <span>Profile</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="loadingState" class="loading">Loading profile...</div>
+        
+        <div id="profileContent" class="profile-grid" style="display: none;">
+            <!-- Sidebar -->
+            <div class="profile-sidebar">
+                <div class="profile-avatar" id="profileAvatar">R</div>
+                <div class="profile-name">
+                    <h2 id="profileName">Loading...</h2>
+                </div>
+                <div class="profile-id">
+                    Patient ID: <strong id="profilePatientId">-</strong>
+                </div>
+
+                <div class="profile-info">
+                    <div class="info-item">
+                        <div class="info-label">Phone</div>
+                        <div class="info-value" id="profilePhone">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Age</div>
+                        <div class="info-value"><span id="profileAge">-</span> Years, <span id="profileGender">-</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Blood Group</div>
+                        <div class="info-value" id="profileBloodGroup">-</div>
+                    </div>
+                </div>
+
+                <button onclick="editProfile()" class="btn-edit-profile">✏️ Edit Profile</button>
+            </div>
+
+            <!-- Main Content -->
+            <div class="profile-main">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('appointments')">Appointments</button>
+                    <button class="tab" onclick="switchTab('prescription')">Prescription</button>
+                    <button class="tab" onclick="switchTab('medical-records')">Medical Records</button>
+                    <button class="tab" onclick="switchTab('billing')">Billing</button>
+                </div>
+
+                <!-- Appointments Tab -->
+                <div id="appointments-tab" class="tab-content active">
+                    <div id="appointmentsContent">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📅</div>
+                            <h3>No Appointments Yet</h3>
+                            <p>You haven't booked any appointments.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prescription Tab -->
+                <div id="prescription-tab" class="tab-content">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💊</div>
+                        <h3>No Prescriptions</h3>
+                        <p>Your prescriptions will appear here after consultations.</p>
+                    </div>
+                </div>
+
+                <!-- Medical Records Tab -->
+                <div id="medical-records-tab" class="tab-content">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <h3>No Medical Records</h3>
+                        <p>Your medical records will be available here.</p>
+                    </div>
+                </div>
+
+                <!-- Billing Tab -->
+                <div id="billing-tab" class="tab-content">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💳</div>
+                        <h3>No Billing Information</h3>
+                        <p>Your billing history will appear here.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgL3nTaBFS1789IwrsFb1SN4T7GIas3Jk",
+            authDomain: "doctor-booking-b556e.firebaseapp.com",
+            projectId: "doctor-booking-b556e",
+            storageBucket: "doctor-booking-b556e.firebasestorage.app",
+            messagingSenderId: "573037462071",
+            appId: "1:573037462071:web:a21ae3786e8b8a3758b5b2",
+            measurementId: "G-NQ9BK8LFJM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let patientData = null;
+
+        // Check authentication
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                await loadProfile(user.uid);
+                await loadAppointments(user.uid);
+            } else {
+                window.location.href = 'patient-auth.html';
+            }
+        });
+
+        async function loadProfile(uid) {
+            try {
+                const docRef = doc(db, 'patients', uid);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    patientData = docSnap.data();
+                    displayProfile(patientData);
+                    
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('profileContent').style.display = 'grid';
+                } else {
+                    window.location.href = 'patient-profile-setup.html';
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('Failed to load profile. Please try again.');
+            }
+        }
+
+        function displayProfile(data) {
+            document.getElementById('profileAvatar').textContent = data.fullName.charAt(0).toUpperCase();
+            document.getElementById('profileName').textContent = data.fullName;
+            document.getElementById('profilePatientId').textContent = data.patientId;
+            document.getElementById('profilePhone').textContent = data.phone;
+            document.getElementById('profileAge').textContent = data.age;
+            document.getElementById('profileGender').textContent = data.gender;
+            document.getElementById('profileBloodGroup').textContent = data.bloodGroup;
+        }
+
+        async function loadAppointments(uid) {
+            try {
+                // Check if appointments collection exists and filter by patient
+                const appointmentsRef = collection(db, 'appointments');
+                const q = query(appointmentsRef, where('patientId', '==', uid));
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    const appointments = [];
+                    querySnapshot.forEach((doc) => {
+                        appointments.push({ id: doc.id, ...doc.data() });
+                    });
+
+                    displayAppointments(appointments);
+                } else {
+                    // No appointments found - keep empty state
+                    console.log('No appointments found for this patient');
+                }
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+            }
+        }
+
+        function displayAppointments(appointments) {
+            const container = document.getElementById('appointmentsContent');
+            
+            const sortedAppointments = appointments.sort((a, b) => 
+                new Date(b.appointmentDate || b.bookingDate) - new Date(a.appointmentDate || a.bookingDate)
+            );
+
+            container.innerHTML = `
+                <table class="appointments-table">
+                    <thead>
+                        <tr>
+                            <th>Doctor</th>
+                            <th>Appointment Date</th>
+                            <th>Booking Date</th>
+                            <th>Amount</th>
+                            <th>Follow Up</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${sortedAppointments.map(apt => `
+                            <tr>
+                                <td>
+                                    <strong>${apt.doctorName || 'Dr. Unknown'}</strong><br>
+                                    <small style="color: #999;">${apt.doctorSpecialty || 'Specialist'}</small>
+                                </td>
+                                <td>${formatDate(apt.appointmentDate)}<br><small>${apt.appointmentTime || ''}</small></td>
+                                <td>${formatDate(apt.bookingDate)}</td>
+                                <td><strong>$${apt.amount || 0}</strong></td>
+                                <td>${formatDate(apt.followUpDate)}</td>
+                                <td><span class="status-badge status-${apt.status.toLowerCase()}">${apt.status}</span></td>
+                                <td>
+                                    ${apt.status === 'Pending' ? '<button class="btn-action" onclick="cancelAppointment(\'' + apt.id + '\')">Cancel</button>' : 
+                                    apt.status === 'Confirm' ? '<button class="btn-action" onclick="rescheduleAppointment(\'' + apt.id + '\')">Reschedule</button>' : '-'}
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        window.switchTab = function(tabName) {
+            // Update tab buttons
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + '-tab').classList.add('active');
+        };
+
+        window.editProfile = function() {
+            window.location.href = 'patient-profile-edit.html';
+        };
+
+        window.handleLogout = async function() {
+            if (confirm('Are you sure you want to logout?')) {
+                try {
+                    await signOut(auth);
+                    window.location.href = 'index.html';
+                } catch (error) {
+                    console.error('Error logging out:', error);
+                    alert('Failed to logout. Please try again.');
+                }
+            }
+        };
+
+        window.cancelAppointment = function(appointmentId) {
+            alert('Cancel appointment functionality will be implemented soon.');
+        };
+
+        window.rescheduleAppointment = function(appointmentId) {
+            alert('Reschedule appointment functionality will be implemented soon.');
+        };
+    </script>
+</body>
+</html>
