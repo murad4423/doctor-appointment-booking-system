@@ -438,6 +438,7 @@
                     <thead>
                         <tr>
                             <th>Serial</th>
+                            <th>Patient ID</th>
                             <th>Patient</th>
                             <th>Email</th>
                             <th>Phone</th>
@@ -449,7 +450,7 @@
                     </thead>
                     <tbody id="patientsTableBody">
                         <tr>
-                            <td colspan="8" class="no-data">Loading patients...</td>
+                            <td colspan="9" class="no-data">Loading patients...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -669,41 +670,43 @@
         }
 
         // Display patients
-        function displayPatients(patients) {
-            const tbody = document.getElementById('patientsTableBody');
-            
-            if (patients.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="no-data">No patients found</td></tr>';
-                return;
-            }
+ function displayPatients(patients) {
+    const tbody = document.getElementById('patientsTableBody');
+    
+    if (patients.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="no-data">No patients found</td></tr>';  // 8 থেকে 9
+        return;
+    }
 
-            tbody.innerHTML = patients.map((patient, index) => {
-                const initials = patient.fullName ? patient.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : 'P';
-                
-                return `
-                    <tr style="cursor: pointer;">
-                        <td class="serial">#${index + 1}</td>
-                        <td>
-                            <div style="display: flex; align-items: center;">
-                                <div class="patient-avatar">${initials}</div>
-                                <strong>${patient.fullName || 'Unknown'}</strong>
-                            </div>
-                        </td>
-                        <td>${patient.email || 'N/A'}</td>
-                        <td>${patient.phoneNumber || 'N/A'}</td>
-                        <td>${patient.gender || 'N/A'}</td>
-                        <td>${patient.bloodGroup || 'N/A'}</td>
-                        <td>${patient.city || 'N/A'}</td>
-                        <td>
-                            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 13px;" 
-                                onclick="viewPatientDetails('${patient.id}')">
-                                👁️ View
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
+    tbody.innerHTML = patients.map((patient, index) => {
+        const initials = patient.fullName ? patient.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : 'P';
+        const patientId = patient.patientId || 'N/A';  // এই লাইন যোগ করুন
+        
+        return `
+            <tr onclick="viewPatient('${patient.id}')">
+                <td class="serial">#${index + 1}</td>
+                <td><strong style="color: #667eea;">${patientId}</strong></td>  <!-- এই লাইন যোগ করুন -->
+                <td>
+                    <div style="display: flex; align-items: center;">
+                        <div class="patient-avatar">${initials}</div>
+                        <strong>${patient.fullName || 'Unknown'}</strong>
+                    </div>
+                </td>
+                <td>${patient.email || 'N/A'}</td>
+                <td>${patient.phoneNumber || 'N/A'}</td>
+                <td>${patient.gender || 'N/A'}</td>
+                <td>${patient.bloodGroup || 'N/A'}</td>
+                <td>${patient.city || 'N/A'}</td>
+                <td>
+                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 13px;" 
+                        onclick="event.stopPropagation(); editPatient('${patient.id}')">
+                        ✏️ Edit
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
 
         // Search functionality
         document.getElementById('searchInput').addEventListener('input', (e) => {
@@ -713,6 +716,7 @@
                 return (patient.fullName || '').toLowerCase().includes(searchTerm) ||
                        (patient.email || '').toLowerCase().includes(searchTerm) ||
                        (patient.phoneNumber || '').includes(searchTerm);
+                (patient.patientId || '').toLowerCase().includes(searchTerm);
             });
 
             displayPatients(filtered);
