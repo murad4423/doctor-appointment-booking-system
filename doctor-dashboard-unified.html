@@ -1100,14 +1100,13 @@
 
         // Load dashboard statistics
         async function loadDashboardData() {
-            try {
-                // Load appointments
-                const appointmentsRef = collection(db, 'appointments');
-                const q = query(appointmentsRef, where('doctorEmail', '==', currentDoctor.email));
-                const appointmentsSnapshot = await getDocs(q);
+    try {
+        const bookingsRef = collection(db, 'bookings');
+        const q = query(bookingsRef, where('doctorEmail', '==', currentDoctor.email));
+        const bookingsSnapshot = await getDocs(q);
 
-                allAppointments = [];
-                appointmentsSnapshot.forEach((doc) => {
+        allAppointments = [];
+        bookingsSnapshot.forEach((doc) => {
                     allAppointments.push({ id: doc.id, ...doc.data() });
                 });
 
@@ -1161,13 +1160,13 @@
             }
 
             tbody.innerHTML = recent.map(apt => `
-                <tr>
-                    <td>${apt.patientName || 'N/A'}</td>
-                    <td>${apt.date || 'N/A'}</td>
-                    <td>${apt.time || 'N/A'}</td>
-                    <td><span class="status-badge status-${apt.status}">${apt.status || 'pending'}</span></td>
-                </tr>
-            `).join('');
+    <tr>
+        <td>${apt.patientName || 'N/A'}</td>
+        <td>${apt.appointmentDate || 'N/A'}</td>
+        <td>${apt.appointmentTime || 'N/A'}</td>
+        <td><span class="status-badge status-${(apt.status || 'pending').toLowerCase()}">${apt.status || 'Pending'}</span></td>
+    </tr>
+`).join('');
         }
 
         // Load all appointments
@@ -1193,15 +1192,15 @@
             const tbody = document.getElementById('allAppointmentsTable');
             
             tbody.innerHTML = appointments.map(apt => `
-                <tr>
-                    <td>${apt.patientName || 'N/A'}</td>
-                    <td>${apt.patientEmail || 'N/A'}</td>
-                    <td>${apt.patientPhone || 'N/A'}</td>
-                    <td>${apt.date || 'N/A'}</td>
-                    <td>${apt.time || 'N/A'}</td>
-                    <td><span class="status-badge status-${apt.status}">${apt.status || 'pending'}</span></td>
-                </tr>
-            `).join('');
+    <tr>
+        <td>${apt.patientName || 'N/A'}</td>
+        <td>${apt.patientEmail || 'N/A'}</td>
+        <td>${apt.patientPhone || 'N/A'}</td>
+        <td>${apt.appointmentDate || 'N/A'}</td>
+        <td>${apt.appointmentTime || 'N/A'}</td>
+        <td><span class="status-badge status-${(apt.status || 'pending').toLowerCase()}">${apt.status || 'Pending'}</span></td>
+    </tr>
+`).join('');
         }
 
         // Load patients data
@@ -1210,22 +1209,22 @@
             const patientsMap = new Map();
             
             allAppointments.forEach(apt => {
-                if (apt.patientEmail) {
-                    if (!patientsMap.has(apt.patientEmail)) {
-                        patientsMap.set(apt.patientEmail, {
-                            name: apt.patientName,
-                            email: apt.patientEmail,
-                            phone: apt.patientPhone,
-                            firstVisit: apt.date,
-                            totalVisits: 1
-                        });
+    if (apt.patientEmail) {
+        if (!patientsMap.has(apt.patientEmail)) {
+            patientsMap.set(apt.patientEmail, {
+                name: apt.patientName,
+                email: apt.patientEmail,
+                phone: apt.patientPhone,
+                firstVisit: apt.appointmentDate,
+                totalVisit: 1
+            });
                     } else {
                         const patient = patientsMap.get(apt.patientEmail);
                         patient.totalVisits++;
                         // Update first visit if earlier
-                        if (new Date(apt.date) < new Date(patient.firstVisit)) {
-                            patient.firstVisit = apt.date;
-                        }
+                        if (new Date(apt.appointmentDate) < new Date(patient.firstVisit)) {
+    patient.firstVisit = apt.appointmentDate;
+}
                     }
                 }
             });
