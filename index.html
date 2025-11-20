@@ -31,7 +31,13 @@
             font-size: 24px;
         }
 
-        .admin-link {
+        .navbar-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .admin-link, .patient-link {
             color: #667eea;
             text-decoration: none;
             font-weight: 600;
@@ -41,9 +47,18 @@
             transition: all 0.3s;
         }
 
-        .admin-link:hover {
+        .admin-link:hover, .patient-link:hover {
             background: #667eea;
             color: white;
+        }
+
+        .patient-link {
+            background: #667eea;
+            color: white;
+        }
+
+        .patient-link:hover {
+            background: #5568d3;
         }
 
         .hero {
@@ -227,6 +242,10 @@
                 padding: 15px 20px;
             }
 
+            .navbar-links {
+                gap: 10px;
+            }
+
             .search-box {
                 flex-direction: column;
             }
@@ -240,7 +259,10 @@
 <body>
     <div class="navbar">
         <h1>🏥 Doctor Appointment System</h1>
-        <a href="admin.html" class="admin-link">Admin Panel</a>
+        <div class="navbar-links">
+            <a href="patient-auth.html" class="patient-link">Patient Login</a>
+            <a href="admin.html" class="admin-link">Admin Panel</a>
+        </div>
     </div>
 
     <div class="hero">
@@ -270,7 +292,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyBgL3nTaBFS1789IwrsFb1SN4T7GIas3Jk",
@@ -287,7 +309,6 @@
 
         let allDoctorsData = [];
 
-        // Load all doctors
         async function loadDoctors() {
             try {
                 const querySnapshot = await getDocs(collection(db, 'doctors'));
@@ -304,7 +325,6 @@
             }
         }
 
-        // Display all doctors
         function displayAllDoctors(doctors) {
             const container = document.getElementById('allDoctors');
             
@@ -328,7 +348,6 @@
             `).join('');
         }
 
-        // Search doctors
         window.searchDoctors = function() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
             const resultsDiv = document.getElementById('searchResults');
@@ -361,22 +380,18 @@
             `).join('');
         };
 
-        // View doctor profile
         window.viewDoctor = function(doctorId) {
             window.location.href = `doctors.html?id=${doctorId}`;
         };
 
-        // Search on Enter key
         document.getElementById('searchInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 searchDoctors();
             }
         });
 
-        // Real-time search
         document.getElementById('searchInput').addEventListener('input', searchDoctors);
 
-        // Load doctors on page load
         loadDoctors();
     </script>
 </body>
