@@ -270,19 +270,32 @@
         });
 
         async function checkProfileExists(uid) {
-            try {
-                const docRef = doc(db, 'patients', uid);
-                const docSnap = await getDoc(docRef);
-                
-                if (docSnap.exists()) {
-                    window.location.href = 'patient-profile.html';
-                } else {
-                    window.location.href = 'patient-profile-setup.html';
-                }
-            } catch (error) {
-                console.error('Error checking profile:', error);
+    try {
+        const docRef = doc(db, 'patients', uid);
+        const docSnap = await getDoc(docRef);
+        
+        // Check for redirect parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirect = urlParams.get('redirect');
+        const doctorId = urlParams.get('doctor');
+        
+        if (docSnap.exists()) {
+            // Profile exists
+            if (redirect === 'booking' && doctorId) {
+                window.location.href = `booking.html?doctor=${doctorId}`;
+            } else {
+                window.location.href = 'patient-profile.html';
             }
+        } else {
+            // Need to create profile first
+            sessionStorage.setItem('pendingRedirect', redirect || '');
+            sessionStorage.setItem('pendingDoctor', doctorId || '');
+            window.location.href = 'patient-profile-setup.html';
         }
+    } catch (error) {
+        console.error('Error checking profile:', error);
+    }
+}
 
         window.switchTab = function(tab) {
             const tabs = document.querySelectorAll('.tab');
