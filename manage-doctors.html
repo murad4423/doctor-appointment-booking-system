@@ -155,13 +155,6 @@
             border-color: #667eea;
         }
 
-        .form-group small {
-            display: block;
-            margin-top: 5px;
-            color: #666;
-            font-size: 12px;
-        }
-
         .doctors-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -237,6 +230,34 @@
             color: #991b1b;
         }
 
+        .time-slots-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .time-slot-tag {
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+        }
+
+        .time-slot-tag button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
         @media (max-width: 768px) {
             .header {
                 padding: 20px;
@@ -253,7 +274,7 @@
     </style>
 </head>
 <body>
-    <!-- Admin Login Screen -->
+    <!-- Login Screen -->
     <div id="loginScreen" class="login-container">
         <div class="login-box">
             <h2>🔐 Admin Login</h2>
@@ -272,41 +293,13 @@
         </div>
     </div>
 
-    <!-- Doctor Registration Modal -->
-    <div id="registrationModal" class="login-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000;">
-        <div class="login-box" style="max-width: 500px;">
-            <h2>👨‍⚕️ Create Doctor Account</h2>
-            <p style="text-align: center; color: #666; margin-bottom: 20px;">First, create login credentials for the doctor</p>
-            <form id="registrationForm">
-                <div class="form-group">
-                    <label for="regEmail">Doctor's Email *</label>
-                    <input type="email" id="regEmail" required placeholder="doctor@example.com">
-                </div>
-                <div class="form-group">
-                    <label for="regPassword">Password *</label>
-                    <input type="password" id="regPassword" required placeholder="Minimum 6 characters">
-                    <small>This password will be shared with the doctor for login</small>
-                </div>
-                <div class="form-group">
-                    <label for="regConfirmPassword">Confirm Password *</label>
-                    <input type="password" id="regConfirmPassword" required placeholder="Re-enter password">
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <button type="submit" class="btn btn-primary" style="flex: 1;">Create Account & Continue</button>
-                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeRegistrationModal()">Cancel</button>
-                </div>
-                <div id="registrationError" style="color: #ef4444; text-align: center; margin-top: 10px;"></div>
-            </form>
-        </div>
-    </div>
-
     <!-- Dashboard -->
     <div id="dashboard" class="dashboard">
         <div class="header">
             <h1>👨‍⚕️ Manage Doctors</h1>
             <div class="header-actions">
                 <a href="admin.html" class="btn btn-secondary">View Bookings</a>
-                <button class="btn btn-primary" onclick="openRegistrationModal()">+ Add Doctor</button>
+                <button class="btn btn-primary" onclick="toggleAddForm()">+ Add Doctor</button>
                 <button class="btn btn-danger" id="logoutBtn">Logout</button>
             </div>
         </div>
@@ -463,7 +456,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, getDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
@@ -480,16 +473,11 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let currentDoctorUID = null;
-        let currentAdminEmail = null;
-
         // Auth state observer
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
-                document.getElementById('registrationModal').style.display = 'none';
-                currentAdminEmail = user.email;
                 loadDoctors();
             } else {
                 document.getElementById('loginScreen').style.display = 'flex';
@@ -497,7 +485,7 @@
             }
         });
 
-        // Admin Login
+        // Login
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
@@ -513,200 +501,159 @@
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
 
-        // Open Registration Modal
-        window.openRegistrationModal = function() {
-            document.getElementById('registrationModal').style.display = 'flex';
-            document.getElementById('registrationForm').reset();
-            document.getElementById('registrationError').textContent = '';
-        };
-
-        // Close Registration Modal
-        window.closeRegistrationModal = function() {
-            document.getElementById('registrationModal').style.display = 'none';
-            document.getElementById('registrationForm').reset();
-            currentDoctorUID = null;
-        };
-
-        // Handle Doctor Registration
-        document.getElementById('registrationForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-            const confirmPassword = document.getElementById('regConfirmPassword').value;
-            const errorDiv = document.getElementById('registrationError');
-
-            if (password !== confirmPassword) {
-                errorDiv.textContent = 'Passwords do not match!';
-                return;
-            }
-
-            if (password.length < 6) {
-                errorDiv.textContent = 'Password must be at least 6 characters!';
-                return;
-            }
-
-            try {
-                // Create doctor account
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                currentDoctorUID = userCredential.user.uid;
-
-                // Sign out the newly created user
-                await signOut(auth);
-
-                // Sign back in as admin
-                const adminPassword = document.getElementById('password').value;
-                await signInWithEmailAndPassword(auth, currentAdminEmail, adminPassword);
-
-                showMessage(`Doctor account created! Email: ${email}`, 'success');
-                
-                document.getElementById('registrationModal').style.display = 'none';
-                document.getElementById('addForm').classList.add('active');
-                document.getElementById('formTitle').textContent = 'Add Doctor Details';
-                document.getElementById('emailDoctor').value = email;
-                document.getElementById('emailDoctor').readOnly = true;
-                document.getElementById('addForm').scrollIntoView({ behavior: 'smooth' });
-                
-            } catch (error) {
-                console.error('Registration error:', error);
-                
-                if (error.code === 'auth/email-already-in-use') {
-                    errorDiv.textContent = 'This email is already registered!';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorDiv.textContent = 'Invalid email format!';
-                } else if (error.code === 'auth/weak-password') {
-                    errorDiv.textContent = 'Password is too weak!';
-                } else {
-                    errorDiv.textContent = 'Registration failed. Please try again.';
-                }
-            }
-        });
-
         // Toggle add form
-        window.toggleAddForm = function() {
-            const form = document.getElementById('addForm');
-            form.classList.toggle('active');
-            if (!form.classList.contains('active')) {
-                document.getElementById('doctorForm').reset();
-                document.getElementById('doctorId').value = '';
-                document.getElementById('editMode').value = 'false';
-                document.getElementById('formTitle').textContent = 'Add New Doctor';
-                document.getElementById('submitBtn').textContent = 'Save Doctor';
-                document.getElementById('emailDoctor').readOnly = false;
-                currentDoctorUID = null;
-            }
-        };
+// Toggle add form
+window.toggleAddForm = function() {
+    const form = document.getElementById('addForm');
+    form.classList.toggle('active');
+    if (!form.classList.contains('active')) {
+        document.getElementById('doctorForm').reset();
+        document.getElementById('doctorId').value = '';
+        document.getElementById('editMode').value = 'false';
+        document.getElementById('formTitle').textContent = 'Add New Doctor';
+        document.getElementById('submitBtn').textContent = 'Save Doctor';
+    }
+};
 
-        // Edit doctor
-        window.editDoctor = async function(doctorId) {
-            try {
-                const docRef = doc(db, 'doctors', doctorId);
-                const docSnap = await getDoc(docRef);
-                
-                if (!docSnap.exists()) {
-                    showMessage('Doctor not found!', 'error');
-                    return;
-                }
-                
-                const doctor = docSnap.data();
+// NEW: Edit doctor function
+window.editDoctor = async function(doctorId) {
+    try {
+        // Import getDoc if not already imported at top
+        const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const docRef = doc(db, 'doctors', doctorId);
+        const docSnap = await getDoc(docRef);
+        
+        if (!docSnap.exists()) {
+            showMessage('Doctor not found!', 'error');
+            return;
+        }
+        
+        const doctor = docSnap.data();
 
-                document.getElementById('doctorId').value = doctorId;
-                document.getElementById('editMode').value = 'true';
-                document.getElementById('name').value = doctor.name || '';
-                document.getElementById('specialty').value = doctor.specialty || '';
-                document.getElementById('bmdcRegNo').value = doctor.bmdcRegNo || '';
-                document.getElementById('experience').value = doctor.experience || '';
-                document.getElementById('institutionName').value = doctor.institutionName || '';
-                document.getElementById('designation').value = doctor.designation || '';
-                document.getElementById('about').value = doctor.about || '';
-                document.getElementById('degrees').value = doctor.degrees || '';
-                document.getElementById('fellowships').value = doctor.fellowships || '';
-                document.getElementById('trainings').value = doctor.trainings || '';
-                document.getElementById('specialized').value = doctor.specialized || '';
-                document.getElementById('fieldOfConcentration').value = doctor.fieldOfConcentration || '';
-                document.getElementById('chamberName').value = doctor.chamberName || '';
-                document.getElementById('chamberAddress').value = doctor.chamberAddress || '';
-                document.getElementById('chamberPhone').value = doctor.chamberPhone || '';
-                document.getElementById('chamberTime').value = doctor.chamberTime || '';
-                document.getElementById('consultationFee').value = doctor.consultationFee || '';
-                document.getElementById('maxPatients').value = doctor.maxPatients || '';
-                document.getElementById('availableDays').value = doctor.availableDays ? doctor.availableDays.join(', ') : '';
-                document.getElementById('emailDoctor').value = doctor.email || '';
-                document.getElementById('facebookLink').value = doctor.facebookLink || '';
-                
-                document.getElementById('formTitle').textContent = 'Edit Doctor';
-                document.getElementById('submitBtn').textContent = 'Update Doctor';
-                document.getElementById('addForm').classList.add('active');
-                document.getElementById('addForm').scrollIntoView({ behavior: 'smooth' });
-                
-            } catch (error) {
-                console.error('Error loading doctor:', error);
-                showMessage('Failed to load doctor data', 'error');
-            }
-        };
+// Fill form with doctor data
+document.getElementById('doctorId').value = doctorId;
+document.getElementById('editMode').value = 'true';
 
-        // Add or Update doctor
-        document.getElementById('doctorForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+// Basic
+document.getElementById('name').value = doctor.name || '';
+document.getElementById('specialty').value = doctor.specialty || '';
 
-            const availableDaysInput = document.getElementById('availableDays').value;
-            const editMode = document.getElementById('editMode').value === 'true';
-            const doctorId = document.getElementById('doctorId').value;
+// Professional Information
+document.getElementById('bmdcRegNo').value = doctor.bmdcRegNo || '';
+document.getElementById('experience').value = doctor.experience || '';
+document.getElementById('institutionName').value = doctor.institutionName || '';
+document.getElementById('designation').value = doctor.designation || '';
+document.getElementById('about').value = doctor.about || '';
 
-            const doctorData = {
-                name: document.getElementById('name').value,
-                specialty: document.getElementById('specialty').value,
-                bmdcRegNo: document.getElementById('bmdcRegNo').value,
-                experience: document.getElementById('experience').value,
-                institutionName: document.getElementById('institutionName').value,
-                designation: document.getElementById('designation').value,
-                about: document.getElementById('about').value,
-                degrees: document.getElementById('degrees').value,
-                fellowships: document.getElementById('fellowships').value,
-                trainings: document.getElementById('trainings').value,
-                specialized: document.getElementById('specialized').value,
-                fieldOfConcentration: document.getElementById('fieldOfConcentration').value,
-                chamberName: document.getElementById('chamberName').value,
-                chamberAddress: document.getElementById('chamberAddress').value,
-                chamberPhone: document.getElementById('chamberPhone').value,
-                chamberTime: document.getElementById('chamberTime').value,
-                consultationFee: document.getElementById('consultationFee').value,
-                maxPatients: document.getElementById('maxPatients').value,
-                availableDays: availableDaysInput ? availableDaysInput.split(',').map(d => d.trim()) : [],
-                email: document.getElementById('emailDoctor').value,
-                facebookLink: document.getElementById('facebookLink').value,
-                status: 'Active'
-            };
+// Academic Qualifications
+document.getElementById('degrees').value = doctor.degrees || '';
+document.getElementById('fellowships').value = doctor.fellowships || '';
+document.getElementById('trainings').value = doctor.trainings || '';
 
-            try {
-                if (editMode && doctorId) {
-                    await updateDoc(doc(db, 'doctors', doctorId), doctorData);
-                    showMessage('Doctor updated successfully!', 'success');
-                } else {
-                    doctorData.createdAt = serverTimestamp();
-                    if (currentDoctorUID) {
-                        doctorData.uid = currentDoctorUID;
-                    }
-                    await addDoc(collection(db, 'doctors'), doctorData);
-                    showMessage('Doctor added successfully!', 'success');
-                }
-                
-                document.getElementById('doctorForm').reset();
-                document.getElementById('doctorId').value = '';
-                document.getElementById('editMode').value = 'false';
-                document.getElementById('formTitle').textContent = 'Add New Doctor';
-                document.getElementById('submitBtn').textContent = 'Save Doctor';
-                document.getElementById('emailDoctor').readOnly = false;
-                currentDoctorUID = null;
-                toggleAddForm();
-                loadDoctors();
-                
-            } catch (error) {
-                console.error('Error saving doctor:', error);
-                showMessage(editMode ? 'Failed to update doctor.' : 'Failed to add doctor.', 'error');
-            }
-        });
+// Specialization & Work
+document.getElementById('specialized').value = doctor.specialized || '';
+document.getElementById('fieldOfConcentration').value = doctor.fieldOfConcentration || '';
 
+// Chamber Information
+document.getElementById('chamberName').value = doctor.chamberName || '';
+document.getElementById('chamberAddress').value = doctor.chamberAddress || '';
+document.getElementById('chamberPhone').value = doctor.chamberPhone || '';
+document.getElementById('chamberTime').value = doctor.chamberTime || '';
+document.getElementById('consultationFee').value = doctor.consultationFee || '';
+document.getElementById('maxPatients').value = doctor.maxPatients || '';
+document.getElementById('availableDays').value = doctor.availableDays ? doctor.availableDays.join(', ') : '';
+
+// Contact & Social Media
+document.getElementById('emailDoctor').value = doctor.email || '';
+document.getElementById('facebookLink').value = doctor.facebookLink || ''; 
+        
+        // Change form title and button
+        document.getElementById('formTitle').textContent = 'Edit Doctor';
+        document.getElementById('submitBtn').textContent = 'Update Doctor';
+        
+        // Show form
+        document.getElementById('addForm').classList.add('active');
+        
+        // Scroll to form
+        document.getElementById('addForm').scrollIntoView({ behavior: 'smooth' });
+        
+    } catch (error) {
+        console.error('Error loading doctor:', error);
+        showMessage('Failed to load doctor data', 'error');
+    }
+};
+
+// Add or Update doctor
+document.getElementById('doctorForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const availableDaysInput = document.getElementById('availableDays').value;
+    const editMode = document.getElementById('editMode').value === 'true';
+    const doctorId = document.getElementById('doctorId').value;
+
+    const doctorData = {
+    name: document.getElementById('name').value,
+    specialty: document.getElementById('specialty').value,
+    
+    // Professional Information
+    bmdcRegNo: document.getElementById('bmdcRegNo').value,
+    experience: document.getElementById('experience').value,
+    institutionName: document.getElementById('institutionName').value,
+    designation: document.getElementById('designation').value,
+    about: document.getElementById('about').value,
+    
+    // Academic Qualifications
+    degrees: document.getElementById('degrees').value,
+    fellowships: document.getElementById('fellowships').value,
+    trainings: document.getElementById('trainings').value,
+    
+    // Specialization & Work
+    specialized: document.getElementById('specialized').value,
+    fieldOfConcentration: document.getElementById('fieldOfConcentration').value,
+    
+    // Chamber Information
+    chamberName: document.getElementById('chamberName').value,
+    chamberAddress: document.getElementById('chamberAddress').value,
+    chamberPhone: document.getElementById('chamberPhone').value,
+    chamberTime: document.getElementById('chamberTime').value,
+    consultationFee: document.getElementById('consultationFee').value,
+    maxPatients: document.getElementById('maxPatients').value,
+    availableDays: availableDaysInput ? availableDaysInput.split(',').map(d => d.trim()) : [],
+    
+    // Contact & Social Media
+    email: document.getElementById('emailDoctor').value,
+    facebookLink: document.getElementById('facebookLink').value,
+    
+    status: 'Active'
+};
+
+    try {
+        if (editMode && doctorId) {
+            // UPDATE existing doctor
+            const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+            await updateDoc(doc(db, 'doctors', doctorId), doctorData);
+            showMessage('Doctor updated successfully!', 'success');
+        } else {
+            // ADD new doctor
+            doctorData.createdAt = serverTimestamp();
+            await addDoc(collection(db, 'doctors'), doctorData);
+            showMessage('Doctor added successfully!', 'success');
+        }
+        
+        document.getElementById('doctorForm').reset();
+        document.getElementById('doctorId').value = '';
+        document.getElementById('editMode').value = 'false';
+        document.getElementById('formTitle').textContent = 'Add New Doctor';
+        document.getElementById('submitBtn').textContent = 'Save Doctor';
+        toggleAddForm();
+        loadDoctors();
+        
+    } catch (error) {
+        console.error('Error saving doctor:', error);
+        showMessage(editMode ? 'Failed to update doctor.' : 'Failed to add doctor.', 'error');
+    }
+});
         // Load doctors
         async function loadDoctors() {
             try {
@@ -736,19 +683,17 @@
                     <div class="doctor-avatar">${doctor.name.charAt(0)}</div>
                     <h3>${doctor.name}</h3>
                     <div class="specialty">${doctor.specialty || 'Specialist'}</div>
-                    <div class="info">
-                        ${doctor.email ? `<strong>Email:</strong> ${doctor.email}<br>` : ''}
-                        <strong>Institution:</strong> ${doctor.institutionName || 'Not specified'}<br>
-                        <strong>Designation:</strong> ${doctor.designation || 'Not specified'}<br>
-                        <strong>Chamber:</strong> ${doctor.chamberName || 'Not specified'}<br>
-                        <strong>Max Patients:</strong> ${doctor.maxPatients || 'Not specified'}/day<br>
-                        <strong>Fee:</strong> ${doctor.consultationFee || 'Contact for details'}
-                        ${doctor.uid ? '<br><span style="color: #667eea; font-size: 12px;">✓ Login Account Created</span>' : ''}
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn btn-primary" style="flex: 1;" onclick="editDoctor('${doctor.id}')">Edit</button>
-                        <button class="btn btn-danger" style="flex: 1;" onclick="deleteDoctor('${doctor.id}')">Delete</button>
-                    </div>
+<div class="info">
+    <strong>Institution:</strong> ${doctor.institutionName || 'Not specified'}<br>
+    <strong>Designation:</strong> ${doctor.designation || 'Not specified'}<br>
+    <strong>Chamber:</strong> ${doctor.chamberName || 'Not specified'}<br>
+    <strong>Max Patients:</strong> ${doctor.maxPatients || 'Not specified'}/day<br>
+    <strong>Fee:</strong> ${doctor.consultationFee || 'Contact for details'}
+</div>
+<div class="card-actions">
+    <button class="btn btn-primary" style="flex: 1;" onclick="editDoctor('${doctor.id}')">Edit</button>
+    <button class="btn btn-danger" style="flex: 1;" onclick="deleteDoctor('${doctor.id}')">Delete</button>
+</div>
                 </div>
             `).join('');
         }
