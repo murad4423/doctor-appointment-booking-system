@@ -705,20 +705,13 @@
                             </div>
                         </div>
 
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">ðŸ“…</span>
-                                <span class="glance-label">Appointment Consultation Time</span>
-                            </div>
-                            <div class="time-range">
-                                ${doctor.chamberTime || 'Sat - Thu (7 PM - 10 PM)'}
-                            </div>
-                            ${doctor.availableDays && doctor.availableDays.length > 0 ? `
-                                <div class="days-list">
-                                    ${doctor.availableDays.map(day => `<span class="day-badge">${day}</span>`).join('')}
-                                </div>
-                            ` : ''}
-                        </div>
+<div class="glance-item">
+    <div class="glance-header">
+        <span class="glance-icon">ðŸ"œâ€¦</span>
+        <span class="glance-label">Appointment Consultation Time</span>
+    </div>
+    ${getScheduleDisplay(doctor)}
+</div>
 
                         <div class="glance-item">
                             <div class="glance-header">
@@ -817,15 +810,35 @@ onAuthStateChanged(auth, (user) => {
     isUserAuthenticated = !!user;
 });
 
-window.handleBooking = function(doctorId) {
-    if (isUserAuthenticated) {
-        window.location.href = `booking.html?doctor=${doctorId}`;
-    } else {
-        if (confirm('You need to login to book an appointment. Would you like to login now?')) {
-            window.location.href = `patient-auth.html?redirect=booking&doctor=${doctorId}`;
-        }
+function getScheduleDisplay(doctor) {
+    const schedule = doctor.schedule || {};
+    const enabledDays = Object.keys(schedule).filter(day => schedule[day].enabled);
+    
+    if (enabledDays.length === 0) {
+        // Fallback to old format if no schedule
+        return `
+            <div class="time-range">
+                ${doctor.chamberTime || 'Not available'}
+            </div>
+            ${doctor.availableDays && doctor.availableDays.length > 0 ? `
+                <div class="days-list">
+                    ${doctor.availableDays.map(day => `<span class="day-badge">${day}</span>`).join('')}
+                </div>
+            ` : ''}
+        `;
     }
-};
+
+    // Build display from schedule
+    let html = '';
+    
+    enabledDays.forEach(day => {
+        const dayData = schedule[day];
+        let timeSlots = dayData.slots.map(slot => `${slot.start} - ${slot.end}`).join(' & ');
+        html += `<div style="margin-bottom: 8px;"><span class="day-badge" style="background: #eff6ff; color: #2563eb;">${day}</span> <span style="color: #4b5563; font-size: 13px;">${timeSlots}</span></div>`;
+    });
+
+    return html;
+}
     </script>
 </body>
 </html>
