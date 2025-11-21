@@ -431,25 +431,20 @@
                 
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Chamber Time</label>
-                            <input type="text" id="chamberTime" placeholder="9:00 AM - 5:00 PM">
-                        </div>
-                        <div class="form-group">
                             <label>Consultation Fee</label>
                             <input type="text" id="consultationFee" placeholder="1500 BDT">
                         </div>
-                    </div>
-                
-                    <div class="form-row">
                         <div class="form-group">
                             <label>Maximum Patients Per Day</label>
                             <input type="number" id="maxPatients" placeholder="e.g., 30" min="1">
                         </div>
-                        <div class="form-group">
-                            <label>Available Days (comma separated)</label>
-                            <input type="text" id="availableDays" placeholder="Saturday, Sunday, Monday">
-                        </div>
                     </div>
+                    
+                    <div style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                        <p style="color: #1e40af; font-size: 14px; margin: 0;">
+                            <strong>📅 Schedule Management:</strong> Doctor working days and times are now managed from the <strong>Schedule Timings</strong> section in the Doctor Dashboard. They are no longer editable here.
+                        </p>
+                    </div>  
                 
                     <!-- Contact Information -->
                     <h3 style="color: #667eea; margin: 25px 0 15px 0; font-size: 18px;">📞 Contact & Social Media</h3>
@@ -547,7 +542,6 @@ window.closeRegistrationForm = function() {
     document.getElementById('doctorRegistrationForm').reset();
 };
 
-// Details form বন্ধ করার function
 window.closeDetailsForm = function() {
     document.getElementById('addForm').classList.remove('active');
     document.getElementById('doctorForm').reset();
@@ -555,12 +549,12 @@ window.closeDetailsForm = function() {
     document.getElementById('editMode').value = 'false';
     document.getElementById('formTitle').textContent = 'Add New Doctor';
     document.getElementById('submitBtn').textContent = 'Save Doctor';
+    document.getElementById('emailDoctor').readOnly = true;
 };
 
 // NEW: Edit doctor function
 window.editDoctor = async function(doctorId) {
     try {
-        // Import getDoc if not already imported at top
         const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
         
         const docRef = doc(db, 'doctors', doctorId);
@@ -573,45 +567,42 @@ window.editDoctor = async function(doctorId) {
         
         const doctor = docSnap.data();
 
-// Fill form with doctor data
-document.getElementById('doctorId').value = doctorId;
-document.getElementById('editMode').value = 'true';
+        // Fill form with doctor data
+        document.getElementById('doctorId').value = doctorId;
+        document.getElementById('editMode').value = 'true';
 
-// Basic
-document.getElementById('name').value = doctor.name || '';
-document.getElementById('specialty').value = doctor.specialty || '';
+        // Basic Information
+        document.getElementById('name').value = doctor.name || '';
+        document.getElementById('specialty').value = doctor.specialty || '';
 
-// Professional Information
-document.getElementById('bmdcRegNo').value = doctor.bmdcRegNo || '';
-document.getElementById('experience').value = doctor.experience || '';
-document.getElementById('institutionName').value = doctor.institutionName || '';
-document.getElementById('designation').value = doctor.designation || '';
-document.getElementById('about').value = doctor.about || '';
+        // Professional Information
+        document.getElementById('bmdcRegNo').value = doctor.bmdcRegNo || '';
+        document.getElementById('experience').value = doctor.experience || '';
+        document.getElementById('institutionName').value = doctor.institutionName || '';
+        document.getElementById('designation').value = doctor.designation || '';
+        document.getElementById('about').value = doctor.about || '';
 
-// Academic Qualifications
-document.getElementById('degrees').value = doctor.degrees || '';
-document.getElementById('fellowships').value = doctor.fellowships || '';
-document.getElementById('trainings').value = doctor.trainings || '';
+        // Academic Qualifications
+        document.getElementById('degrees').value = doctor.degrees || '';
+        document.getElementById('fellowships').value = doctor.fellowships || '';
+        document.getElementById('trainings').value = doctor.trainings || '';
 
-// Specialization & Work
-document.getElementById('specialized').value = doctor.specialized || '';
-document.getElementById('fieldOfConcentration').value = doctor.fieldOfConcentration || '';
+        // Specialization & Work
+        document.getElementById('specialized').value = doctor.specialized || '';
+        document.getElementById('fieldOfConcentration').value = doctor.fieldOfConcentration || '';
 
-// Chamber Information
-document.getElementById('chamberName').value = doctor.chamberName || '';
-document.getElementById('chamberAddress').value = doctor.chamberAddress || '';
-document.getElementById('chamberPhone').value = doctor.chamberPhone || '';
-document.getElementById('chamberTime').value = doctor.chamberTime || '';
-document.getElementById('consultationFee').value = doctor.consultationFee || '';
-document.getElementById('maxPatients').value = doctor.maxPatients || '';
-document.getElementById('availableDays').value = doctor.availableDays ? doctor.availableDays.join(', ') : '';
+        // Chamber Information (excluding chamberTime and availableDays)
+        document.getElementById('chamberName').value = doctor.chamberName || '';
+        document.getElementById('chamberAddress').value = doctor.chamberAddress || '';
+        document.getElementById('chamberPhone').value = doctor.chamberPhone || '';
+        document.getElementById('consultationFee').value = doctor.consultationFee || '';
+        document.getElementById('maxPatients').value = doctor.maxPatients || '';
 
-// Contact & Social Media
-document.getElementById('emailDoctor').value = doctor.email || '';
-// Edit mode এ email editable রাখুন
-document.getElementById('emailDoctor').readOnly = false;
-document.getElementById('facebookLink').value = doctor.facebookLink || ''; 
-        
+        // Contact & Social Media
+        document.getElementById('emailDoctor').value = doctor.email || '';
+        document.getElementById('emailDoctor').readOnly = false;
+        document.getElementById('facebookLink').value = doctor.facebookLink || '';
+
         // Change form title and button
         document.getElementById('formTitle').textContent = 'Edit Doctor';
         document.getElementById('submitBtn').textContent = 'Update Doctor';
@@ -697,11 +688,12 @@ document.getElementById('doctorRegistrationForm').addEventListener('submit', asy
 document.getElementById('doctorForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const availableDaysInput = document.getElementById('availableDays').value;
+     
     const editMode = document.getElementById('editMode').value === 'true';
     const doctorId = document.getElementById('doctorId').value;
 
-    const doctorData = {
+ const doctorData = {
+    // Basic Information
     name: document.getElementById('name').value,
     specialty: document.getElementById('specialty').value,
     
@@ -721,34 +713,34 @@ document.getElementById('doctorForm').addEventListener('submit', async (e) => {
     specialized: document.getElementById('specialized').value,
     fieldOfConcentration: document.getElementById('fieldOfConcentration').value,
     
-    // Chamber Information
+    // Chamber Information (excluding chamberTime and availableDays)
     chamberName: document.getElementById('chamberName').value,
     chamberAddress: document.getElementById('chamberAddress').value,
     chamberPhone: document.getElementById('chamberPhone').value,
-    chamberTime: document.getElementById('chamberTime').value,
     consultationFee: document.getElementById('consultationFee').value,
     maxPatients: document.getElementById('maxPatients').value,
-    availableDays: availableDaysInput ? availableDaysInput.split(',').map(d => d.trim()) : [],
     
     // Contact & Social Media
     email: document.getElementById('emailDoctor').value,
     facebookLink: document.getElementById('facebookLink').value,
     
-    status: 'Active'
+    status: 'Active',
+    updatedAt: new Date().toISOString()
 };
 
-    try {
-        if (editMode && doctorId) {
-            // UPDATE existing doctor
-            const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-            await updateDoc(doc(db, 'doctors', doctorId), doctorData);
-            showMessage('Doctor updated successfully!', 'success');
-        } else {
-            // ADD new doctor
-            doctorData.createdAt = serverTimestamp();
-            await addDoc(collection(db, 'doctors'), doctorData);
-            showMessage('Doctor added successfully!', 'success');
-        }
+try {
+    if (editMode && doctorId) {
+        // UPDATE existing doctor
+        const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        await updateDoc(doc(db, 'doctors', doctorId), doctorData);
+        showMessage('✅ Doctor updated successfully!', 'success');
+    } else {
+        // ADD new doctor
+        doctorData.createdAt = serverTimestamp();
+        doctorData.updatedAt = serverTimestamp();
+        await addDoc(collection(db, 'doctors'), doctorData);
+        showMessage('✅ Doctor added successfully!', 'success');
+    }
         
         document.getElementById('doctorForm').reset();
         document.getElementById('doctorId').value = '';
