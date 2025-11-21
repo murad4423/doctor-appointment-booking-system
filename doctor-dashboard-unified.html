@@ -921,24 +921,17 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Chamber Time</label>
-                                <input type="text" id="chamberTime" placeholder="9:00 AM - 5:00 PM">
-                            </div>
-                            <div class="form-group">
                                 <label>Consultation Fee (BDT)</label>
                                 <input type="text" id="consultationFee">
                             </div>
-                        </div>
-                        <div class="form-row">
                             <div class="form-group">
                                 <label>Max Patients Per Day</label>
                                 <input type="number" id="maxPatients" min="1">
                             </div>
-                            <div class="form-group">
-                                <label>Available Days</label>
-                                <input type="text" id="availableDays" placeholder="Saturday, Sunday, Monday">
-                            </div>
                         </div>
+                        <p style="color: #666; font-size: 13px; margin-top: 10px;">
+                            <i class="fas fa-info-circle"></i> Schedule your working days and times from the <strong>Schedule Timings</strong> section.
+                        </p>
                     </div>
 
                     <!-- Contact Information -->
@@ -1090,10 +1083,10 @@
             document.getElementById('chamberName').value = currentDoctor.chamberName || '';
             document.getElementById('chamberPhone').value = currentDoctor.chamberPhone || '';
             document.getElementById('chamberAddress').value = currentDoctor.chamberAddress || '';
-            document.getElementById('chamberTime').value = currentDoctor.chamberTime || '';
+           
             document.getElementById('consultationFee').value = currentDoctor.consultationFee || '';
             document.getElementById('maxPatients').value = currentDoctor.maxPatients || '';
-            document.getElementById('availableDays').value = currentDoctor.availableDays ? currentDoctor.availableDays.join(', ') : '';
+           
             document.getElementById('emailDoctor').value = currentDoctor.email || '';
             document.getElementById('facebookLink').value = currentDoctor.facebookLink || '';
         }
@@ -1261,12 +1254,15 @@ const q = query(bookingsRef, where('doctorId', '==', doctorId));
 
         // Initialize schedule section
         function initializeSchedule() {
-            const container = document.getElementById('scheduleDays');
-            const schedule = currentDoctor.schedule || {};
+    const container = document.getElementById('scheduleDays');
+    const schedule = currentDoctor.schedule || {};
 
-            container.innerHTML = daysOfWeek.map(day => {
-                const dayData = schedule[day] || { enabled: false, slots: [{ start: '', end: '' }, { start: '', end: '' }] };
-                
+    container.innerHTML = daysOfWeek.map(day => {
+        const dayData = schedule[day] || { 
+            enabled: false, 
+            slots: [{ start: '', end: '' }, { start: '', end: '' }],
+            maxPatients: currentDoctor.maxPatients || 20
+        };
                 return `
                     <div class="schedule-day-card">
                         <div class="schedule-day-header">
@@ -1321,48 +1317,61 @@ const q = query(bookingsRef, where('doctorId', '==', doctorId));
 
         // Save schedule
         window.saveSchedule = async function() {
-            const schedule = {};
+    const schedule = {};
+    const maxPatients = document.getElementById('maxPatients').value;
 
-            daysOfWeek.forEach(day => {
-                const toggle = document.querySelector(`.day-toggle[data-day="${day}"]`);
-                const enabled = toggle.checked;
+    daysOfWeek.forEach(day => {
+        const toggle = document.querySelector(`.day-toggle[data-day="${day}"]`);
+        const enabled = toggle.checked;
 
-                if (enabled) {
-                    const slots = [];
-                    for (let i = 0; i < 2; i++) {
-                        const start = document.querySelector(`.slot-input[data-day="${day}"][data-slot="${i}"][data-field="start"]`).value;
-                        const end = document.querySelector(`.slot-input[data-day="${day}"][data-slot="${i}"][data-field="end"]`).value;
-                        
-                        if (start && end) {
-                            slots.push({ start, end });
-                        }
-                    }
-
-                    if (slots.length > 0) {
-                        schedule[day] = { enabled: true, slots };
-                    }
-                }
-            });
-
-            try {
-                const doctorRef = doc(db, 'doctors', doctorId);
-                await updateDoc(doctorRef, { schedule });
+        if (enabled) {
+            const slots = [];
+            for (let i = 0; i < 2; i++) {
+                const start = document.querySelector(`.slot-input[data-day="${day}"][data-slot="${i}"][data-field="start"]`).value;
+                const end = document.querySelector(`.slot-input[data-day="${day}"][data-slot="${i}"][data-field="end"]`).value;
                 
-                currentDoctor.schedule = schedule;
-                showMessage('Schedule saved successfully!', 'success');
-            } catch (error) {
-                console.error('Error saving schedule:', error);
-                showMessage('Failed to save schedule', 'error');
+                if (start && end) {
+                    slots.push({ start, end });
+                }
             }
-        };
+
+            if (slots.length > 0) {
+                schedule[day] = { 
+                    enabled: true, 
+                    slots,
+                    maxPatients: parseInt(maxPatients) || 20
+                };
+            }
+        }
+    });
+
+    try {
+        const doctorRef = doc(db, 'doctors', doctorId);
+        // Save both schedule and update availableDays for backward compatibility
+        const availableDays = Object.keys(schedule).filter(day => schedule[day].enabled);
+        
+        await updateDoc(doctorRef, { 
+            schedule,
+            availableDays: availableDays,
+            maxPatients: parseInt(maxPatients) || 20
+        });
+        
+        currentDoctor.schedule = schedule;
+        currentDoctor.availableDays = availableDays;
+        currentDoctor.maxPatients = parseInt(maxPatients) || 20;
+        
+        showMessage('Schedule saved successfully!', 'success');
+    } catch (error) {
+        console.error('Error saving schedule:', error);
+        showMessage('Failed to save schedule', 'error');
+    }
+};
 
         // Profile form submission
         document.getElementById('profileForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const availableDaysInput = document.getElementById('availableDays').value;
-
-            const updatedData = {
+             const updatedData = {
                 name: document.getElementById('name').value,
                 specialty: document.getElementById('specialty').value,
                 bmdcRegNo: document.getElementById('bmdcRegNo').value,
