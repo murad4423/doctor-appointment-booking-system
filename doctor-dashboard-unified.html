@@ -1369,44 +1369,56 @@ const q = query(bookingsRef, where('doctorId', '==', doctorId));
 
         // Profile form submission
         document.getElementById('profileForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+    e.preventDefault();
 
-             const updatedData = {
-                name: document.getElementById('name').value,
-                specialty: document.getElementById('specialty').value,
-                bmdcRegNo: document.getElementById('bmdcRegNo').value,
-                experience: document.getElementById('experience').value,
-                institutionName: document.getElementById('institutionName').value,
-                designation: document.getElementById('designation').value,
-                about: document.getElementById('about').value,
-                degrees: document.getElementById('degrees').value,
-                fellowships: document.getElementById('fellowships').value,
-                trainings: document.getElementById('trainings').value,
-                specialized: document.getElementById('specialized').value,
-                fieldOfConcentration: document.getElementById('fieldOfConcentration').value,
-                chamberName: document.getElementById('chamberName').value,
-                chamberPhone: document.getElementById('chamberPhone').value,
-                chamberAddress: document.getElementById('chamberAddress').value,
-                chamberTime: document.getElementById('chamberTime').value,
-                consultationFee: document.getElementById('consultationFee').value,
-                maxPatients: document.getElementById('maxPatients').value,
-                availableDays: availableDaysInput ? availableDaysInput.split(',').map(d => d.trim()) : [],
-                facebookLink: document.getElementById('facebookLink').value
-            };
+    const updatedData = {
+        // Basic Information
+        name: document.getElementById('name').value,
+        specialty: document.getElementById('specialty').value,
+        
+        // Professional Information
+        bmdcRegNo: document.getElementById('bmdcRegNo').value,
+        experience: document.getElementById('experience').value,
+        institutionName: document.getElementById('institutionName').value,
+        designation: document.getElementById('designation').value,
+        about: document.getElementById('about').value,
+        
+        // Academic Qualifications
+        degrees: document.getElementById('degrees').value,
+        fellowships: document.getElementById('fellowships').value,
+        trainings: document.getElementById('trainings').value,
+        
+        // Specialization & Work
+        specialized: document.getElementById('specialized').value,
+        fieldOfConcentration: document.getElementById('fieldOfConcentration').value,
+        
+        // Chamber Information (excluding chamberTime and availableDays)
+        chamberName: document.getElementById('chamberName').value,
+        chamberPhone: document.getElementById('chamberPhone').value,
+        chamberAddress: document.getElementById('chamberAddress').value,
+        consultationFee: document.getElementById('consultationFee').value,
+        maxPatients: document.getElementById('maxPatients').value,
+        
+        // Contact & Social Media
+        facebookLink: document.getElementById('facebookLink').value,
+        
+        // Timestamp for tracking updates
+        updatedAt: new Date().toISOString()
+    };
 
-            try {
-                const doctorRef = doc(db, 'doctors', doctorId);
-                await updateDoc(doctorRef, updatedData);
+    try {
+        const doctorRef = doc(db, 'doctors', doctorId);
+        await updateDoc(doctorRef, updatedData);
 
-                Object.assign(currentDoctor, updatedData);
-                updateUIWithDoctorData();
-                
-                showMessage('Profile updated successfully!', 'success');
-            } catch (error) {
-                console.error('Error updating profile:', error);
-                showMessage('Failed to update profile', 'error');
-            }
-        });
+        Object.assign(currentDoctor, updatedData);
+        updateUIWithDoctorData();
+        
+        showMessage('Profile updated successfully!', 'success');
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        showMessage('Failed to update profile', 'error');
+    }
+});
 
         // Password change form
         document.getElementById('passwordForm').addEventListener('submit', async (e) => {
