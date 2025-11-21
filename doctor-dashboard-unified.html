@@ -1100,20 +1100,21 @@
 
         // Load dashboard statistics
         async function loadDashboardData() {
-    try {
-        const bookingsRef = collection(db, 'bookings');
-        const q = query(bookingsRef, where('doctorEmail', '==', currentDoctor.email));
-        const bookingsSnapshot = await getDocs(q);
+            try {
+               // Load appointments from bookings collection
+const bookingsRef = collection(db, 'bookings');
+const q = query(bookingsRef, where('doctorId', '==', doctorId));
+               const appointmentsSnapshot = await getDocs(q);
 
-        allAppointments = [];
-        bookingsSnapshot.forEach((doc) => {
+                allAppointments = [];
+                appointmentsSnapshot.forEach((doc) => {
                     allAppointments.push({ id: doc.id, ...doc.data() });
                 });
 
                 // Calculate statistics
                 const today = new Date().toISOString().split('T')[0];
-                const todayAppointments = allAppointments.filter(apt => apt.date === today);
-                
+                const todayAppointments = allAppointments.filter(apt => apt.appointmentDate === today);
+
                 // Get unique patients
                 const uniquePatients = new Set();
                 allAppointments.forEach(apt => {
@@ -1142,8 +1143,8 @@
         // Load recent appointments for dashboard
         function loadRecentAppointments() {
             const recent = allAppointments
-                .sort((a, b) => new Date(b.date) - new Date(a.date))
-                .slice(0, 5);
+    .sort((a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate))
+    .slice(0, 5);
 
             const tbody = document.getElementById('recentAppointmentsTable');
             
@@ -1196,9 +1197,9 @@
         <td>${apt.patientName || 'N/A'}</td>
         <td>${apt.patientEmail || 'N/A'}</td>
         <td>${apt.patientPhone || 'N/A'}</td>
-        <td>${apt.appointmentDate || 'N/A'}</td>
-        <td>${apt.appointmentTime || 'N/A'}</td>
-        <td><span class="status-badge status-${(apt.status || 'pending').toLowerCase()}">${apt.status || 'Pending'}</span></td>
+        <td>${apt.date || 'N/A'}</td>
+        <td>${apt.time || 'N/A'}</td>
+        <td><span class="status-badge status-${apt.status}">${apt.status || 'pending'}</span></td>
     </tr>
 `).join('');
         }
@@ -1209,25 +1210,24 @@
             const patientsMap = new Map();
             
             allAppointments.forEach(apt => {
-    if (apt.patientEmail) {
-        if (!patientsMap.has(apt.patientEmail)) {
-            patientsMap.set(apt.patientEmail, {
+    if (apt.email) {
+        if (!patientsMap.has(apt.email)) {
+            patientsMap.set(apt.email, {
                 name: apt.patientName,
-                email: apt.patientEmail,
-                phone: apt.patientPhone,
+                email: apt.email,
+                phone: apt.phone,
                 firstVisit: apt.appointmentDate,
-                totalVisit: 1
+                totalVisits: 1
             });
-                    } else {
-                        const patient = patientsMap.get(apt.patientEmail);
-                        patient.totalVisits++;
-                        // Update first visit if earlier
-                        if (new Date(apt.appointmentDate) < new Date(patient.firstVisit)) {
-    patient.firstVisit = apt.appointmentDate;
-}
-                    }
-                }
-            });
+        } else {
+            const patient = patientsMap.get(apt.email);
+            patient.totalVisits++;
+            if (new Date(apt.appointmentDate) < new Date(patient.firstVisit)) {
+                patient.firstVisit = apt.appointmentDate;
+            }
+        }
+    }
+});
 
             allPatients = Array.from(patientsMap.values());
             renderPatientsTable(allPatients);
