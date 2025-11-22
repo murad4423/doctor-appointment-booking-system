@@ -1643,25 +1643,36 @@
         });
 
         // Check for duplicate bookings
-        async function checkDuplicateBooking(doctorId, appointmentDate) {
-            if (!currentPatient) return false;
-            
-            try {
-                const q = query(
-                    collection(db, 'bookings'),
-                    where('patientUserId', '==', currentPatient.uid),
-                    where('doctorId', '==', doctorId),
-                    where('appointmentDate', '==', appointmentDate),
-                    where('status', '!=', 'Cancelled')
-                );
+// Check for duplicate bookings
+async function checkDuplicateBooking(doctorId, appointmentDate) {
+    if (!currentPatient) return false;
+    
+    try {
+        // First query: Check non-cancelled bookings
+        const q1 = query(
+            collection(db, 'bookings'),
+            where('patientUserId', '==', currentPatient.uid),
+            where('doctorId', '==', doctorId),
+            where('appointmentDate', '==', appointmentDate)
+        );
 
-                const querySnapshot = await getDocs(q);
-                return !querySnapshot.empty;
-            } catch (error) {
-                console.error('Error checking duplicate:', error);
-                return false;
+        const querySnapshot1 = await getDocs(q1);
+        
+        // Filter out cancelled bookings manually (since Firebase doesn't support != with multiple where clauses reliably)
+        const activeBookings = [];
+        querySnapshot1.forEach((doc) => {
+            const booking = doc.data();
+            if (booking.status !== 'Cancelled') {
+                activeBookings.push(booking);
             }
-        }
+        });
+
+        return activeBookings.length > 0;
+    } catch (error) {
+        console.error('Error checking duplicate:', error);
+        return false;
+    }
+}
 
         // Serial Modal Functions
         window.openSerialModal = function() {
