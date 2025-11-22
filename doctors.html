@@ -596,39 +596,56 @@
 
                         <div class="doctor-details">
                             <h1 class="doctor-name">${doctor.name}</h1>
-                            <div class="doctor-qualifications">${degrees}</div>
-                            ${training ? `<div class="doctor-training">Training/Courses: ${training}</div>` : ''}
-                            
-                            <div class="specialty-tags">
-                                <span class="specialty-tag">${doctor.specialty || 'Medical Specialist'}</span>
-                                <span class="specialty-tag secondary-tag">Internal Medicine</span>
-                            </div>
+${degrees ? `<div class="doctor-qualifications">${degrees}</div>` : ''}
+${training ? `<div class="doctor-training">${training}</div>` : ''}
 
-                            <div class="stats-row">
-                                <div class="stat-item">
-                                    <span class="stat-label">Total Experience</span>
-                                    <span class="stat-value">${experienceYears}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">BMDC Number</span>
-                                    <span class="stat-value">${doctor.bmdcRegNo || 'N/A'}</span>
-                                </div>
-                            </div>
-
-                            <div class="workplace-info">
-                                Working in <strong>${doctor.institutionName || 'Medical Center'}</strong>
-                            </div>
-                        </div>
-
-
-<div class="fee-card">
-    <div class="fee-label">Consultation Fee</div>
-    <div class="fee-amount">৳${doctor.consultationFee || '500'}</div>
-    <div class="fee-vat">(inc. VAT)</div>
-    <button onclick="handleBooking('${doctorId}')" class="book-btn" style="background: #2563eb; cursor: pointer;">
-        📅 Book Appointment
-    </button>
+<div class="specialty-tags">
+    ${doctor.specialty ? `<span class="specialty-tag">${doctor.specialty}</span>` : ''}
+    ${doctor.designation ? `<span class="specialty-tag secondary-tag">${doctor.designation}</span>` : ''}
 </div>
+<div class="stats-row">
+    ${doctor.experience ? `
+        <div class="stat-item">
+            <span class="stat-label">Total Experience</span>
+            <span class="stat-value">${doctor.experience}</span>
+        </div>
+    ` : ''}
+    ${doctor.bmdcRegNo ? `
+        <div class="stat-item">
+            <span class="stat-label">BMDC Number</span>
+            <span class="stat-value">${doctor.bmdcRegNo}</span>
+        </div>
+    ` : ''}
+    ${doctor.chamberPhone ? `
+        <div class="stat-item">
+            <span class="stat-label">Chamber Phone</span>
+            <span class="stat-value">${doctor.chamberPhone}</span>
+        </div>
+    ` : ''}
+</div>
+
+${doctor.institutionName ? `
+    <div class="workplace-info">
+        Working in <strong>${doctor.institutionName}</strong>
+    </div>
+` : ''}
+${doctor.chamberAddress ? `
+    <div class="workplace-info" style="margin-top: 5px;">
+        📍 <strong>${doctor.chamberAddress}</strong>
+    </div>
+` : ''}
+
+
+${doctor.consultationFee ? `
+    <div class="fee-card">
+        <div class="fee-label">Consultation Fee</div>
+        <div class="fee-amount">৳${doctor.consultationFee}</div>
+        <div class="fee-vat">(inc. VAT)</div>
+        <a href="booking.html?doctorId=${doctorId}" class="book-btn" style="background: #2563eb; cursor: pointer;">
+            📅 Book Appointment
+        </a>
+    </div>
+` : ''}
                     </div>
                 </div>
 
@@ -645,65 +662,73 @@
 
                 <div class="content-grid">
                     <div class="main-content">
-                        <div id="infoTab" class="tab-content active">
-                            <h2 class="content-title">About Doctor</h2>
-                            <div class="about-text">
-                                ${doctor.about || `${doctor.name}, ${degrees}. National Gastroliver Institute and Hospital, Dhaka. Currently practicing at ${doctor.institutionName || 'Medical Center'}. Dedicated to providing quality healthcare services to patients with extensive experience in the field of ${doctor.specialty || 'medicine'}.`}
-                            </div>
+<div id="infoTab" class="tab-content active">
+    ${doctor.about ? `
+        <h2 class="content-title">About Doctor</h2>
+        <div class="about-text">${doctor.about}</div>
+    ` : ''}
 
-                            ${doctor.specialized ? `
-                                <div class="info-section">
-                                    <h3 class="info-section-title">Areas of Specialization</h3>
-                                    <div class="info-text">${doctor.specialized}</div>
-                                </div>
-                            ` : ''}
+    ${doctor.specialized ? `
+        <div class="info-section">
+            <h3 class="info-section-title">Areas of Specialization</h3>
+            <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
+                ${doctor.specialized.split(',').map(item => `<li>${item.trim()}</li>`).join('')}
+            </ul>
+        </div>
+    ` : ''}
 
-                            ${doctor.fieldOfConcentration ? `
-                                <div class="info-section">
-                                    <h3 class="info-section-title">Field of Concentration</h3>
-                                    <div class="info-text">${doctor.fieldOfConcentration}</div>
-                                </div>
-                            ` : ''}
-                        </div>
+    ${doctor.fieldOfConcentration ? `
+        <div class="info-section">
+            <h3 class="info-section-title">Field of Concentration</h3>
+            <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
+                ${doctor.fieldOfConcentration.split(',').map(item => `<li>${item.trim()}</li>`).join('')}
+            </ul>
+        </div>
+    ` : ''}
+</div>
 
-                        <div id="educationTab" class="tab-content">
-                            <h2 class="content-title">Educational Qualifications</h2>
-                            
-                            ${doctor.degrees ? `
-                                <div class="info-section">
-                                    <h3 class="info-section-title">Academic Degrees</h3>
-                                    <div class="info-text">${doctor.degrees}</div>
-                                </div>
-                            ` : ''}
+<div id="educationTab" class="tab-content">
+    <h2 class="content-title">Educational Qualifications</h2>
+    
+    ${doctor.degrees ? `
+        <div class="info-section">
+            <h3 class="info-section-title">Academic Degrees</h3>
+            <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
+                ${doctor.degrees.split(',').map(item => `<li>${item.trim()}</li>`).join('')}
+            </ul>
+        </div>
+    ` : ''}
 
-                            ${doctor.fellowships ? `
-                                <div class="info-section">
-                                    <h3 class="info-section-title">Fellowships</h3>
-                                    <div class="info-text">${doctor.fellowships}</div>
-                                </div>
-                            ` : ''}
+    ${doctor.fellowships ? `
+        <div class="info-section">
+            <h3 class="info-section-title">Fellowships</h3>
+            <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
+                ${doctor.fellowships.split(',').map(item => `<li>${item.trim()}</li>`).join('')}
+            </ul>
+        </div>
+    ` : ''}
 
-                            ${doctor.trainings ? `
-                                <div class="info-section">
-                                    <h3 class="info-section-title">Training & Courses</h3>
-                                    <div class="info-text">${doctor.trainings}</div>
-                                </div>
-                            ` : ''}
-                        </div>
+    ${doctor.trainings ? `
+        <div class="info-section">
+            <h3 class="info-section-title">Training & Courses</h3>
+            <div class="info-text" style="white-space: pre-line;">${doctor.trainings}</div>
+        </div>
+    ` : ''}
+</div>
                     </div>
 
-                    <div class="sidebar">
-                        <h2 class="content-title">At a Glance</h2>
+<div class="sidebar">
+    <h2 class="content-title">At a Glance</h2>
 
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">â°</span>
-                                <span class="glance-label">Instant Consultation Time</span>
-                            </div>
-                            <div class="time-range">
-                                ${doctor.chamberTime || 'Mon - Sat (7 PM - 10 PM)'}
-                            </div>
-                        </div>
+    ${doctor.chamberName ? `
+        <div class="glance-item">
+            <div class="glance-header">
+                <span class="glance-icon">🏥</span>
+                <span class="glance-label">Chamber Name</span>
+            </div>
+            <div class="glance-value">${doctor.chamberName}</div>
+        </div>
+    ` : ''}
 
 <div class="glance-item">
     <div class="glance-header">
@@ -713,59 +738,59 @@
     ${getScheduleDisplay(doctor)}
 </div>
 
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">ðŸ’°</span>
-                                <span class="glance-label">Fees</span>
-                            </div>
-                            <div class="fee-grid">
-                                <div class="fee-item">
-                                    <div class="fee-item-label">Consultation Fee</div>
-                                    <div class="fee-item-value">à§³${doctor.consultationFee || '500'}</div>
-                                    <div class="fee-item-note">(inc. VAT)</div>
-                                </div>
-                                <div class="fee-item">
-                                    <div class="fee-item-label">Follow-Up Fee</div>
-                                    <div class="fee-item-value">à§³${doctor.followUpFee || '400'}</div>
-                                    <div class="fee-item-note">(Within 14 days)</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">ðŸ‘¥</span>
-                                <span class="glance-label">Patient Attended</span>
-                            </div>
-                            <div class="glance-value">${doctor.patientsAttended || '1541'}</div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">ðŸ“</span>
-                                <span class="glance-label">Joined DocTime</span>
-                            </div>
-                            <div class="glance-value">August 01, 2021</div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">â±ï¸</span>
-                                <span class="glance-label">Avg. Consultation Time</span>
-                            </div>
-                            <div class="glance-value">5 minutes</div>
-                        </div>
-
-                        <div class="glance-item">
-                            <div class="glance-header">
-                                <span class="glance-icon">ðŸ”¢</span>
-                                <span class="glance-label">Doctor Code</span>
-                            </div>
-                            <div class="glance-value">${doctor.doctorCode || 'DT' + doctorId.substring(0, 4).toUpperCase()}</div>
-                        </div>
-                    </div>
+${doctor.consultationFee || doctor.followUpFee ? `
+    <div class="glance-item">
+        <div class="glance-header">
+            <span class="glance-icon">💰</span>
+            <span class="glance-label">Fees</span>
+        </div>
+        <div class="fee-grid">
+            ${doctor.consultationFee ? `
+                <div class="fee-item">
+                    <div class="fee-item-label">Consultation Fee</div>
+                    <div class="fee-item-value">৳${doctor.consultationFee}</div>
+                    <div class="fee-item-note">(inc. VAT)</div>
                 </div>
-            `;
+            ` : ''}
+            ${doctor.followUpFee ? `
+                <div class="fee-item">
+                    <div class="fee-item-label">Follow-Up Fee</div>
+                    <div class="fee-item-value">৳${doctor.followUpFee}</div>
+                    <div class="fee-item-note">(Within 14 days)</div>
+                </div>
+            ` : ''}
+        </div>
+    </div>
+` : ''}
+
+
+${doctor.email ? `
+    <div class="glance-item">
+        <div class="glance-header">
+            <span class="glance-icon">📧</span>
+            <span class="glance-label">Email</span>
+        </div>
+        <div class="glance-value" style="font-size: 13px; word-break: break-all;">${doctor.email}</div>
+    </div>
+` : ''}
+
+${doctor.facebookLink ? `
+    <div class="glance-item">
+        <div class="glance-header">
+            <span class="glance-icon">📱</span>
+            <span class="glance-label">Social Media</span>
+        </div>
+        <a href="${doctor.facebookLink}" target="_blank" class="glance-value" style="color: #2563eb; text-decoration: none; font-size: 13px;">Facebook Profile →</a>
+    </div>
+` : ''}
+
+<div class="glance-item">
+    <div class="glance-header">
+        <span class="glance-icon">🆔</span>
+        <span class="glance-label">Doctor ID</span>
+    </div>
+    <div class="glance-value">${doctorId}</div>
+</div>
 
             // Tab switching
             const tabs = document.querySelectorAll('.tab');
