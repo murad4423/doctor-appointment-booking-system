@@ -483,7 +483,10 @@
             font-size: 12px;
             font-weight: 600;
         }
-
+        .status-skipped {
+    background: #fff3cd;
+    color: #856404;
+}
         .status-pending {
             background: #fff3cd;
             color: #856404;
@@ -644,6 +647,23 @@
     background: #95a5a6;
     cursor: not-allowed;
     transform: none;
+}
+
+.btn-undo {
+    background: #9b59b6;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-undo:hover {
+    background: #8e44ad;
+    transform: translateY(-2px);
 }
 
 .row-completed {
@@ -918,30 +938,34 @@
                 </div>
         
                 <!-- Filter Statistics -->
-                <div id="filterStats" style="padding: 15px 20px; background: white; border-bottom: 1px solid #e9ecef; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 18px; font-weight: 700; color: #667eea;" id="statNewPatients">0</div>
-                        <div style="font-size: 12px; color: #7f8c8d;">New Patients</div>
+                <div id="filterStats" style="padding: 15px 20px; background: white; border-bottom: 1px solid #e9ecef;">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 18px; font-weight: 700; color: #667eea;" id="statNewPatients">0</div>
+                            <div style="font-size: 12px; color: #7f8c8d;">New Patients</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 18px; font-weight: 700; color: #764ba2;" id="statFollowups">0</div>
+                            <div style="font-size: 12px; color: #7f8c8d;">Follow-ups</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 18px; font-weight: 700; color: #f5576c;" id="statReports">0</div>
+                            <div style="font-size: 12px; color: #7f8c8d;">Reports</div>
+                        </div>
                     </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 18px; font-weight: 700; color: #764ba2;" id="statFollowups">0</div>
-                        <div style="font-size: 12px; color: #7f8c8d;">Follow-ups</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 18px; font-weight: 700; color: #f5576c;" id="statReports">0</div>
-                        <div style="font-size: 12px; color: #7f8c8d;">Reports</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 18px; font-weight: 700; color: #43e97b;" id="statCompleted">0</div>
-                        <div style="font-size: 12px; color: #7f8c8d;">Completed</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 18px; font-weight: 700; color: #e74c3c;" id="statCancelled">0</div>
-                        <div style="font-size: 12px; color: #7f8c8d;">Cancelled</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 18px; font-weight: 700; color: #f39c12;" id="statSkipped">0</div>
-                        <div style="font-size: 12px; color: #7f8c8d;">Skipped Today</div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 18px; font-weight: 700; color: #43e97b;" id="statCompleted">0</div>
+                            <div style="font-size: 12px; color: #7f8c8d;">Completed</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 18px; font-weight: 700; color: #e74c3c;" id="statCancelled">0</div>
+                            <div style="font-size: 12px; color: #7f8c8d;">Cancelled</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 18px; font-weight: 700; color: #f39c12;" id="statSkipped">0</div>
+                            <div style="font-size: 12px; color: #7f8c8d;">Skipped Today</div>
+                        </div>
                     </div>
                 </div>
         
@@ -1233,6 +1257,8 @@
         let doctorId = null;
         let allAppointments = [];
         let allPatients = [];
+// Track previous states for undo functionality
+let appointmentStateHistory = new Map(); // appointmentId -> previous state
 
         // Days of week for schedule
         const daysOfWeek = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
@@ -1324,6 +1350,11 @@ const q = query(bookingsRef, where('doctorId', '==', doctorId));
                     allAppointments.push({ id: doc.id, ...doc.data() });
                 });
 
+                // Debug: Check appointment types
+console.log('Sample appointments:', allAppointments.slice(0, 3));
+console.log('Appointment types found:', [...new Set(allAppointments.map(a => a.appointmentType))]);
+
+
                 // Calculate statistics
                 const today = new Date().toISOString().split('T')[0];
                 const todayAppointments = allAppointments.filter(apt => apt.appointmentDate === today);
@@ -1383,33 +1414,50 @@ function getTypeClass(type) {
     return classMap[type] || 'type-new';
 }
 
-// Mark appointment as complete
+// Save current state before making changes
+function saveAppointmentState(appointmentId) {
+    const apt = allAppointments.find(a => a.id === appointmentId);
+    if (apt) {
+        appointmentStateHistory.set(appointmentId, {
+            status: apt.status,
+            completedAt: apt.completedAt,
+            cancelledAt: apt.cancelledAt,
+            skippedAt: apt.skippedAt,
+            wasSkipped: apt.wasSkipped
+        });
+    }
+}
+
 // Mark appointment as complete
 async function markAppointmentComplete(appointmentId) {
     try {
-        const appointmentRef = doc(db, 'bookings', appointmentId);
         const apt = allAppointments.find(a => a.id === appointmentId);
         
-        // If previously skipped, reduce skip count
+        // Save current state for undo
+        saveAppointmentState(appointmentId);
+        
+        const appointmentRef = doc(db, 'bookings', appointmentId);
         const updateData = { 
             status: 'completed',
             completedAt: new Date().toISOString()
         };
         
-        if (apt.status === 'skipped') {
+        // Track if it was previously skipped
+        if (apt && apt.status === 'skipped') {
             updateData.wasSkipped = true;
         }
         
         await updateDoc(appointmentRef, updateData);
         
-        apt.status = 'completed';
-        apt.completedAt = new Date().toISOString();
+        if (apt) {
+            apt.status = 'completed';
+            apt.completedAt = new Date().toISOString();
+            if (updateData.wasSkipped) {
+                apt.wasSkipped = true;
+            }
+        }
         
-        updatePatientsYetToSee();
-        loadRecentAppointments();
-        loadAppointmentsData();
-        loadDashboardData();
-        
+        refreshAllData();
         showMessage('Appointment marked as completed!', 'success');
     } catch (error) {
         console.error('Error marking appointment complete:', error);
@@ -1424,22 +1472,31 @@ async function cancelAppointment(appointmentId) {
     }
     
     try {
+        // Save current state for undo
+        saveAppointmentState(appointmentId);
+        
         const appointmentRef = doc(db, 'bookings', appointmentId);
-        await updateDoc(appointmentRef, { 
+        const updateData = { 
             status: 'cancelled',
             cancelledAt: new Date().toISOString()
-        });
+        };
         
         const apt = allAppointments.find(a => a.id === appointmentId);
+        if (apt && apt.status === 'skipped') {
+            updateData.wasSkipped = true;
+        }
+        
+        await updateDoc(appointmentRef, updateData);
+        
         if (apt) {
             apt.status = 'cancelled';
             apt.cancelledAt = new Date().toISOString();
+            if (updateData.wasSkipped) {
+                apt.wasSkipped = true;
+            }
         }
         
-        updatePatientsYetToSee();
-        loadRecentAppointments();
-        loadAppointmentsData();
-        
+        refreshAllData();
         showMessage('Appointment cancelled!', 'success');
     } catch (error) {
         console.error('Error cancelling appointment:', error);
@@ -1450,6 +1507,9 @@ async function cancelAppointment(appointmentId) {
 // Skip appointment
 async function skipAppointment(appointmentId) {
     try {
+        // Save current state for undo
+        saveAppointmentState(appointmentId);
+        
         const appointmentRef = doc(db, 'bookings', appointmentId);
         await updateDoc(appointmentRef, { 
             status: 'skipped',
@@ -1462,10 +1522,7 @@ async function skipAppointment(appointmentId) {
             apt.skippedAt = new Date().toISOString();
         }
         
-        updatePatientsYetToSee();
-        loadRecentAppointments();
-        loadAppointmentsData();
-        
+        refreshAllData();
         showMessage('Appointment skipped!', 'success');
     } catch (error) {
         console.error('Error skipping appointment:', error);
@@ -1473,10 +1530,80 @@ async function skipAppointment(appointmentId) {
     }
 }
 
+// Undo appointment action
+async function undoAppointment(appointmentId) {
+    if (!confirm('Are you sure you want to undo the last action for this appointment?')) {
+        return;
+    }
+    
+    try {
+        const previousState = appointmentStateHistory.get(appointmentId);
+        
+        if (!previousState) {
+            showMessage('No previous state to restore', 'error');
+            return;
+        }
+        
+        const appointmentRef = doc(db, 'bookings', appointmentId);
+        const updateData = { 
+            status: previousState.status
+        };
+        
+        // Restore previous timestamps
+        if (previousState.completedAt) {
+            updateData.completedAt = previousState.completedAt;
+        } else {
+            updateData.completedAt = null;
+        }
+        
+        if (previousState.cancelledAt) {
+            updateData.cancelledAt = previousState.cancelledAt;
+        } else {
+            updateData.cancelledAt = null;
+        }
+        
+        if (previousState.skippedAt) {
+            updateData.skippedAt = previousState.skippedAt;
+        } else {
+            updateData.skippedAt = null;
+        }
+        
+        if (previousState.wasSkipped !== undefined) {
+            updateData.wasSkipped = previousState.wasSkipped;
+        }
+        
+        await updateDoc(appointmentRef, updateData);
+        
+        const apt = allAppointments.find(a => a.id === appointmentId);
+        if (apt) {
+            Object.assign(apt, updateData);
+        }
+        
+        // Remove from history after successful undo
+        appointmentStateHistory.delete(appointmentId);
+        
+        refreshAllData();
+        showMessage('Action undone successfully!', 'success');
+    } catch (error) {
+        console.error('Error undoing appointment:', error);
+        showMessage('Failed to undo action', 'error');
+    }
+}
+
+// Helper function to refresh all data
+function refreshAllData() {
+    updatePatientsYetToSee();
+    loadRecentAppointments();
+    loadAppointmentsData();
+    loadDashboardData();
+}
+
 // Make functions globally available
 window.markAppointmentComplete = markAppointmentComplete;
 window.cancelAppointment = cancelAppointment;
 window.skipAppointment = skipAppointment;
+window.undoAppointment = undoAppointment;
+
 
 // Update filter statistics
 function updateFilterStats() {
@@ -1537,7 +1664,7 @@ function renderAppointmentsTableNew(appointments) {
         return;
     }
 
-    // Sort appointments: by date first, then by serial number, then by status priority
+    // Sort appointments: by date first, then by status priority, then by serial number
     const sortedAppointments = appointments.sort((a, b) => {
         // First sort by date
         if (a.appointmentDate !== b.appointmentDate) {
@@ -1558,7 +1685,11 @@ function renderAppointmentsTableNew(appointments) {
     });
 
     tbody.innerHTML = sortedAppointments.map((apt) => {
-        const isDisabled = ['completed', 'cancelled', 'skipped'].includes(apt.status);
+        // Skip button is never disabled
+        // Complete and Cancel are disabled after being clicked OR after the other is clicked
+        const isCompleteDisabled = apt.status === 'completed' || apt.status === 'cancelled';
+        const isCancelDisabled = apt.status === 'completed' || apt.status === 'cancelled';
+        
         const rowClass = apt.status === 'completed' ? 'row-completed' : 
                         apt.status === 'skipped' ? 'row-skipped' : 
                         apt.status === 'cancelled' ? 'row-cancelled' : '';
@@ -1584,16 +1715,18 @@ function renderAppointmentsTableNew(appointments) {
                         <i class="fas fa-eye"></i> View
                     </button>
                     <button class="btn-complete" onclick="markAppointmentComplete('${apt.id}')" 
-                        ${isDisabled ? 'disabled' : ''}>
+                        ${isCompleteDisabled ? 'disabled' : ''}>
                         <i class="fas fa-check"></i> Complete
                     </button>
-                    <button class="btn-skip" onclick="skipAppointment('${apt.id}')" 
-                        ${isDisabled ? 'disabled' : ''}>
+                    <button class="btn-skip" onclick="skipAppointment('${apt.id}')">
                         <i class="fas fa-forward"></i> Skip
                     </button>
                     <button class="btn-cancel" onclick="cancelAppointment('${apt.id}')" 
-                        ${isDisabled ? 'disabled' : ''}>
+                        ${isCancelDisabled ? 'disabled' : ''}>
                         <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button class="btn-undo" onclick="undoAppointment('${apt.id}')">
+                        <i class="fas fa-undo"></i> Undo
                     </button>
                 </div>
             </td>
@@ -1668,23 +1801,28 @@ function loadRecentAppointments() {
         return;
     }
 
-    tbody.innerHTML = recent.map((apt, index) => `
-        <tr>
-            <td><strong>${apt.serialNumber || index + 1}</strong></td>
-            <td>${apt.patientName || 'N/A'}</td>
-            <td>${apt.appointmentDate || 'N/A'}</td>
-            <td>
-                <span class="appointment-type-badge ${getTypeClass(apt.appointmentType)}">
-                    ${getTypeDisplay(apt.appointmentType)}
-                </span>
-            </td>
-<td>
-    <span class="status-badge status-${(apt.status || 'pending').toLowerCase()}">
-        ${apt.status || 'Pending'}
-    </span>
-</td>
-        </tr>
-    `).join('');
+    tbody.innerHTML = recent.map((apt, index) => {
+    const rowClass = apt.status === 'completed' ? 'row-completed' : 
+                    apt.status === 'skipped' ? 'row-skipped' : 
+                    apt.status === 'cancelled' ? 'row-cancelled' : '';
+    
+    return `
+    <tr class="${rowClass}">
+        <td><strong>${apt.serialNumber || index + 1}</strong></td>
+        <td>${apt.patientName || 'N/A'}</td>
+        <td>${apt.appointmentDate || 'N/A'}</td>
+        <td>
+            <span class="appointment-type-badge ${getTypeClass(apt.appointmentType)}">
+                ${getTypeDisplay(apt.appointmentType)}
+            </span>
+        </td>
+        <td>
+            <span class="status-badge status-${(apt.status || 'pending').toLowerCase()}">
+                ${apt.status || 'Pending'}
+            </span>
+        </td>
+    </tr>
+`}).join('');
     
     updatePatientsYetToSee();
 }
