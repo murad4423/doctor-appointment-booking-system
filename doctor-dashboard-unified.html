@@ -600,6 +600,63 @@
     transform: none;
 }
 
+.btn-cancel {
+    background: #e74c3c;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+}
+
+.btn-cancel:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-skip {
+    background: #f39c12;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-skip:hover {
+    background: #d68910;
+    transform: translateY(-2px);
+}
+
+.btn-skip:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.row-completed {
+    background-color: #d4edda !important;
+}
+
+.row-skipped {
+    background-color: #fff3cd !important;
+}
+
+.row-cancelled {
+    background-color: #f8d7da !important;
+}
 .appointment-type-badge {
     padding: 6px 12px;
     border-radius: 20px;
@@ -768,16 +825,16 @@
                         <p>Total Revenue</p>
                     </div>
                 </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon today">
-                    <i class="fas fa-hourglass-half"></i>
+                <div class="stat-card">
+                    <div class="stat-icon patients">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="patientsYetToSee">0</h3>
+                        <p>Patients Yet to See</p>
+                    </div>
                 </div>
-                <div class="stat-info">
-                    <h3 id="patientsYetToSee">0</h3>
-                    <p>Patients Yet to See</p>
                 </div>
-            </div>
 
             <div class="table-container">
                 <div class="table-header">
@@ -790,7 +847,7 @@
                             <th>Patient Name</th>
                             <th>Date</th>
                             <th>Type</th>
-                            <th>Actions</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody id="recentAppointmentsTable">
@@ -818,11 +875,18 @@
                 <!-- Filter Section -->
                 <div style="padding: 20px; background: #f8f9fa; border-bottom: 1px solid #e9ecef; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                     <div>
-                        <label style="font-weight: 600; color: #2c3e50; font-size: 13px; display: block; margin-bottom: 8px;">
-                            <i class="fas fa-filter"></i> Filter by Date
-                        </label>
-                        <input type="date" id="dateFilter" style="padding: 8px 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; width: 100%;">
-                    </div>
+                        <div>
+                            <label style="font-weight: 600; color: #2c3e50; font-size: 13px; display: block; margin-bottom: 8px;">
+                                <i class="fas fa-filter"></i> From Date
+                            </label>
+                            <input type="date" id="dateFilterFrom" style="padding: 8px 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; width: 100%;">
+                        </div>
+                        <div>
+                            <label style="font-weight: 600; color: #2c3e50; font-size: 13px; display: block; margin-bottom: 8px;">
+                                <i class="fas fa-filter"></i> To Date
+                            </label>
+                            <input type="date" id="dateFilterTo" style="padding: 8px 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; width: 100%;">
+                        </div>
                     <div>
                         <label style="font-weight: 600; color: #2c3e50; font-size: 13px; display: block; margin-bottom: 8px;">
                             <i class="fas fa-tag"></i> Filter by Type
@@ -840,9 +904,9 @@
                         </label>
                         <select id="statusFilter" style="padding: 8px 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; width: 100%;">
                             <option value="">All Status</option>
-                            <option value="pending">Pending</option>
                             <option value="confirmed">Confirmed</option>
                             <option value="completed">Completed</option>
+                            <option value="skipped">Skipped</option>
                             <option value="cancelled">Cancelled</option>
                         </select>
                     </div>
@@ -854,7 +918,7 @@
                 </div>
         
                 <!-- Filter Statistics -->
-                <div id="filterStats" style="padding: 15px 20px; background: white; border-bottom: 1px solid #e9ecef; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                <div id="filterStats" style="padding: 15px 20px; background: white; border-bottom: 1px solid #e9ecef; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px;">
                     <div style="text-align: center;">
                         <div style="font-size: 18px; font-weight: 700; color: #667eea;" id="statNewPatients">0</div>
                         <div style="font-size: 12px; color: #7f8c8d;">New Patients</div>
@@ -869,7 +933,15 @@
                     </div>
                     <div style="text-align: center;">
                         <div style="font-size: 18px; font-weight: 700; color: #43e97b;" id="statCompleted">0</div>
-                        <div style="font-size: 12px; color: #7f8c8d;">Completed Today</div>
+                        <div style="font-size: 12px; color: #7f8c8d;">Completed</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 18px; font-weight: 700; color: #e74c3c;" id="statCancelled">0</div>
+                        <div style="font-size: 12px; color: #7f8c8d;">Cancelled</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 18px; font-weight: 700; color: #f39c12;" id="statSkipped">0</div>
+                        <div style="font-size: 12px; color: #7f8c8d;">Skipped Today</div>
                     </div>
                 </div>
         
@@ -1062,6 +1134,16 @@
                                 <input type="text" id="consultationFee">
                             </div>
                             <div class="form-group">
+                                <label>Follow-up Fee (BDT)</label>
+                                <input type="text" id="followupFee">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Report View Fee (BDT)</label>
+                                <input type="text" id="reportFee">
+                            </div>
+                            <div class="form-group">
                                 <label>Max Patients Per Day</label>
                                 <input type="number" id="maxPatients" min="1">
                             </div>
@@ -1223,7 +1305,8 @@
            
             document.getElementById('consultationFee').value = currentDoctor.consultationFee || '';
             document.getElementById('maxPatients').value = currentDoctor.maxPatients || '';
-           
+            document.getElementById('followupFee').value = currentDoctor.followupFee || '';
+            document.getElementById('reportFee').value = currentDoctor.reportFee || '';
             document.getElementById('emailDoctor').value = currentDoctor.email || '';
             document.getElementById('facebookLink').value = currentDoctor.facebookLink || '';
         }
@@ -1301,19 +1384,26 @@ function getTypeClass(type) {
 }
 
 // Mark appointment as complete
+// Mark appointment as complete
 async function markAppointmentComplete(appointmentId) {
     try {
         const appointmentRef = doc(db, 'bookings', appointmentId);
-        await updateDoc(appointmentRef, { 
+        const apt = allAppointments.find(a => a.id === appointmentId);
+        
+        // If previously skipped, reduce skip count
+        const updateData = { 
             status: 'completed',
             completedAt: new Date().toISOString()
-        });
+        };
         
-        // Update local data
-        const apt = allAppointments.find(a => a.id === appointmentId);
-        if (apt) {
-            apt.status = 'completed';
+        if (apt.status === 'skipped') {
+            updateData.wasSkipped = true;
         }
+        
+        await updateDoc(appointmentRef, updateData);
+        
+        apt.status = 'completed';
+        apt.completedAt = new Date().toISOString();
         
         updatePatientsYetToSee();
         loadRecentAppointments();
@@ -1327,20 +1417,108 @@ async function markAppointmentComplete(appointmentId) {
     }
 }
 
+// Cancel appointment
+async function cancelAppointment(appointmentId) {
+    if (!confirm('Are you sure you want to cancel this appointment?')) {
+        return;
+    }
+    
+    try {
+        const appointmentRef = doc(db, 'bookings', appointmentId);
+        await updateDoc(appointmentRef, { 
+            status: 'cancelled',
+            cancelledAt: new Date().toISOString()
+        });
+        
+        const apt = allAppointments.find(a => a.id === appointmentId);
+        if (apt) {
+            apt.status = 'cancelled';
+            apt.cancelledAt = new Date().toISOString();
+        }
+        
+        updatePatientsYetToSee();
+        loadRecentAppointments();
+        loadAppointmentsData();
+        
+        showMessage('Appointment cancelled!', 'success');
+    } catch (error) {
+        console.error('Error cancelling appointment:', error);
+        showMessage('Failed to cancel appointment', 'error');
+    }
+}
+
+// Skip appointment
+async function skipAppointment(appointmentId) {
+    try {
+        const appointmentRef = doc(db, 'bookings', appointmentId);
+        await updateDoc(appointmentRef, { 
+            status: 'skipped',
+            skippedAt: new Date().toISOString()
+        });
+        
+        const apt = allAppointments.find(a => a.id === appointmentId);
+        if (apt) {
+            apt.status = 'skipped';
+            apt.skippedAt = new Date().toISOString();
+        }
+        
+        updatePatientsYetToSee();
+        loadRecentAppointments();
+        loadAppointmentsData();
+        
+        showMessage('Appointment skipped!', 'success');
+    } catch (error) {
+        console.error('Error skipping appointment:', error);
+        showMessage('Failed to skip appointment', 'error');
+    }
+}
+
+// Make functions globally available
+window.markAppointmentComplete = markAppointmentComplete;
+window.cancelAppointment = cancelAppointment;
+window.skipAppointment = skipAppointment;
+
 // Update filter statistics
 function updateFilterStats() {
-    const today = new Date().toISOString().split('T')[0];
-    const todayAppointments = allAppointments.filter(apt => apt.appointmentDate === today);
+    const dateFrom = document.getElementById('dateFilterFrom')?.value;
+    const dateTo = document.getElementById('dateFilterTo')?.value;
+    const typeFilter = document.getElementById('typeFilter')?.value;
+    const statusFilter = document.getElementById('statusFilter')?.value;
     
-    const newPatients = todayAppointments.filter(apt => apt.appointmentType === 'new').length;
-    const followups = todayAppointments.filter(apt => apt.appointmentType === 'followup').length;
-    const reports = todayAppointments.filter(apt => apt.appointmentType === 'report').length;
-    const completed = todayAppointments.filter(apt => apt.status === 'completed').length;
+    let filtered = allAppointments;
+    
+    // Apply filters
+    if (dateFrom && dateTo) {
+        filtered = filtered.filter(apt => apt.appointmentDate >= dateFrom && apt.appointmentDate <= dateTo);
+    } else if (dateFrom) {
+        filtered = filtered.filter(apt => apt.appointmentDate >= dateFrom);
+    } else if (dateTo) {
+        filtered = filtered.filter(apt => apt.appointmentDate <= dateTo);
+    }
+    
+    if (typeFilter) {
+        filtered = filtered.filter(apt => apt.appointmentType === typeFilter);
+    }
+    
+    if (statusFilter) {
+        filtered = filtered.filter(apt => apt.status === statusFilter);
+    }
+    
+    const today = new Date().toISOString().split('T')[0];
+    
+    const newPatients = filtered.filter(apt => apt.appointmentType === 'new').length;
+    const followups = filtered.filter(apt => apt.appointmentType === 'followup').length;
+    const reports = filtered.filter(apt => apt.appointmentType === 'report').length;
+    const completed = filtered.filter(apt => apt.status === 'completed').length;
+    const cancelled = filtered.filter(apt => apt.status === 'cancelled').length;
+    const skipped = filtered.filter(apt => apt.status === 'skipped' && apt.appointmentDate === today).length;
     
     document.getElementById('statNewPatients').textContent = newPatients;
     document.getElementById('statFollowups').textContent = followups;
     document.getElementById('statReports').textContent = reports;
     document.getElementById('statCompleted').textContent = completed;
+    document.getElementById('statCancelled').textContent = cancelled;
+    document.getElementById('statSkipped').textContent = skipped;
 }
 
 // Render appointments table with new format
@@ -1359,9 +1537,35 @@ function renderAppointmentsTableNew(appointments) {
         return;
     }
 
-    tbody.innerHTML = appointments.map((apt, index) => `
-        <tr>
-            <td><strong>${apt.serialNumber || index + 1}</strong></td>
+    // Sort appointments: by date first, then by serial number, then by status priority
+    const sortedAppointments = appointments.sort((a, b) => {
+        // First sort by date
+        if (a.appointmentDate !== b.appointmentDate) {
+            return new Date(a.appointmentDate) - new Date(b.appointmentDate);
+        }
+        
+        // Then by status priority (confirmed first, then skipped, then completed, then cancelled)
+        const statusPriority = { 'confirmed': 1, 'pending': 1, 'skipped': 2, 'completed': 3, 'cancelled': 4 };
+        const aPriority = statusPriority[a.status] || 5;
+        const bPriority = statusPriority[b.status] || 5;
+        
+        if (aPriority !== bPriority) {
+            return aPriority - bPriority;
+        }
+        
+        // Finally by serial number
+        return (a.serialNumber || 0) - (b.serialNumber || 0);
+    });
+
+    tbody.innerHTML = sortedAppointments.map((apt) => {
+        const isDisabled = ['completed', 'cancelled', 'skipped'].includes(apt.status);
+        const rowClass = apt.status === 'completed' ? 'row-completed' : 
+                        apt.status === 'skipped' ? 'row-skipped' : 
+                        apt.status === 'cancelled' ? 'row-cancelled' : '';
+        
+        return `
+        <tr class="${rowClass}">
+            <td><strong>${apt.serialNumber || '-'}</strong></td>
             <td>${apt.patientName || 'N/A'}</td>
             <td>${apt.appointmentDate || 'N/A'}</td>
             <td>
@@ -1380,13 +1584,21 @@ function renderAppointmentsTableNew(appointments) {
                         <i class="fas fa-eye"></i> View
                     </button>
                     <button class="btn-complete" onclick="markAppointmentComplete('${apt.id}')" 
-                        ${apt.status === 'completed' ? 'disabled' : ''}>
+                        ${isDisabled ? 'disabled' : ''}>
                         <i class="fas fa-check"></i> Complete
+                    </button>
+                    <button class="btn-skip" onclick="skipAppointment('${apt.id}')" 
+                        ${isDisabled ? 'disabled' : ''}>
+                        <i class="fas fa-forward"></i> Skip
+                    </button>
+                    <button class="btn-cancel" onclick="cancelAppointment('${apt.id}')" 
+                        ${isDisabled ? 'disabled' : ''}>
+                        <i class="fas fa-times"></i> Cancel
                     </button>
                 </div>
             </td>
         </tr>
-    `).join('');
+    `}).join('');
 }
 
 // Placeholder for View button (you can add functionality later)
@@ -1400,7 +1612,8 @@ function viewAppointment(appointmentId) {
 
 // Reset filters
 window.resetFilters = function() {
-    document.getElementById('dateFilter').value = '';
+    document.getElementById('dateFilterFrom').value = '';
+    document.getElementById('dateFilterTo').value = '';
     document.getElementById('typeFilter').value = '';
     document.getElementById('statusFilter').value = '';
     loadAppointmentsData();
@@ -1408,14 +1621,19 @@ window.resetFilters = function() {
 
 // Apply filters
 function applyFilters() {
-    const dateFilter = document.getElementById('dateFilter').value;
+    const dateFrom = document.getElementById('dateFilterFrom').value;
+    const dateTo = document.getElementById('dateFilterTo').value;
     const typeFilter = document.getElementById('typeFilter').value;
     const statusFilter = document.getElementById('statusFilter').value;
     
     let filtered = allAppointments;
     
-    if (dateFilter) {
-        filtered = filtered.filter(apt => apt.appointmentDate === dateFilter);
+    if (dateFrom && dateTo) {
+        filtered = filtered.filter(apt => apt.appointmentDate >= dateFrom && apt.appointmentDate <= dateTo);
+    } else if (dateFrom) {
+        filtered = filtered.filter(apt => apt.appointmentDate >= dateFrom);
+    } else if (dateTo) {
+        filtered = filtered.filter(apt => apt.appointmentDate <= dateTo);
     }
     
     if (typeFilter) {
@@ -1427,6 +1645,7 @@ function applyFilters() {
     }
     
     renderAppointmentsTableNew(filtered);
+    updateFilterStats();
 }
 
  // Load recent appointments for dashboard
@@ -1459,17 +1678,11 @@ function loadRecentAppointments() {
                     ${getTypeDisplay(apt.appointmentType)}
                 </span>
             </td>
-            <td>
-                <div class="action-buttons">
-                    <button class="btn-view" onclick="viewAppointment('${apt.id}')" style="width: auto;">
-                        <i class="fas fa-eye"></i> View
-                    </button>
-                    <button class="btn-complete" onclick="markAppointmentComplete('${apt.id}')" 
-                        ${apt.status === 'completed' ? 'disabled' : ''} style="width: auto;">
-                        <i class="fas fa-check"></i> Complete
-                    </button>
-                </div>
-            </td>
+<td>
+    <span class="status-badge status-${(apt.status || 'pending').toLowerCase()}">
+        ${apt.status || 'Pending'}
+    </span>
+</td>
         </tr>
     `).join('');
     
@@ -1711,6 +1924,10 @@ function loadAppointmentsData() {
         chamberPhone: document.getElementById('chamberPhone').value,
         chamberAddress: document.getElementById('chamberAddress').value,
         consultationFee: document.getElementById('consultationFee').value,
+        consultationFee: document.getElementById('consultationFee').value,
+followupFee: document.getElementById('followupFee').value,
+reportFee: document.getElementById('reportFee').value,
+maxPatients: document.getElementById('maxPatients').value,
         maxPatients: document.getElementById('maxPatients').value,
         
         // Contact & Social Media
@@ -1837,11 +2054,11 @@ function loadAppointmentsData() {
             renderPatientsTable(filtered);
         });
 
-        // Filter event listeners for appointments page
-document.getElementById('dateFilter')?.addEventListener('change', applyFilters);
+ // Filter event listeners for appointments page
+document.getElementById('dateFilterFrom')?.addEventListener('change', applyFilters);
+document.getElementById('dateFilterTo')?.addEventListener('change', applyFilters);
 document.getElementById('typeFilter')?.addEventListener('change', applyFilters);
 document.getElementById('statusFilter')?.addEventListener('change', applyFilters);
-
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', async () => {
             if (confirm('Are you sure you want to logout?')) {
