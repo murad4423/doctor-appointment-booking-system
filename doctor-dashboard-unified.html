@@ -967,6 +967,17 @@
             </div>
         </div>
 
+        <!-- Today's Appointments Info Banner -->
+<div style="padding: 15px 20px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-left: 4px solid #667eea; margin-bottom: 10px; border-radius: 8px;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-info-circle" style="color: #667eea; font-size: 18px;"></i>
+        <div>
+            <strong style="color: #333;">Showing Today's Appointments</strong>
+            <p style="margin: 0; color: #666; font-size: 13px;">Use date filters below to view appointments from other dates</p>
+        </div>
+    </div>
+</div>
+        
         <!-- Filter Section - Full Width -->
         <div style="padding: 20px; background: #f8f9fa; border-bottom: 1px solid #e9ecef;">
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 15px;">
@@ -1682,7 +1693,7 @@ window.skipAppointment = skipAppointment;
 window.undoAppointment = undoAppointment;
 
 
-// Update filter statistics
+// Update filter statistics - Updated version
 function updateFilterStats() {
     const dateFrom = document.getElementById('dateFilterFrom')?.value;
     const dateTo = document.getElementById('dateFilterTo')?.value;
@@ -1691,7 +1702,7 @@ function updateFilterStats() {
     
     let filtered = allAppointments;
     
-    // Apply filters
+    // Apply same filters as applyFilters()
     if (dateFrom && dateTo) {
         filtered = filtered.filter(apt => apt.appointmentDate >= dateFrom && apt.appointmentDate <= dateTo);
     } else if (dateFrom) {
@@ -1822,16 +1833,19 @@ function viewAppointment(appointmentId) {
     }
 }
 
-// Reset filters
+// Reset filters - Updated to today's date
 window.resetFilters = function() {
-    document.getElementById('dateFilterFrom').value = '';
-    document.getElementById('dateFilterTo').value = '';
+    const today = new Date().toISOString().split('T')[0];
+    
+    document.getElementById('dateFilterFrom').value = today;
+    document.getElementById('dateFilterTo').value = today;
     document.getElementById('typeFilter').value = '';
     document.getElementById('statusFilter').value = '';
-    loadAppointmentsData();
+    
+    loadAppointmentsData(); // This will now show today's appointments
 }
 
-// Apply filters
+// Apply filters - Updated version
 function applyFilters() {
     const dateFrom = document.getElementById('dateFilterFrom').value;
     const dateTo = document.getElementById('dateFilterTo').value;
@@ -1840,6 +1854,7 @@ function applyFilters() {
     
     let filtered = allAppointments;
     
+    // Date filtering
     if (dateFrom && dateTo) {
         filtered = filtered.filter(apt => apt.appointmentDate >= dateFrom && apt.appointmentDate <= dateTo);
     } else if (dateFrom) {
@@ -1848,10 +1863,12 @@ function applyFilters() {
         filtered = filtered.filter(apt => apt.appointmentDate <= dateTo);
     }
     
+    // Type filtering
     if (typeFilter) {
         filtered = filtered.filter(apt => apt.appointmentType === typeFilter);
     }
     
+    // Status filtering
     if (statusFilter) {
         filtered = filtered.filter(apt => apt.status === statusFilter);
     }
@@ -1860,6 +1877,22 @@ function applyFilters() {
     updateFilterStats();
 }
 
+// Helper function to show message about filtered view
+function showFilterMessage() {
+    const dateFrom = document.getElementById('dateFilterFrom').value;
+    const today = new Date().toISOString().split('T')[0];
+    
+    if (dateFrom !== today) {
+        const messageDiv = document.getElementById('globalMessage');
+        messageDiv.textContent = '📅 Showing filtered appointments. Click "Reset Filters" to view today\'s appointments.';
+        messageDiv.className = 'message success show';
+        
+        setTimeout(() => {
+            messageDiv.classList.remove('show');
+        }, 5000);
+    }
+}
+        
  // Load recent appointments for dashboard
 function loadRecentAppointments() {
     const recent = allAppointments
@@ -1922,7 +1955,17 @@ function loadAppointmentsData() {
         return;
     }
 
-    renderAppointmentsTableNew(allAppointments);
+    // Get today's date
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Set default date filters to today
+    document.getElementById('dateFilterFrom').value = today;
+    document.getElementById('dateFilterTo').value = today;
+    
+    // Filter appointments for today
+    const todayAppointments = allAppointments.filter(apt => apt.appointmentDate === today);
+    
+    renderAppointmentsTableNew(todayAppointments);
     updateFilterStats();
 }
 
@@ -2271,12 +2314,18 @@ maxPatients: document.getElementById('maxPatients').value,
             renderPatientsTable(filtered);
         });
 
- // Filter event listeners for appointments page
-document.getElementById('dateFilterFrom')?.addEventListener('change', applyFilters);
-document.getElementById('dateFilterTo')?.addEventListener('change', applyFilters);
+// Filter event listeners for appointments page
+document.getElementById('dateFilterFrom')?.addEventListener('change', function() {
+    applyFilters();
+    showFilterMessage();
+});
+document.getElementById('dateFilterTo')?.addEventListener('change', function() {
+    applyFilters();
+    showFilterMessage();
+});
 document.getElementById('typeFilter')?.addEventListener('change', applyFilters);
 document.getElementById('statusFilter')?.addEventListener('change', applyFilters);
-        // Logout
+        
         document.getElementById('logoutBtn').addEventListener('click', async () => {
             if (confirm('Are you sure you want to logout?')) {
                 try {
