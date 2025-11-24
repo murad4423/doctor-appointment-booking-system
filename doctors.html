@@ -1589,26 +1589,27 @@
             try {
                 const appointmentId = generateAppointmentId();
                 
-                const bookingData = {
-                    appointmentId: appointmentId,
-                    patientId: currentPatient.uid,
-                    patientUserId: currentPatient.uid,
-                    patientProfileName: currentPatient.fullName,
-                    patientName: document.getElementById('patientName').value,
-                    phone: document.getElementById('phone').value,
-                    email: document.getElementById('email').value || 'Not provided',
-                    serialNumber: document.getElementById('selectedSerial').value,
-                    appointmentDate: selectedDate,
-                    patientType: document.getElementById('patientType').value,
-                    doctorId: doctorId,
-                    doctorName: currentDoctor.name,
-                    doctorSpecialty: currentDoctor.specialty || 'Specialist',
-                    bookingFor: document.getElementById('bookingFor').value,
-                    status: 'Pending',
-                    createdAt: serverTimestamp(),
-                    amount: currentDoctor.consultationFee || 500,
-                    followUpDate: null
-                };
+const bookingData = {
+    appointmentId: appointmentId,
+    patientId: currentPatient.uid,
+    patientUserId: currentPatient.uid,
+    patientProfileName: currentPatient.fullName,
+    patientName: document.getElementById('patientName').value,
+    phone: document.getElementById('phone').value,
+    email: document.getElementById('email').value || 'Not provided',
+    serialNumber: document.getElementById('selectedSerial').value,
+    appointmentDate: selectedDate,
+    appointmentType: document.getElementById('patientType').value,  // নতুন field name
+    patientType: document.getElementById('patientType').value,      // backward compatibility এর জন্য রাখুন
+    doctorId: doctorId,
+    doctorName: currentDoctor.name,
+    doctorSpecialty: currentDoctor.specialty || 'Specialist',
+    bookingFor: document.getElementById('bookingFor').value,
+    status: 'confirmed',  // 'Pending' থেকে 'confirmed' করুন
+    createdAt: serverTimestamp(),
+    amount: currentDoctor.consultationFee || 500,
+    followUpDate: null
+};
 
                 await addDoc(collection(db, 'bookings'), bookingData);
 
