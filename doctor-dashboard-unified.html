@@ -849,12 +849,20 @@
                     Profile Settings
                 </a>
             </li>
+
+            <li class="nav-item">
+    <a class="nav-link" data-section="attendants">
+        <i class="fas fa-user-nurse"></i>
+        Manage Attendants
+    </a>
+</li>
             <li class="nav-item">
                 <a class="nav-link" data-section="password">
                     <i class="fas fa-key"></i>
                     Change Password
                 </a>
             </li>
+            
             <li class="nav-item">
                 <a class="nav-link" id="logoutBtn">
                     <i class="fas fa-sign-out-alt"></i>
@@ -1290,6 +1298,80 @@
             </div>
         </section>
 
+        <section class="content-section" id="attendants">
+    <div class="form-container">
+        <h3 style="margin-bottom: 25px; color: #2c3e50;">
+            <i class="fas fa-user-nurse"></i> Manage Attendants
+        </h3>
+        
+        <!-- Register New Attendant Form -->
+        <div class="form-section">
+            <div class="form-section-title">
+                <i class="fas fa-user-plus"></i>
+                <span>Register New Attendant</span>
+            </div>
+            
+            <form id="attendantRegisterForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Attendant Name *</label>
+                        <input type="text" id="attendantName" required placeholder="Enter full name">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input type="tel" id="attendantPhone" required placeholder="Enter phone number">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="attendantEmail" required placeholder="Enter email address">
+                    </div>
+                    <div class="form-group">
+                        <label>Password *</label>
+                        <input type="password" id="attendantPassword" required minlength="6" placeholder="Minimum 6 characters">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                    <i class="fas fa-user-plus"></i> Register Attendant
+                </button>
+            </form>
+        </div>
+
+        <!-- Registered Attendants List -->
+        <div class="form-section" style="margin-top: 40px;">
+            <div class="form-section-title">
+                <i class="fas fa-users"></i>
+                <span>Registered Attendants</span>
+            </div>
+            
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Registered On</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendantsTableBody">
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Loading attendants...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+        
         <!-- Change Password Section -->
         <section class="content-section" id="password">
             <div class="form-container" style="max-width: 500px; margin: 0 auto;">
@@ -1323,8 +1405,8 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signOut, onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, query, where, getDocs, doc, updateDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth, signOut, onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, query, where, getDocs, doc, updateDoc, getDoc, setDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyBgL3nTaBFS1789IwrsFb1SN4T7GIas3Jk",
@@ -2039,6 +2121,116 @@ function loadAppointmentsData() {
             `).join('');
         }
 
+        async function loadAttendants() {
+    try {
+        const attendantsRef = collection(db, 'attendants');
+        const q = query(attendantsRef, where('doctorId', '==', doctorId));
+        const querySnapshot = await getDocs(q);
+
+        const tbody = document.getElementById('attendantsTableBody');
+        
+        if (querySnapshot.empty) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="empty-state">
+                        <i class="fas fa-user-times"></i>
+                        <p>No attendants registered yet</p>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = '';
+        querySnapshot.forEach((doc) => {
+            const attendant = doc.data();
+            const row = document.createElement('tr');
+            
+            const registeredDate = attendant.registeredAt ? 
+                new Date(attendant.registeredAt).toLocaleDateString() : 'N/A';
+            
+            row.innerHTML = `
+                <td>${attendant.name || 'N/A'}</td>
+                <td>${attendant.email || 'N/A'}</td>
+                <td>${attendant.phone || 'N/A'}</td>
+                <td>${registeredDate}</td>
+                <td>
+                    <button class="btn btn-danger" onclick="deleteAttendant('${doc.id}', '${attendant.email}')" 
+                            style="padding: 8px 16px; font-size: 14px;">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error loading attendants:', error);
+        showMessage('Failed to load attendants', 'error');
+    }
+}
+
+// Register new attendant - Form submission handler
+document.getElementById('attendantRegisterForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('attendantName').value;
+    const phone = document.getElementById('attendantPhone').value;
+    const email = document.getElementById('attendantEmail').value;
+    const password = document.getElementById('attendantPassword').value;
+
+    try {
+        // Create authentication account
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const attendantUid = userCredential.user.uid;
+
+        // Store attendant data in Firestore
+        await setDoc(doc(db, 'attendants', attendantUid), {
+            name: name,
+            phone: phone,
+            email: email,
+            doctorId: doctorId,
+            doctorName: currentDoctor.name,
+            doctorEmail: currentDoctor.email,
+            role: 'attendant',
+            registeredAt: new Date().toISOString()
+        });
+
+        showMessage('Attendant registered successfully!', 'success');
+        document.getElementById('attendantRegisterForm').reset();
+        loadAttendants();
+    } catch (error) {
+        console.error('Error registering attendant:', error);
+        
+        let errorMessage = 'Failed to register attendant';
+        if (error.code === 'auth/email-already-in-use') {
+            errorMessage = 'This email is already registered';
+        } else if (error.code === 'auth/weak-password') {
+            errorMessage = 'Password is too weak';
+        } else if (error.code === 'auth/invalid-email') {
+            errorMessage = 'Invalid email address';
+        }
+        
+        showMessage(errorMessage, 'error');
+    }
+});
+
+// Delete attendant
+window.deleteAttendant = async function(attendantId, attendantEmail) {
+    if (!confirm(`Are you sure you want to delete this attendant?\n\nEmail: ${attendantEmail}\n\nThis action cannot be undone.`)) {
+        return;
+    }
+
+    try {
+        // Delete from Firestore
+        await deleteDoc(doc(db, 'attendants', attendantId));
+        
+        showMessage('Attendant deleted successfully!', 'success');
+        loadAttendants();
+    } catch (error) {
+        console.error('Error deleting attendant:', error);
+        showMessage('Failed to delete attendant', 'error');
+    }
+};
         // Initialize schedule section
         function initializeSchedule() {
     const container = document.getElementById('scheduleDays');
@@ -2292,8 +2484,12 @@ maxPatients: document.getElementById('maxPatients').value,
                 case 'patients':
                     loadPatientsData();
                     break;
+                case 'attendants':
+                    loadAttendants();
+                    break;
             }
         }
+
 
         // Search functionality
         document.getElementById('appointmentSearch')?.addEventListener('input', function(e) {
