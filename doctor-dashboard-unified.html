@@ -1434,13 +1434,22 @@ let appointmentStateHistory = new Map(); // appointmentId -> previous state
         const daysOfWeek = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
         // Authentication check
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                await loadDoctorData(user.email);
-            } else {
-                window.location.href = 'doctor-login.html';
-            }
-        });
+// Doctor Dashboard এর authentication check এ যোগ করুন:
+onAuthStateChanged(auth, async (user) => {
+    // ✅ Check if attendant is logged in
+    const attendantSession = localStorage.getItem('attendantSession');
+    if (attendantSession) {
+        // Attendant logged in, redirect to attendant dashboard
+        window.location.href = 'attendant-dashboard.html';
+        return;
+    }
+    
+    if (user) {
+        await loadDoctorData(user.email);
+    } else {
+        window.location.href = 'doctor-login.html';
+    }
+});
 
         // Load doctor data from Firestore
         async function loadDoctorData(email) {
