@@ -384,9 +384,9 @@
         let doctorId = null;
         let allAppointments = [];
 
-        // ✅ Check attendant session on page load
+        // ✅ IMPROVED: Use sessionStorage instead of localStorage
         function checkAttendantSession() {
-            const attendantSession = localStorage.getItem('attendantSession');
+            const attendantSession = sessionStorage.getItem('attendantSession');
             
             if (!attendantSession) {
                 window.location.href = 'attendant-login.html';
@@ -396,16 +396,14 @@
             try {
                 const session = JSON.parse(attendantSession);
                 
-                // Check if session is expired (24 hours)
                 if (!session.loginTime || (Date.now() - session.loginTime) > 86400000) {
-                    localStorage.removeItem('attendantSession');
+                    sessionStorage.removeItem('attendantSession');
                     window.location.href = 'attendant-login.html';
                     return false;
                 }
 
-                // Verify it's an attendant session
                 if (session.sessionType !== 'attendant' || !session.doctorId) {
-                    localStorage.removeItem('attendantSession');
+                    sessionStorage.removeItem('attendantSession');
                     window.location.href = 'attendant-login.html';
                     return false;
                 }
@@ -414,13 +412,12 @@
                 doctorId = session.doctorId;
                 return true;
             } catch (e) {
-                localStorage.removeItem('attendantSession');
+                sessionStorage.removeItem('attendantSession');
                 window.location.href = 'attendant-login.html';
                 return false;
             }
         }
 
-        // ✅ Initialize on page load
         if (checkAttendantSession()) {
             updateUIWithAttendantData();
             loadDoctorInfo();
@@ -561,7 +558,7 @@
 
         document.getElementById('logoutBtn').addEventListener('click', () => {
             if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('attendantSession');
+                sessionStorage.removeItem('attendantSession');
                 window.location.href = 'attendant-login.html';
             }
         });
