@@ -200,17 +200,16 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // ✅ Check if already logged in as attendant
-        const attendantSession = localStorage.getItem('attendantSession');
+        // ✅ IMPROVED: Only check attendant session, don't interfere with Firebase Auth
+        const attendantSession = sessionStorage.getItem('attendantSession');
         if (attendantSession) {
             try {
                 const session = JSON.parse(attendantSession);
-                // Verify session is still valid (less than 24 hours old)
                 if (session.loginTime && (Date.now() - session.loginTime) < 86400000) {
                     window.location.href = 'attendant-dashboard.html';
                 }
             } catch (e) {
-                localStorage.removeItem('attendantSession');
+                sessionStorage.removeItem('attendantSession');
             }
         }
 
@@ -235,7 +234,6 @@
             loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
 
             try {
-                // Query attendants collection by email
                 const attendantsRef = collection(db, 'attendants');
                 const q = query(attendantsRef, where('email', '==', email));
                 const querySnapshot = await getDocs(q);
@@ -247,7 +245,6 @@
                 let attendantData = null;
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    // Check if password matches
                     if (data.password === password) {
                         attendantData = { id: docSnap.id, ...data };
                     }
@@ -257,17 +254,14 @@
                     throw new Error('Invalid email or password');
                 }
 
-                // ✅ Store attendant session in localStorage with timestamp
+                // ✅ Use sessionStorage instead of localStorage (separate from Firebase Auth)
                 const sessionData = {
                     ...attendantData,
                     loginTime: Date.now(),
                     sessionType: 'attendant'
                 };
                 
-                localStorage.setItem('attendantSession', JSON.stringify(sessionData));
-                
-                // ✅ Clear any doctor session
-                localStorage.removeItem('doctorSession');
+                sessionStorage.setItem('attendantSession', JSON.stringify(sessionData));
                 
                 showMessage('Login successful! Redirecting...', 'success');
                 
