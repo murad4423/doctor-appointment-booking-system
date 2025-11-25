@@ -148,12 +148,6 @@
         .back-link a:hover {
             text-decoration: underline;
         }
-
-        @media (max-width: 768px) {
-            .login-container {
-                padding: 30px 20px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -206,6 +200,20 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // ✅ Check if already logged in as attendant
+        const attendantSession = localStorage.getItem('attendantSession');
+        if (attendantSession) {
+            try {
+                const session = JSON.parse(attendantSession);
+                // Verify session is still valid (less than 24 hours old)
+                if (session.loginTime && (Date.now() - session.loginTime) < 86400000) {
+                    window.location.href = 'attendant-dashboard.html';
+                }
+            } catch (e) {
+                localStorage.removeItem('attendantSession');
+            }
+        }
+
         function showMessage(text, type) {
             const messageDiv = document.getElementById('message');
             messageDiv.textContent = text;
@@ -219,7 +227,7 @@
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const loginBtn = document.getElementById('loginBtn');
 
@@ -249,21 +257,27 @@
                     throw new Error('Invalid email or password');
                 }
 
-                // Store attendant session in localStorage
-                localStorage.setItem('attendantSession', JSON.stringify(attendantData));
+                // ✅ Store attendant session in localStorage with timestamp
+                const sessionData = {
+                    ...attendantData,
+                    loginTime: Date.now(),
+                    sessionType: 'attendant'
+                };
+                
+                localStorage.setItem('attendantSession', JSON.stringify(sessionData));
+                
+                // ✅ Clear any doctor session
+                localStorage.removeItem('doctorSession');
                 
                 showMessage('Login successful! Redirecting...', 'success');
                 
                 setTimeout(() => {
                     window.location.href = 'attendant-dashboard.html';
-                }, 1500);
+                }, 1000);
 
             } catch (error) {
                 console.error('Login error:', error);
-                
-                let errorMessage = 'Invalid email or password';
-                
-                showMessage(errorMessage, 'error');
+                showMessage('Invalid email or password', 'error');
                 loginBtn.disabled = false;
                 loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
             }
