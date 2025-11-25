@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendant Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            height: 70px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 24px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-info strong {
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .user-info span {
+            color: #7f8c8d;
+            font-size: 12px;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: 15px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-top: 90px;
+            padding: 30px;
+            min-height: calc(100vh - 90px);
+        }
+
+        .stats-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .stats-card h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .doctor-info-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .doctor-info-box h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .doctor-info-box p {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .table-header {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .table-header h3 {
+            color: #2c3e50;
+            font-size: 18px;
+        }
+
+        .search-box input {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 200px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .table td {
+            font-size: 14px;
+            color: #495057;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-skipped {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .appointment-type-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .type-new {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .type-followup {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .type-report {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-view {
+            background: #4facfe;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .message {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+            }
+
+            .header {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 15px;
+            }
+
+            .table {
+                font-size: 12px;
+            }
+
+            .table th,
+            .table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>Attendant Dashboard</h1>
+        <div class="user-profile">
+            <div class="user-avatar" id="userAvatar">AT</div>
+            <div class="user-info">
+                <strong id="userName">Loading...</strong>
+                <span id="userRole">Attendant</span>
+            </div>
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div id="globalMessage" class="message"></div>
+
+        <!-- Doctor Info -->
+        <div class="stats-card">
+            <h2>Assigned Doctor</h2>
+            <div class="doctor-info-box" id="doctorInfoBox">
+                <div style="text-align: center;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 32px;"></i>
+                    <p style="margin-top: 10px;">Loading doctor information...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointments Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <h3><i class="fas fa-calendar-check"></i> Doctor's Appointments</h3>
+                <div class="search-box">
+                    <input type="text" id="appointmentSearch" placeholder="Search by patient name...">
+                </div>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>S.N.</th>
+                        <th>Patient Name</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="appointmentsTable">
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading appointments...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, query, where, getDocs, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgL3nTaBFS1789IwrsFb1SN4T7GIas3Jk",
+            authDomain: "doctor-booking-b556e.firebaseapp.com",
+            projectId: "doctor-booking-b556e",
+            storageBucket: "doctor-booking-b556e.firebasestorage.app",
+            messagingSenderId: "573037462071",
+            appId: "1:573037462071:web:a21ae3786e8b8a3758b5b2",
+            measurementId: "G-NQ9BK8LFJM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentAttendant = null;
+        let doctorId = null;
+        let allAppointments = [];
+
+        // Authentication check
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                await loadAttendantData(user.uid);
+            } else {
+                window.location.href = 'attendant-login.html';
+            }
+        });
+
+        // Load attendant data
+        async function loadAttendantData(uid) {
+            try {
+                const attendantDoc = await getDoc(doc(db, 'attendants', uid));
+
+                if (!attendantDoc.exists()) {
+                    showMessage('Attendant profile not found!', 'error');
+                    setTimeout(() => {
+                        auth.signOut();
+                    }, 2000);
+                    return;
+                }
+
+                currentAttendant = { id: attendantDoc.id, ...attendantDoc.data() };
+                doctorId = currentAttendant.doctorId;
+
+                updateUIWithAttendantData();
+                loadDoctorInfo();
+                loadAppointments();
+            } catch (error) {
+                console.error('Error loading attendant:', error);
+                showMessage('Failed to load profile data', 'error');
+            }
+        }
+
+        // Update UI with attendant information
+        function updateUIWithAttendantData() {
+            if (!currentAttendant) return;
+
+            document.getElementById('userName').textContent = currentAttendant.name || 'Attendant';
+            
+            const initials = currentAttendant.name ? 
+                currentAttendant.name.split(' ').map(n => n[0]).join('').substring(0, 2) : 'AT';
+            document.getElementById('userAvatar').textContent = initials;
+        }
+
+        // Load doctor information
+        async function loadDoctorInfo() {
+            try {
+                const doctorDoc = await getDoc(doc(db, 'doctors', doctorId));
+
+                if (!doctorDoc.exists()) {
+                    document.getElementById('doctorInfoBox').innerHTML = `
+                        <p>Doctor information not found</p>
+                    `;
+                    return;
+                }
+
+                const doctor = doctorDoc.data();
+                document.getElementById('doctorInfoBox').innerHTML = `
+                    <h3><i class="fas fa-user-md"></i> ${doctor.name}</h3>
+                    <p><i class="fas fa-stethoscope"></i> ${doctor.specialty || 'Specialist'}</p>
+                    <p><i class="fas fa-hospital"></i> ${doctor.chamberName || 'N/A'}</p>
+                    <p><i class="fas fa-map-marker-alt"></i> ${doctor.chamberAddress || 'N/A'}</p>
+                `;
+            } catch (error) {
+                console.error('Error loading doctor info:', error);
+            }
+        }
+
+        // Load appointments
+        async function loadAppointments() {
+            try {
+                const bookingsRef = collection(db, 'bookings');
+                const q = query(bookingsRef, where('doctorId', '==', doctorId));
+                const appointmentsSnapshot = await getDocs(q);
+
+                allAppointments = [];
+                appointmentsSnapshot.forEach((doc) => {
+                    allAppointments.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderAppointmentsTable(allAppointments);
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+                showMessage('Failed to load appointments', 'error');
+            }
+        }
+
+        // Render appointments table
+        function renderAppointmentsTable(appointments) {
+            const tbody = document.getElementById('appointmentsTable');
+            
+            if (appointments.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No appointments found</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Sort by date and serial number
+            const sortedAppointments = appointments.sort((a, b) => {
+                if (a.appointmentDate !== b.appointmentDate) {
+                    return new Date(b.appointmentDate) - new Date(a.appointmentDate);
+                }
+                return (b.serialNumber || 0) - (a.serialNumber || 0);
+            });
+
+            tbody.innerHTML = sortedAppointments.map((apt) => `
+                <tr>
+                    <td><strong>${apt.serialNumber || '-'}</strong></td>
+                    <td>${apt.patientName || 'N/A'}</td>
+                    <td>${apt.appointmentDate || 'N/A'}</td>
+                    <td>
+                        <span class="appointment-type-badge ${getTypeClass(apt.appointmentType)}">
+                            ${getTypeDisplay(apt.appointmentType)}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-${(apt.status || 'pending').toLowerCase()}">
+                            ${apt.status || 'Pending'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-view" onclick="viewAppointment('${apt.id}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Helper functions
+        function getTypeDisplay(type) {
+            const typeMap = {
+                'new': 'New Patient',
+                'followup': 'Follow-up',
+                'report': 'Report'
+            };
+            return typeMap[type] || type || 'General';
+        }
+
+        function getTypeClass(type) {
+            const classMap = {
+                'new': 'type-new',
+                'followup': 'type-followup',
+                'report': 'type-report'
+            };
+            return classMap[type] || 'type-new';
+        }
+
+        window.viewAppointment = function(appointmentId) {
+            const apt = allAppointments.find(a => a.id === appointmentId);
+            if (apt) {
+                showMessage(`Viewing appointment for ${apt.patientName}`, 'success');
+            }
+        };
+
+        // Search functionality
+        document.getElementById('appointmentSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = allAppointments.filter(apt => 
+                (apt.patientName || '').toLowerCase().includes(searchTerm)
+            );
+            renderAppointmentsTable(filtered);
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            if (confirm('Are you sure you want to logout?')) {
+                try {
+                    await signOut(auth);
+                    window.location.href = 'attendant-login.html';
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            }
+        });
+
+        // Show message function
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('globalMessage');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type} show`;
+            
+            setTimeout(() => {
+                messageDiv.classList.remove('show');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
