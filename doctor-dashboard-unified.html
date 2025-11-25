@@ -1427,26 +1427,30 @@
         let doctorId = null;
         let allAppointments = [];
         let allPatients = [];
+    
 // Track previous states for undo functionality
 let appointmentStateHistory = new Map(); // appointmentId -> previous state
 
         // Days of week for schedule
         const daysOfWeek = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
-        // Authentication check
-// Doctor Dashboard এর authentication check এ যোগ করুন:
+// ✅ UPDATED: Separate authentication check for doctor
 onAuthStateChanged(auth, async (user) => {
-    // ✅ Check if attendant is logged in
-    const attendantSession = localStorage.getItem('attendantSession');
-    if (attendantSession) {
-        // Attendant logged in, redirect to attendant dashboard
-        window.location.href = 'attendant-dashboard.html';
+    // Check if this is intentionally accessing doctor dashboard
+    const isDoctorDashboard = window.location.pathname.includes('doctor-dashboard');
+    
+    if (!isDoctorDashboard) {
         return;
     }
+
+    // ✅ If attendant session exists, ignore it here - let them use attendant dashboard separately
+    // We only care about Firebase Auth for doctor
     
     if (user) {
+        // This is a Firebase authenticated user (Doctor)
         await loadDoctorData(user.email);
     } else {
+        // No Firebase auth, redirect to doctor login
         window.location.href = 'doctor-login.html';
     }
 });
