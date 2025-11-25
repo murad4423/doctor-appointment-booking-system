@@ -578,11 +578,8 @@
                 </div>
             </div>
             
-            <div class="serial-management-placeholder">
-                <i class="fas fa-list-ol"></i>
-                <p><strong>Serial Management System</strong></p>
-                <p style="margin-top: 8px; font-size: 14px;">Coming soon - Manage patient serials efficiently</p>
-            </div>
+<!-- Serial Management System -->
+<div id="serialManagementRoot"></div>
         </div>
     </main>
 
@@ -677,7 +674,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, query, where, getDocs, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyBgL3nTaBFS1789IwrsFb1SN4T7GIas3Jk",
@@ -693,6 +690,458 @@
         const db = getFirestore(app);
 
         let currentAttendant = null;
+        // ==================== SERIAL MANAGEMENT SYSTEM ====================
+
+async function initSerialManagement() {
+    if (!currentAttendant || !doctorId) return;
+    
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Load today's appointments with serial numbers
+    const bookingsRef = collection(db, 'bookings');
+    const q = query(
+        bookingsRef, 
+        where('doctorId', '==', doctorId),
+        where('appointmentDate', '==', today)
+    );
+    
+    const snapshot = await getDocs(q);
+    const todayAppointments = [];
+    snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        if (data.serialNumber) {
+            todayAppointments.push({
+                id: docSnap.id,
+                ...data
+            });
+        }
+    });
+    
+    // Sort by serial number
+    todayAppointments.sort((a, b) => a.serialNumber - b.serialNumber);
+    
+    // Initialize or load serial management data
+    const serialDocId = `${doctorId}_${today}`;
+    const serialDocRef = doc(db, 'serialManagement', serialDocId);
+    
+    let serialDocSnap = await getDoc(serialDocRef);
+    let serialData;
+    
+    if (!serialDocSnap.exists()) {
+        // First time today - initialize with first 5 appointments
+        const firstFive = todayAppointments.slice(0, 5).map(a => a.serialNumber);
+        // Fill remaining slots with 0
+        while (firstFive.length < 5) {
+            firstFive.push(0);
+        }
+        
+        serialData = {
+            doctorId: doctorId,
+            date: today,
+            slots: firstFive,
+            nextSerial: todayAppointments.length > 5 ? todayAppointments[5].serialNumber : 0,
+            skipped: [],
+            completed: [],
+            history: { slots: firstFive, skipped: [], completed: [] },
+            lastUpdated: new Date()
+        };
+        
+        await setDoc(serialDocRef, serialData);
+    } else {
+        serialData = serialDocSnap.data();
+    }
+    
+    renderSerialUI(serialData, todayAppointments, serialDocRef);
+    
+    // Real-time listener
+    onSnapshot(serialDocRef, (snapshot) => {
+        if (snapshot.exists()) {
+            renderSerialUI(snapshot.data(), todayAppointments, serialDocRef);
+        }
+    });
+}
+
+function renderSerialUI(serialData, appointments, serialDocRef) {
+    const root = document.getElementById('serialManagementRoot');
+    if (!root) return;
+    
+    const getPatientName = (serial) => {
+        const apt = appointments.find(a => a.serialNumber === serial);
+        return apt ? apt.patientName : 'No Patient';
+    };
+    
+    const progress = appointments.length > 0 
+        ? Math.round((serialData.completed.length / appointments.length) * 100) 
+        : 0;
+    
+    root.innerHTML = `
+        <div class="serial-management-card">
+            <style>
+                .serial-management-card {
+                    background: white;
+                    border-radius: 16px;
+                    padding: 24px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                    margin-top: 20px;
+                }
+                .serial-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 24px;
+                    padding-bottom: 16px;
+                    border-bottom: 2px solid #e5e7eb;
+                }
+                .serial-slots {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                    gap: 16px;
+                    margin-bottom: 24px;
+                }
+                .serial-slot {
+                    border-radius: 16px;
+                    padding: 20px;
+                    text-align: center;
+                    color: white;
+                    position: relative;
+                    transition: all 0.3s;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                }
+                .serial-slot:hover {
+                    transform: translateY(-4px);
+                    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+                }
+                .serial-slot.current {
+                    box-shadow: 0 0 0 4px #fbbf24;
+                    transform: scale(1.05);
+                }
+                .serial-slot.empty {
+                    opacity: 0.4;
+                }
+                .slot-number {
+                    font-size: 3rem;
+                    font-weight: bold;
+                    font-family: monospace;
+                    margin-bottom: 8px;
+                }
+                .slot-name {
+                    font-size: 0.875rem;
+                    opacity: 0.95;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                .control-buttons {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                    gap: 12px;
+                    margin-bottom: 24px;
+                }
+                .control-btn {
+                    padding: 16px 24px;
+                    border: none;
+                    border-radius: 12px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    color: white;
+                    transition: all 0.2s;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    font-size: 1rem;
+                }
+                .control-btn:hover:not(:disabled) {
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+                }
+                .control-btn:disabled {
+                    opacity: 0.4;
+                    cursor: not-allowed;
+                }
+                .btn-done { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+                .btn-skip { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); }
+                .btn-undo { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+                .btn-add { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+                .stats-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                    gap: 12px;
+                    margin-bottom: 24px;
+                }
+                .stat-card {
+                    padding: 16px;
+                    border-radius: 12px;
+                    border: 2px solid;
+                }
+                .skipped-list {
+                    background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+                    padding: 16px;
+                    border-radius: 12px;
+                    border: 2px solid #fb923c;
+                    margin-top: 16px;
+                }
+                .skipped-items {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 8px;
+                    margin-top: 12px;
+                }
+                .skipped-badge {
+                    background: #f97316;
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    font-weight: bold;
+                    box-shadow: 0 2px 8px rgba(249,115,22,0.3);
+                }
+                .progress-bar {
+                    width: 100%;
+                    height: 16px;
+                    background: #e5e7eb;
+                    border-radius: 999px;
+                    overflow: hidden;
+                    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+                }
+                .progress-fill {
+                    height: 100%;
+                    background: linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6);
+                    transition: width 0.5s ease;
+                }
+                @media (max-width: 768px) {
+                    .serial-slots {
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+                    .slot-number {
+                        font-size: 2rem;
+                    }
+                }
+            </style>
+            
+            <div class="serial-header">
+                <div>
+                    <h2 style="font-size: 1.5rem; font-weight: bold; color: #1f2937; margin-bottom: 4px;">
+                        <i class="fas fa-list-ol"></i> Serial Management
+                    </h2>
+                    <p style="color: #6b7280; font-size: 0.875rem;">
+                        <i class="fas fa-calendar"></i> ${new Date().toLocaleDateString()}
+                    </p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 2.5rem; font-weight: bold; color: #8b5cf6;">
+                        ${String(serialData.slots[0] || 0).padStart(2, '0')}
+                    </div>
+                    <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase;">Current</div>
+                </div>
+            </div>
+            
+            <div class="serial-slots">
+                ${serialData.slots.map((serial, index) => {
+                    const colors = [
+                        'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                        'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                        'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                        'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                        'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                    ];
+                    return `
+                        <div class="serial-slot ${index === 0 ? 'current' : ''} ${serial === 0 ? 'empty' : ''}" 
+                             style="background: ${colors[index]}">
+                            ${index === 0 ? '<div style="position: absolute; top: -8px; right: -8px; background: #fbbf24; color: #92400e; font-size: 0.75rem; font-weight: bold; padding: 4px 12px; border-radius: 999px;">NOW</div>' : ''}
+                            <div class="slot-number">
+                                ${serial > 0 ? String(serial).padStart(2, '0') : '--'}
+                            </div>
+                            <div class="slot-name">
+                                ${serial > 0 ? getPatientName(serial) : 'Empty'}
+                            </div>
+                            <div style="margin-top: 8px; font-size: 0.75rem; opacity: 0.75;">
+                                ${index === 0 ? 'Current' : `+${index}`}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            
+            <div class="control-buttons">
+                <button class="control-btn btn-done" id="btnSerialDone" ${serialData.slots[0] === 0 ? 'disabled' : ''}>
+                    <i class="fas fa-check-circle"></i> Done
+                </button>
+                <button class="control-btn btn-skip" id="btnSerialSkip" ${serialData.slots[0] === 0 ? 'disabled' : ''}>
+                    <i class="fas fa-forward"></i> Skip
+                </button>
+                <button class="control-btn btn-undo" id="btnSerialUndo">
+                    <i class="fas fa-undo"></i> Undo
+                </button>
+                <button class="control-btn btn-add" id="btnSerialAdd" ${serialData.skipped.length === 0 ? 'disabled' : ''}>
+                    <i class="fas fa-plus"></i> Add Skip
+                </button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #1e40af;">${appointments.length}</div>
+                    <div style="font-size: 0.875rem; color: #1e40af; font-weight: 600;">Total</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #10b981;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #065f46;">${serialData.completed.length}</div>
+                    <div style="font-size: 0.875rem; color: #065f46; font-weight: 600;">Completed</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%); border-color: #f97316;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #9a3412;">${serialData.skipped.length}</div>
+                    <div style="font-size: 0.875rem; color: #9a3412; font-weight: 600;">Skipped</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%); border-color: #8b5cf6;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #581c87;">${progress}%</div>
+                    <div style="font-size: 0.875rem; color: #581c87; font-weight: 600;">Progress</div>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: #6b7280; margin-bottom: 8px;">
+                    <span style="font-weight: 600;">Daily Progress</span>
+                    <span style="font-weight: bold;">${serialData.completed.length} / ${appointments.length}</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progress}%"></div>
+                </div>
+            </div>
+            
+            ${serialData.skipped.length > 0 ? `
+                <div class="skipped-list">
+                    <h4 style="font-weight: bold; color: #9a3412; margin-bottom: 8px;">
+                        <i class="fas fa-forward"></i> Skipped Patients
+                    </h4>
+                    <div class="skipped-items">
+                        ${serialData.skipped.map(s => `
+                            <div class="skipped-badge">${String(s).padStart(2, '0')}</div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+        </div>
+    `;
+    
+    // Attach event handlers
+    const btnDone = document.getElementById('btnSerialDone');
+    const btnSkip = document.getElementById('btnSerialSkip');
+    const btnUndo = document.getElementById('btnSerialUndo');
+    const btnAdd = document.getElementById('btnSerialAdd');
+    
+    if (btnDone) {
+        btnDone.onclick = async () => {
+            if (btnDone.disabled) return;
+            const currentSerial = serialData.slots[0];
+            
+            try {
+                await updateDoc(serialDocRef, {
+                    history: {
+                        slots: [...serialData.slots],
+                        skipped: [...serialData.skipped],
+                        completed: [...serialData.completed]
+                    },
+                    slots: [
+                        serialData.slots[1],
+                        serialData.slots[2],
+                        serialData.slots[3],
+                        serialData.slots[4],
+                        serialData.nextSerial && serialData.nextSerial <= 99 ? serialData.nextSerial : 0
+                    ],
+                    nextSerial: serialData.nextSerial && serialData.nextSerial <= 99 ? serialData.nextSerial + 1 : serialData.nextSerial,
+                    completed: [...serialData.completed, currentSerial],
+                    lastUpdated: new Date()
+                });
+                showMessage(`Patient #${String(currentSerial).padStart(2, '0')} completed!`, 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Failed to update. Please try again.', 'error');
+            }
+        };
+    }
+    
+    if (btnSkip) {
+        btnSkip.onclick = async () => {
+            if (btnSkip.disabled) return;
+            const currentSerial = serialData.slots[0];
+            
+            try {
+                await updateDoc(serialDocRef, {
+                    history: {
+                        slots: [...serialData.slots],
+                        skipped: [...serialData.skipped],
+                        completed: [...serialData.completed]
+                    },
+                    slots: [
+                        serialData.slots[1],
+                        serialData.slots[2],
+                        serialData.slots[3],
+                        serialData.slots[4],
+                        serialData.nextSerial && serialData.nextSerial <= 99 ? serialData.nextSerial : 0
+                    ],
+                    nextSerial: serialData.nextSerial && serialData.nextSerial <= 99 ? serialData.nextSerial + 1 : serialData.nextSerial,
+                    skipped: [...serialData.skipped, currentSerial],
+                    lastUpdated: new Date()
+                });
+                showMessage(`Patient #${String(currentSerial).padStart(2, '0')} skipped!`, 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Failed to skip. Please try again.', 'error');
+            }
+        };
+    }
+    
+    if (btnUndo) {
+        btnUndo.onclick = async () => {
+            try {
+                await updateDoc(serialDocRef, {
+                    slots: [...serialData.history.slots],
+                    skipped: [...serialData.history.skipped],
+                    completed: [...serialData.history.completed],
+                    lastUpdated: new Date()
+                });
+                showMessage('Action undone!', 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Failed to undo. Please try again.', 'error');
+            }
+        };
+    }
+    
+    if (btnAdd) {
+        btnAdd.onclick = async () => {
+            if (serialData.skipped.length === 0) return;
+            
+            const selected = prompt(`Enter serial number from skipped list:\n${serialData.skipped.join(', ')}`);
+            if (selected) {
+                const num = parseInt(selected);
+                if (serialData.skipped.includes(num)) {
+                    try {
+                        await updateDoc(serialDocRef, {
+                            history: {
+                                slots: [...serialData.slots],
+                                skipped: [...serialData.skipped],
+                                completed: [...serialData.completed]
+                            },
+                            slots: [
+                                serialData.slots[0],
+                                serialData.slots[1],
+                                serialData.slots[2],
+                                serialData.slots[3],
+                                num
+                            ],
+                            skipped: serialData.skipped.filter(s => s !== num),
+                            lastUpdated: new Date()
+                        });
+                        showMessage(`Patient #${String(num).padStart(2, '0')} added to queue!`, 'success');
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showMessage('Failed to add. Please try again.', 'error');
+                    }
+                } else {
+                    alert('Serial not found in skipped list!');
+                }
+            }
+        };
+    }
+}
+
+// ==================== END SERIAL MANAGEMENT ====================
         let doctorId = null;
         let allAppointments = [];
         let filteredAppointments = [];
@@ -730,10 +1179,11 @@
             }
         }
 
-        if (checkAttendantSession()) {
-            updateUIWithAttendantData();
-            loadDoctorInfo();
-        }
+if (checkAttendantSession()) {
+    updateUIWithAttendantData();
+    loadDoctorInfo();
+    initSerialManagement(); // এই line টি add করুন
+}
 
         function updateUIWithAttendantData() {
             if (!currentAttendant) return;
