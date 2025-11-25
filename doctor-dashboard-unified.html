@@ -1403,11 +1403,11 @@
         </section>
     </main>
 
-    <script type="module">
+<script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signOut, onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getAuth, signOut, onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, collection, query, where, getDocs, doc, updateDoc, getDoc, setDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
+    
         const firebaseConfig = {
             apiKey: "AIzaSyBgL3nTaBFS1789IwrsFb1SN4T7GIas3Jk",
             authDomain: "doctor-booking-b556e.firebaseapp.com",
@@ -2179,15 +2179,25 @@ document.getElementById('attendantRegisterForm')?.addEventListener('submit', asy
     const password = document.getElementById('attendantPassword').value;
 
     try {
-        // Create authentication account
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const attendantUid = userCredential.user.uid;
+        // Check if email already exists
+        const attendantsRef = collection(db, 'attendants');
+        const q = query(attendantsRef, where('email', '==', email));
+        const existingAttendants = await getDocs(q);
+        
+        if (!existingAttendants.empty) {
+            showMessage('This email is already registered!', 'error');
+            return;
+        }
+
+        // Create a unique ID for attendant
+        const attendantId = 'att_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
         // Store attendant data in Firestore
-        await setDoc(doc(db, 'attendants', attendantUid), {
+        await setDoc(doc(db, 'attendants', attendantId), {
             name: name,
             phone: phone,
             email: email,
+            password: password, // In production, hash this password
             doctorId: doctorId,
             doctorName: currentDoctor.name,
             doctorEmail: currentDoctor.email,
@@ -2197,20 +2207,12 @@ document.getElementById('attendantRegisterForm')?.addEventListener('submit', asy
 
         showMessage('Attendant registered successfully!', 'success');
         document.getElementById('attendantRegisterForm').reset();
-        loadAttendants();
+        
+        // Reload attendants list immediately
+        await loadAttendants();
     } catch (error) {
         console.error('Error registering attendant:', error);
-        
-        let errorMessage = 'Failed to register attendant';
-        if (error.code === 'auth/email-already-in-use') {
-            errorMessage = 'This email is already registered';
-        } else if (error.code === 'auth/weak-password') {
-            errorMessage = 'Password is too weak';
-        } else if (error.code === 'auth/invalid-email') {
-            errorMessage = 'Invalid email address';
-        }
-        
-        showMessage(errorMessage, 'error');
+        showMessage('Failed to register attendant. Please try again.', 'error');
     }
 });
 
