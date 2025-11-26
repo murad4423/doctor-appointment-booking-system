@@ -809,188 +809,7 @@
     width: 100%;
 }
         }
-  
-    </style>
-</head>
-<body>
-    <!-- Sidebar Navigation -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h2><i class="fas fa-user-md"></i> Doctor Panel</h2>
-        </div>
-        <ul class="nav-menu">
-            <li class="nav-item">
-                <a class="nav-link active" data-section="dashboard">
-                    <i class="fas fa-tachometer-alt"></i>
-                    Dashboard
-                </a>
-            </li>
-            <li class="nav-item">
-    <a class="nav-link" data-section="today-appointments">
-        <i class="fas fa-calendar-day"></i>
-        Today's Appointments
-    </a>
-</li>
-            <li class="nav-item">
-                <a class="nav-link" data-section="appointments">
-                    <i class="fas fa-calendar-check"></i>
-                    Appointments
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-section="patients">
-                    <i class="fas fa-users"></i>
-                    My Patients
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-section="schedule">
-                    <i class="fas fa-clock"></i>
-                    Schedule Timings
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-section="profile">
-                    <i class="fas fa-user-cog"></i>
-                    Profile Settings
-                </a>
-            </li>
 
-            <li class="nav-item">
-    <a class="nav-link" data-section="attendants">
-        <i class="fas fa-user-nurse"></i>
-        Manage Attendants
-    </a>
-</li>
-            <li class="nav-item">
-                <a class="nav-link" data-section="password">
-                    <i class="fas fa-key"></i>
-                    Change Password
-                </a>
-            </li>
-            
-            <li class="nav-item">
-                <a class="nav-link" id="logoutBtn">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </a>
-            </li>
-        </ul>
-    </div>
-
-    <!-- Header -->
-    <header class="header">
-        <h1 id="pageTitle">Doctor Dashboard</h1>
-        <div class="user-profile">
-            <div class="user-avatar" id="userAvatar">DR</div>
-            <div class="user-info">
-                <strong id="userName">Loading...</strong>
-                <span id="userSpecialty">Specialist</span>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <div id="globalMessage" class="message"></div>
-
-        <!-- Dashboard Section -->
-        <section class="content-section active" id="dashboard">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon total">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="totalAppointments">0</h3>
-                        <p>Total Appointments</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon today">
-                        <i class="fas fa-calendar-day"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="todayAppointments">0</h3>
-                        <p>Today's Appointments</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon patients">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="totalPatients">0</h3>
-                        <p>Total Patients</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon revenue">
-                        <i class="fas fa-dollar-sign"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="totalRevenue">৳0</h3>
-                        <p>Total Revenue</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon patients">
-                        <i class="fas fa-hourglass-half"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="patientsYetToSee">0</h3>
-                        <p>Patients Yet to See</p>
-                    </div>
-                </div>
-                </div>
-
-            <div class="table-container">
-                <div class="table-header">
-                    <h3><i class="fas fa-clock"></i> Recent Appointments</h3>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>S.N.</th>
-                            <th>Patient Name</th>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recentAppointmentsTable">
-                        <tr>
-                            <td colspan="5" class="empty-state">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                <p>Loading appointments...</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Today's Appointments Section -->
-<!-- এটি <section class="content-section" id="appointments"> এর আগে যোগ করুন -->
-
-<section class="content-section" id="today-appointments">
-    <div style="margin-bottom: 30px;">
-        <h3 style="color: #2c3e50; margin-bottom: 10px;">
-            <i class="fas fa-calendar-day"></i> Today's Serial Management
-        </h3>
-        <p style="color: #7f8c8d; font-size: 14px;">
-            View today's appointments and serial queue managed by attendant
-        </p>
-    </div>
-
-    <!-- Serial Management Display (Read-only) -->
-    <div id="todaySerialManagementRoot"></div>
-
-    <!-- Today's Patient List (Read-only) -->
-    <div id="todayPatientListRoot"></div>
-</section>
-
-<style>
 /* Styles for Today's Appointments Section */
 .today-serial-card {
     background: white;
@@ -1281,8 +1100,186 @@
         font-size: 0.75rem;
     }
 }
-</style>
         
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-user-md"></i> Doctor Panel</h2>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a class="nav-link active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+    <a class="nav-link" data-section="today-appointments">
+        <i class="fas fa-calendar-day"></i>
+        Today's Appointments
+    </a>
+</li>
+            <li class="nav-item">
+                <a class="nav-link" data-section="appointments">
+                    <i class="fas fa-calendar-check"></i>
+                    Appointments
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-section="patients">
+                    <i class="fas fa-users"></i>
+                    My Patients
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-section="schedule">
+                    <i class="fas fa-clock"></i>
+                    Schedule Timings
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-section="profile">
+                    <i class="fas fa-user-cog"></i>
+                    Profile Settings
+                </a>
+            </li>
+
+            <li class="nav-item">
+    <a class="nav-link" data-section="attendants">
+        <i class="fas fa-user-nurse"></i>
+        Manage Attendants
+    </a>
+</li>
+            <li class="nav-item">
+                <a class="nav-link" data-section="password">
+                    <i class="fas fa-key"></i>
+                    Change Password
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <h1 id="pageTitle">Doctor Dashboard</h1>
+        <div class="user-profile">
+            <div class="user-avatar" id="userAvatar">DR</div>
+            <div class="user-info">
+                <strong id="userName">Loading...</strong>
+                <span id="userSpecialty">Specialist</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div id="globalMessage" class="message"></div>
+
+        <!-- Dashboard Section -->
+        <section class="content-section active" id="dashboard">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon total">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalAppointments">0</h3>
+                        <p>Total Appointments</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon today">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="todayAppointments">0</h3>
+                        <p>Today's Appointments</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon patients">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalPatients">0</h3>
+                        <p>Total Patients</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalRevenue">৳0</h3>
+                        <p>Total Revenue</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon patients">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="patientsYetToSee">0</h3>
+                        <p>Patients Yet to See</p>
+                    </div>
+                </div>
+                </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-clock"></i> Recent Appointments</h3>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>S.N.</th>
+                            <th>Patient Name</th>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentAppointmentsTable">
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Loading appointments...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Today's Appointments Section -->
+<!-- এটি <section class="content-section" id="appointments"> এর আগে যোগ করুন -->
+
+<section class="content-section" id="today-appointments">
+    <div style="margin-bottom: 30px;">
+        <h3 style="color: #2c3e50; margin-bottom: 10px;">
+            <i class="fas fa-calendar-day"></i> Today's Serial Management
+        </h3>
+        <p style="color: #7f8c8d; font-size: 14px;">
+            View today's appointments and serial queue managed by attendant
+        </p>
+    </div>
+
+    <!-- Serial Management Display (Read-only) -->
+    <div id="todaySerialManagementRoot"></div>
+
+    <!-- Today's Patient List (Read-only) -->
+    <div id="todayPatientListRoot"></div>
+</section>
 
     <!-- Appointments Section -->
 <section class="content-section" id="appointments">
