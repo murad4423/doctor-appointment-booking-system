@@ -3000,42 +3000,29 @@ ${serialData.skipped.length > 0 ? `
             ` : ''}
             
             <!-- Current Patient Display -->
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 24px; border-radius: 16px; margin-top: 24px; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);">
-                <div style="text-align: center; color: white;">
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px;">
-                        <i class="fas fa-user-md" style="font-size: 2rem;"></i>
-                        <h3 style="font-size: 1.5rem; font-weight: bold; margin: 0;">Current Patient in Chamber</h3>
-                    </div>
-                    <div style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); padding: 20px; border-radius: 12px; margin-top: 16px;">
-                        <div style="font-size: 3rem; font-weight: bold; font-family: monospace; margin-bottom: 8px;">
-                            ${serialData.slots[0] > 0 ? String(serialData.slots[0]).padStart(2, '0') : '--'}
-                        </div>
-                        <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 4px;">
-                            ${serialData.slots[0] > 0 ? getPatientName(serialData.slots[0]) : 'No Patient'}
-                        </div>
-                        ${serialData.slots[0] > 0 ? (() => {
-                            const currentPatient = appointments.find(a => a.serialNumber === serialData.slots[0]);
-                            return currentPatient ? `
-                                <div style="font-size: 0.95rem; opacity: 0.9; margin-top: 8px;">
-                                    <div style="margin-bottom: 4px;">
-                                        <i class="fas fa-phone"></i> ${currentPatient.patientPhone || 'N/A'}
-                                    </div>
-                                    ${currentPatient.patientAddress ? `
-                                        <div>
-                                            <i class="fas fa-map-marker-alt"></i> ${currentPatient.patientAddress}
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            ` : '';
-                        })() : ''}
-                        ${serialData.slots[0] === 0 ? `
-                            <div style="font-size: 1rem; opacity: 0.8; margin-top: 8px;">
-                                <i class="fas fa-info-circle"></i> Waiting for next patient
+            ${serialData.slots[0] > 0 ? (() => {
+                const currentPatient = appointments.find(a => a.serialNumber === serialData.slots[0]);
+                return currentPatient ? `
+                    <div style="background: #e0e7ff; padding: 16px; border-radius: 8px; margin-top: 16px; border-left: 4px solid #667eea;">
+                        <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                            <div style="font-weight: bold; color: #4338ca; font-size: 14px; min-width: 150px;">
+                                <i class="fas fa-user-md"></i> Current Patient:
                             </div>
-                        ` : ''}
+                            <div style="font-weight: bold; color: #1f2937; font-size: 16px;">
+                                Serial ${String(serialData.slots[0]).padStart(2, '0')} - ${currentPatient.patientName}
+                            </div>
+                            <div style="color: #4b5563;">
+                                <i class="fas fa-phone"></i> ${currentPatient.patientPhone || 'N/A'}
+                            </div>
+                            ${currentPatient.patientAddress ? `
+                                <div style="color: #4b5563;">
+                                    <i class="fas fa-map-marker-alt"></i> ${currentPatient.patientAddress}
+                                </div>
+                            ` : ''}
+                        </div>
                     </div>
-                </div>
-            </div>
+                ` : '';
+            })() : ''}
         </div>
     `;
 }
