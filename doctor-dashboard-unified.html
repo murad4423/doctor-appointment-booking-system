@@ -2985,8 +2985,7 @@ function renderTodaySerialUI(serialData, appointments) {
                     <div class="today-progress-fill" style="width: ${progress}%"></div>
                 </div>
             </div>
-            
-${serialData.skipped.length > 0 ? `
+        ${serialData.skipped.length > 0 ? `
                 <div class="today-skipped-list">
                     <h4 style="font-weight: bold; color: #9a3412; margin-bottom: 8px;">
                         <i class="fas fa-forward"></i> Skipped Patients
@@ -3003,20 +3002,25 @@ ${serialData.skipped.length > 0 ? `
             ${serialData.slots[0] > 0 ? (() => {
                 const currentPatient = appointments.find(a => a.serialNumber === serialData.slots[0]);
                 return currentPatient ? `
-                    <div style="background: #e0e7ff; padding: 16px; border-radius: 8px; margin-top: 16px; border-left: 4px solid #667eea;">
-                        <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
-                            <div style="font-weight: bold; color: #4338ca; font-size: 14px; min-width: 150px;">
-                                <i class="fas fa-user-md"></i> Current Patient:
-                            </div>
+                    <div style="background: #e0e7ff; padding: 20px; border-radius: 12px; margin-top: 20px; border: 2px solid #667eea;">
+                        <div style="text-align: center; margin-bottom: 12px;">
+                            <h4 style="font-weight: bold; color: #4338ca; font-size: 15px; margin: 0;">
+                                <i class="fas fa-user-md"></i> Current Patient in Chamber
+                            </h4>
+                        </div>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 25px; flex-wrap: wrap; font-size: 14px;">
                             <div style="font-weight: bold; color: #1f2937; font-size: 16px;">
-                                Serial ${String(serialData.slots[0]).padStart(2, '0')} - ${currentPatient.patientName}
+                                <span style="background: #667eea; color: white; padding: 4px 12px; border-radius: 6px; margin-right: 8px;">
+                                    ${String(serialData.slots[0]).padStart(2, '0')}
+                                </span>
+                                ${currentPatient.patientName}
                             </div>
                             <div style="color: #4b5563;">
-                                <i class="fas fa-phone"></i> ${currentPatient.patientPhone || 'N/A'}
+                                <i class="fas fa-phone" style="color: #667eea;"></i> ${currentPatient.patientPhone || 'N/A'}
                             </div>
                             ${currentPatient.patientAddress ? `
                                 <div style="color: #4b5563;">
-                                    <i class="fas fa-map-marker-alt"></i> ${currentPatient.patientAddress}
+                                    <i class="fas fa-map-marker-alt" style="color: #667eea;"></i> ${currentPatient.patientAddress}
                                 </div>
                             ` : ''}
                         </div>
@@ -3024,7 +3028,8 @@ ${serialData.skipped.length > 0 ? `
                 ` : '';
             })() : ''}
         </div>
-    `;
+    `;    
+
 }
 
     function loadSectionData(sectionName) {
