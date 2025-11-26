@@ -3002,6 +3002,23 @@ function renderTodaySerialUI(serialData, appointments) {
     `;
 }
 
+    function loadSectionData(sectionName) {
+    switch(sectionName) {
+        case 'appointments':
+            loadAppointmentsData();
+            break;
+        case 'patients':
+            loadPatientsData();
+            break;
+        case 'attendants':
+            loadAttendants();
+            break;
+        case 'today-appointments':  // ← এটি যোগ করুন
+            loadTodaySerialManagement();
+            break;
+    }
+}
+    
 // Render today's patient list (read-only version)
 function renderTodayPatientList(serialData, appointments) {
     const root = document.getElementById('todayPatientListRoot');
