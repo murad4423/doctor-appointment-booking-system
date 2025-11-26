@@ -1577,7 +1577,6 @@
             ` : ''}
         </div>
     </div>
-
 <div class="tabs-container">
     <div class="tabs">
         <button class="tab active" data-tab="serial">
@@ -1607,58 +1606,58 @@
 
         <!-- Info Tab (Existing) -->
         <div id="infoTab" class="tab-content">
-            ${doctor.about ? \`
+            ${doctor.about ? `
                 <h2 class="content-title">About Doctor</h2>
-                <div class="about-text">\${doctor.about}</div>
-            \` : ''}
+                <div class="about-text">${doctor.about}</div>
+            ` : ''}
 
-            ${doctor.specialized ? \`
+            ${doctor.specialized ? `
                 <div class="info-section">
                     <h3 class="info-section-title">Areas of Specialization</h3>
                     <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
-                        \${doctor.specialized.split(',').map(item => \`<li>\${item.trim()}</li>\`).join('')}
+                        ${doctor.specialized.split(',').map(item => `<li>${item.trim()}</li>`).join('')}
                     </ul>
                 </div>
-            \` : ''}
+            ` : ''}
 
-            ${doctor.fieldOfConcentration ? \`
+            ${doctor.fieldOfConcentration ? `
                 <div class="info-section">
                     <h3 class="info-section-title">Field of Concentration</h3>
                     <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
-                        \${doctor.fieldOfConcentration.split(',').map(item => \`<li>\${item.trim()}</li>\`).join('')}
+                        ${doctor.fieldOfConcentration.split(',').map(item => `<li>${item.trim()}</li>`).join('')}
                     </ul>
                 </div>
-            \` : ''}
+            ` : ''}
         </div>
 
         <!-- Education Tab (Existing) -->
         <div id="educationTab" class="tab-content">
             <h2 class="content-title">Educational Qualifications</h2>
             
-            ${doctor.degrees ? \`
+            ${doctor.degrees ? `
                 <div class="info-section">
                     <h3 class="info-section-title">Academic Degrees</h3>
                     <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
-                        \${doctor.degrees.split(',').map(item => \`<li>\${item.trim()}</li>\`).join('')}
+                        ${doctor.degrees.split(',').map(item => `<li>${item.trim()}</li>`).join('')}
                     </ul>
                 </div>
-            \` : ''}
+            ` : ''}
 
-            ${doctor.fellowships ? \`
+            ${doctor.fellowships ? `
                 <div class="info-section">
                     <h3 class="info-section-title">Fellowships</h3>
                     <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
-                        \${doctor.fellowships.split(',').map(item => \`<li>\${item.trim()}</li>\`).join('')}
+                        ${doctor.fellowships.split(',').map(item => `<li>${item.trim()}</li>`).join('')}
                     </ul>
                 </div>
-            \` : ''}
+            ` : ''}
 
-            ${doctor.trainings ? \`
+            ${doctor.trainings ? `
                 <div class="info-section">
                     <h3 class="info-section-title">Training & Courses</h3>
-                    <div class="info-text" style="white-space: pre-line;">\${doctor.trainings}</div>
+                    <div class="info-text" style="white-space: pre-line;">${doctor.trainings}</div>
                 </div>
-            \` : ''}
+            ` : ''}
         </div>
     </div>
 
