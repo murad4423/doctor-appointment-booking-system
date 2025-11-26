@@ -497,7 +497,68 @@
                 opacity: 1;
             }
         }
+/* Walk-in Booking Styles */
+.date-selector {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
+.date-nav-btn {
+    background: #10b981;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+}
+
+.date-nav-btn:hover {
+    background: #059669;
+    transform: scale(1.1);
+}
+
+.serial-block-walkin {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 2px solid transparent;
+}
+
+.serial-block-walkin.available {
+    background: #10b981;
+    color: white;
+}
+
+.serial-block-walkin.available:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+}
+
+.serial-block-walkin.booked {
+    background: #ef4444;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.serial-block-walkin.selected {
+    background: #3b82f6;
+    color: white;
+    border-color: #1e40af;
+    transform: scale(1.15);
+    box-shadow: 0 5px 20px rgba(59, 130, 246, 0.5);
+}
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -553,6 +614,9 @@
             <button class="appointments-btn" id="openAppointmentsBtn">
                 <i class="fas fa-calendar-alt"></i> All Appointments
             </button>
+            <button class="appointments-btn" id="bookAppointmentBtn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+    <i class="fas fa-calendar-plus"></i> Book Appointment
+</button>
             <div class="user-profile">
                 <div class="user-avatar" id="userAvatar">AT</div>
                 <div class="user-info">
@@ -583,6 +647,153 @@
         </div>
     </main>
 
+    <!-- Walk-in Booking Modal -->
+<div id="walkInBookingModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+            <h2><i class="fas fa-user-plus"></i> Book Walk-in Appointment</h2>
+            <button class="close-btn" id="closeBookingModalBtn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="bookingMessage" class="message"></div>
+
+            <!-- Doctor Info Display -->
+            <div class="doctor-info-box" id="bookingDoctorInfo" style="margin-bottom: 25px;">
+                <h3 style="margin-bottom: 10px;"><i class="fas fa-user-md"></i> Booking For</h3>
+                <p id="bookingDoctorName" style="font-size: 18px; font-weight: 600;"></p>
+                <p id="bookingDoctorSpecialty" style="font-size: 14px; opacity: 0.9;"></p>
+            </div>
+
+            <form id="walkInBookingForm">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label>Patient Name <span style="color: #e74c3c;">*</span></label>
+                        <input type="text" id="walkInPatientName" required placeholder="Enter patient's full name">
+                    </div>
+                    <div class="filter-group">
+                        <label>Phone Number <span style="color: #e74c3c;">*</span></label>
+                        <input type="tel" id="walkInPhone" required placeholder="01XXXXXXXXX" pattern="[0-9]{11}">
+                    </div>
+                </div>
+
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label>Patient Address</label>
+                        <input type="text" id="walkInAddress" placeholder="Enter address (optional)">
+                    </div>
+                    <div class="filter-group">
+                        <label>Email Address</label>
+                        <input type="email" id="walkInEmail" placeholder="example@email.com (optional)">
+                    </div>
+                </div>
+
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label>Appointment Type <span style="color: #e74c3c;">*</span></label>
+                        <select id="walkInAppointmentType" required>
+                            <option value="">Select Type</option>
+                            <option value="new">New Patient</option>
+                            <option value="followup">Follow-up</option>
+                            <option value="report">Report Check</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Select Serial & Date <span style="color: #e74c3c;">*</span></label>
+                        <input 
+                            type="text" 
+                            id="walkInSerialDisplay" 
+                            required 
+                            readonly
+                            placeholder="Click to select serial number"
+                            style="cursor: pointer; background: #f8f9fa;"
+                        >
+                        <input type="hidden" id="walkInSelectedSerial">
+                        <input type="hidden" id="walkInSelectedDate">
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>Reason for Visit <span style="color: #e74c3c;">*</span></label>
+                    <textarea 
+                        id="walkInReason" 
+                        required 
+                        placeholder="Brief description of health concern"
+                        style="min-height: 100px; resize: vertical;"
+                    ></textarea>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 25px;">
+                    <button type="button" class="btn-reset" onclick="closeWalkInBookingModal()" style="flex: 1;">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn-apply" id="submitWalkInBooking" style="flex: 2;">
+                        <i class="fas fa-check-circle"></i> Confirm Booking
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Serial Selection Modal for Walk-in -->
+<div id="walkInSerialModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+            <h2><i class="fas fa-list-ol"></i> Select Serial Number & Date</h2>
+            <button class="close-btn" id="closeWalkInSerialModalBtn">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <!-- Date Selection -->
+            <div class="date-selector" style="background: #f0fdf4; border: 2px solid #10b981; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                <button class="date-nav-btn" id="walkInDatePrev" style="background: #10b981;">◄</button>
+                <input type="date" id="walkInModalDatePicker" style="flex: 1; font-size: 16px; font-weight: 600;">
+                <button class="date-nav-btn" id="walkInDateNext" style="background: #10b981;">►</button>
+            </div>
+
+            <!-- Schedule Info -->
+            <div id="walkInScheduleInfo" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; font-weight: 600; color: #1e40af;">
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="walkInSerialLoading" style="text-align: center; padding: 40px; display: none;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: #10b981;"></i>
+                <p style="margin-top: 15px; color: #666;">Loading available serials...</p>
+            </div>
+
+            <!-- Serial Blocks -->
+            <div id="walkInSerialBlocks" style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 10px; margin-bottom: 25px; min-height: 200px;">
+            </div>
+
+            <!-- Legend -->
+            <div style="display: flex; justify-content: center; gap: 25px; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 20px;">
+                <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600;">
+                    <span style="width: 25px; height: 25px; background: #10b981; border-radius: 6px;"></span> Available
+                </span>
+                <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600;">
+                    <span style="width: 25px; height: 25px; background: #ef4444; border-radius: 6px;"></span> Booked
+                </span>
+                <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600;">
+                    <span style="width: 25px; height: 25px; background: #3b82f6; border-radius: 6px;"></span> Selected
+                </span>
+            </div>
+
+            <!-- Message Display -->
+            <div id="walkInSerialMessage" style="padding: 15px; border-radius: 10px; text-align: center; font-weight: 600; margin-bottom: 15px; display: none;">
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+                <button type="button" class="btn-reset" onclick="closeWalkInSerialModal()" style="flex: 1;">
+                    Cancel
+                </button>
+                <button type="button" class="btn-apply" id="confirmWalkInSerial" style="flex: 2;" disabled>
+                    Confirm Selection
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+    
     <!-- Appointments Modal -->
     <div id="appointmentsModal" class="modal">
         <div class="modal-content">
@@ -1430,7 +1641,10 @@ if (btnDone) {
         let doctorId = null;
         let allAppointments = [];
         let filteredAppointments = [];
-
+// Walk-in booking variables
+let walkInSelectedSerial = null;
+let walkInSelectedDate = null;
+let currentDoctorData = null;
         function checkAttendantSession() {
             const attendantSession = sessionStorage.getItem('attendantSession');
             
@@ -1480,29 +1694,31 @@ if (checkAttendantSession()) {
             document.getElementById('userAvatar').textContent = initials;
         }
 
-        async function loadDoctorInfo() {
-            try {
-                const doctorDoc = await getDoc(doc(db, 'doctors', doctorId));
+async function loadDoctorInfo() {
+    try {
+        const doctorDoc = await getDoc(doc(db, 'doctors', doctorId));
 
-                if (!doctorDoc.exists()) {
-                    document.getElementById('doctorInfoBox').innerHTML = `
-                        <p><i class="fas fa-exclamation-triangle"></i> Doctor information not found</p>
-                    `;
-                    return;
-                }
-
-                const doctor = doctorDoc.data();
-                document.getElementById('doctorInfoBox').innerHTML = `
-                    <h3><i class="fas fa-user-md"></i> ${doctor.name}</h3>
-                    <p><i class="fas fa-stethoscope"></i> ${doctor.specialty || 'Specialist'}</p>
-                    <p><i class="fas fa-hospital"></i> ${doctor.chamberName || 'N/A'}</p>
-                    <p><i class="fas fa-map-marker-alt"></i> ${doctor.chamberAddress || 'N/A'}</p>
-                `;
-            } catch (error) {
-                console.error('Error loading doctor info:', error);
-                showMessage('Failed to load doctor information', 'error');
-            }
+        if (!doctorDoc.exists()) {
+            document.getElementById('doctorInfoBox').innerHTML = `
+                <p><i class="fas fa-exclamation-triangle"></i> Doctor information not found</p>
+            `;
+            return;
         }
+
+        const doctor = doctorDoc.data();
+        currentDoctorData = { id: doctorId, ...doctor }; // Store for walk-in booking
+        
+        document.getElementById('doctorInfoBox').innerHTML = `
+            <h3><i class="fas fa-user-md"></i> ${doctor.name}</h3>
+            <p><i class="fas fa-stethoscope"></i> ${doctor.specialty || 'Specialist'}</p>
+            <p><i class="fas fa-hospital"></i> ${doctor.chamberName || 'N/A'}</p>
+            <p><i class="fas fa-map-marker-alt"></i> ${doctor.chamberAddress || 'N/A'}</p>
+        `;
+    } catch (error) {
+        console.error('Error loading doctor info:', error);
+        showMessage('Failed to load doctor information', 'error');
+    }
+}
 
         async function loadAppointments() {
             try {
@@ -1664,11 +1880,21 @@ allAppointments = [];
             modal.style.display = 'none';
         });
 
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
+window.addEventListener('click', (e) => {
+    const appointmentsModal = document.getElementById('appointmentsModal');
+    const walkInModal = document.getElementById('walkInBookingModal');
+    const serialModal = document.getElementById('walkInSerialModal');
+    
+    if (e.target === appointmentsModal) {
+        appointmentsModal.style.display = 'none';
+    }
+    if (e.target === walkInModal) {
+        closeWalkInBookingModal();
+    }
+    if (e.target === serialModal) {
+        closeWalkInSerialModal();
+    }
+});
 
         // Filter Controls
         document.getElementById('applyFilterBtn').addEventListener('click', applyFilters);
@@ -1676,6 +1902,73 @@ allAppointments = [];
 
         document.getElementById('filterPatientName').addEventListener('input', applyFilters);
 
+        // Walk-in Booking Event Listeners
+document.getElementById('bookAppointmentBtn').addEventListener('click', openWalkInBookingModal);
+document.getElementById('closeBookingModalBtn').addEventListener('click', closeWalkInBookingModal);
+document.getElementById('closeWalkInSerialModalBtn').addEventListener('click', closeWalkInSerialModal);
+
+// Serial modal click to open
+document.getElementById('walkInSerialDisplay').addEventListener('click', openWalkInSerialModal);
+
+// Date navigation
+document.getElementById('walkInDatePrev').addEventListener('click', () => changeWalkInDate(-1));
+document.getElementById('walkInDateNext').addEventListener('click', () => changeWalkInDate(1));
+document.getElementById('walkInModalDatePicker').addEventListener('change', loadWalkInSerials);
+
+// Confirm serial button
+document.getElementById('confirmWalkInSerial').addEventListener('click', confirmWalkInSerial);
+
+// Walk-in booking form submission
+document.getElementById('walkInBookingForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const submitBtn = document.getElementById('submitWalkInBooking');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking...';
+
+    try {
+        const bookingData = {
+            patientName: document.getElementById('walkInPatientName').value,
+            patientPhone: document.getElementById('walkInPhone').value,
+            patientAddress: document.getElementById('walkInAddress').value || 'Not provided',
+            patientEmail: document.getElementById('walkInEmail').value || 'Not provided',
+            appointmentType: document.getElementById('walkInAppointmentType').value,
+            serialNumber: parseInt(document.getElementById('walkInSelectedSerial').value),
+            appointmentDate: document.getElementById('walkInSelectedDate').value,
+            reason: document.getElementById('walkInReason').value,
+            doctorId: doctorId,
+            doctorName: currentDoctorData.name,
+            doctorSpecialty: currentDoctorData.specialty || 'Specialist',
+            bookingFor: 'walkin',
+            bookedBy: currentAttendant.name,
+            bookedByAttendant: true,
+            status: 'Confirmed',
+            createdAt: serverTimestamp(),
+            amount: currentDoctorData.consultationFee || 500
+        };
+
+        await addDoc(collection(db, 'bookings'), bookingData);
+
+        showMessage('✓ Walk-in appointment booked successfully!', 'success');
+        document.getElementById('walkInBookingForm').reset();
+        document.getElementById('walkInSerialDisplay').value = '';
+        
+        closeWalkInBookingModal();
+        
+        // Reload appointments if modal is open
+        if (document.getElementById('appointmentsModal').style.display === 'block') {
+            loadAppointments();
+        }
+
+    } catch (error) {
+        console.error('Error booking appointment:', error);
+        showMessage('✗ Failed to book appointment. Please try again.', 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm Booking';
+    }
+});
+        
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', () => {
             if (confirm('Are you sure you want to logout?')) {
@@ -1684,6 +1977,281 @@ allAppointments = [];
             }
         });
 
+        // ==================== WALK-IN BOOKING FUNCTIONS ====================
+
+// Open walk-in booking modal
+window.openWalkInBookingModal = function() {
+    if (!currentDoctorData) {
+        showMessage('Doctor information not loaded. Please refresh the page.', 'error');
+        return;
+    }
+
+    const modal = document.getElementById('walkInBookingModal');
+    modal.style.display = 'block';
+
+    // Display doctor info
+    document.getElementById('bookingDoctorName').textContent = currentDoctorData.name;
+    document.getElementById('bookingDoctorSpecialty').textContent = 
+        currentDoctorData.specialty || 'Specialist';
+
+    // Reset form
+    document.getElementById('walkInBookingForm').reset();
+    document.getElementById('walkInSerialDisplay').value = '';
+    document.getElementById('walkInSelectedSerial').value = '';
+    document.getElementById('walkInSelectedDate').value = '';
+    walkInSelectedSerial = null;
+    walkInSelectedDate = null;
+};
+
+// Close walk-in booking modal
+window.closeWalkInBookingModal = function() {
+    document.getElementById('walkInBookingModal').style.display = 'none';
+};
+
+// Open serial selection modal for walk-in
+window.openWalkInSerialModal = function() {
+    if (!currentDoctorData) {
+        showMessage('Doctor information not loaded.', 'error');
+        return;
+    }
+
+    // Check if doctor has schedule configured
+    const schedule = currentDoctorData.schedule || {};
+    const enabledDays = Object.keys(schedule).filter(day => schedule[day].enabled);
+    
+    if (enabledDays.length === 0) {
+        showMessage('Doctor schedule not configured. Please contact administrator.', 'error');
+        return;
+    }
+
+    const modal = document.getElementById('walkInSerialModal');
+    modal.style.display = 'block';
+
+    // Set initial date to next available day
+    const today = new Date();
+    const nextAvailableDate = getNextAvailableDateWalkIn(today);
+    document.getElementById('walkInModalDatePicker').value = nextAvailableDate;
+    document.getElementById('walkInModalDatePicker').min = today.toISOString().split('T')[0];
+
+    // Load serials for initial date
+    loadWalkInSerials();
+};
+
+// Close serial selection modal
+window.closeWalkInSerialModal = function() {
+    document.getElementById('walkInSerialModal').style.display = 'none';
+    walkInSelectedSerial = null;
+};
+
+// Get next available date based on doctor's schedule
+function getNextAvailableDateWalkIn(fromDate) {
+    const schedule = currentDoctorData.schedule || {};
+    const enabledDays = Object.keys(schedule).filter(day => schedule[day].enabled);
+    
+    if (enabledDays.length === 0) {
+        return fromDate.toISOString().split('T')[0];
+    }
+
+    let checkDate = new Date(fromDate);
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    for (let i = 0; i < 30; i++) {
+        const dayName = daysOfWeek[checkDate.getDay()];
+        if (enabledDays.includes(dayName)) {
+            return checkDate.toISOString().split('T')[0];
+        }
+        checkDate.setDate(checkDate.getDate() + 1);
+    }
+
+    return fromDate.toISOString().split('T')[0];
+}
+
+// Check if date is available
+function isDateAvailableWalkIn(dateString) {
+    const schedule = currentDoctorData.schedule || {};
+    const enabledDays = Object.keys(schedule).filter(day => schedule[day].enabled);
+    
+    if (enabledDays.length === 0) {
+        return true;
+    }
+
+    const date = new Date(dateString);
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dayName = daysOfWeek[date.getDay()];
+
+    return enabledDays.includes(dayName);
+}
+
+// Change date with navigation buttons
+function changeWalkInDate(direction) {
+    const datePicker = document.getElementById('walkInModalDatePicker');
+    const currentDate = new Date(datePicker.value);
+    currentDate.setDate(currentDate.getDate() + direction);
+
+    const nextDate = getNextAvailableDateWalkIn(currentDate);
+    datePicker.value = nextDate;
+    loadWalkInSerials();
+}
+
+// Load available serials
+async function loadWalkInSerials() {
+    const selectedDate = document.getElementById('walkInModalDatePicker').value;
+    
+    if (!selectedDate) {
+        return;
+    }
+
+    // Check if date is available
+    if (!isDateAvailableWalkIn(selectedDate)) {
+        const date = new Date(selectedDate);
+        const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getDay()];
+        const schedule = currentDoctorData.schedule || {};
+        const enabledDays = Object.keys(schedule).filter(day => schedule[day].enabled);
+        
+        const msgDiv = document.getElementById('walkInSerialMessage');
+        msgDiv.style.display = 'block';
+        msgDiv.style.background = '#fee2e2';
+        msgDiv.style.color = '#991b1b';
+        msgDiv.textContent = `Doctor not available on ${dayName}s. Available: ${enabledDays.join(', ')}`;
+        document.getElementById('walkInSerialBlocks').innerHTML = '';
+        document.getElementById('walkInScheduleInfo').innerHTML = '';
+        return;
+    }
+
+    document.getElementById('walkInSerialMessage').style.display = 'none';
+    document.getElementById('walkInSerialLoading').style.display = 'block';
+    document.getElementById('walkInSerialBlocks').innerHTML = '';
+    walkInSelectedSerial = null;
+
+    try {
+        // Get day schedule info
+        const date = new Date(selectedDate);
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayName = daysOfWeek[date.getDay()];
+        const schedule = currentDoctorData.schedule || {};
+        const daySchedule = schedule[dayName];
+        const maxPatients = parseInt(daySchedule?.maxPatients || currentDoctorData.maxPatients || 20);
+
+        // Display schedule info
+        document.getElementById('walkInScheduleInfo').innerHTML = 
+            `<i class="fas fa-calendar-check"></i> ${dayName} Schedule: ${daySchedule?.startTime || 'N/A'} - ${daySchedule?.endTime || 'N/A'} | Max ${maxPatients} patients`;
+
+        // Get existing bookings
+        const bookingsRef = collection(db, 'bookings');
+        const q = query(
+            bookingsRef,
+            where('doctorId', '==', doctorId),
+            where('appointmentDate', '==', selectedDate)
+        );
+
+        const querySnapshot = await getDocs(q);
+        const bookedSerials = new Set();
+
+        querySnapshot.forEach((docSnap) => {
+            const booking = docSnap.data();
+            if (booking.serialNumber) {
+                bookedSerials.add(parseInt(booking.serialNumber));
+            }
+        });
+
+        document.getElementById('walkInSerialLoading').style.display = 'none';
+
+        // Check if all booked
+        if (bookedSerials.size >= maxPatients) {
+            const msgDiv = document.getElementById('walkInSerialMessage');
+            msgDiv.style.display = 'block';
+            msgDiv.style.background = '#fee2e2';
+            msgDiv.style.color = '#991b1b';
+            msgDiv.textContent = '❌ All serials booked for this date. Try another day.';
+            return;
+        }
+
+        // Generate serial blocks
+        const blocksContainer = document.getElementById('walkInSerialBlocks');
+        
+        for (let i = 1; i <= maxPatients; i++) {
+            const block = document.createElement('div');
+            block.className = 'serial-block-walkin';
+            block.textContent = i;
+
+            if (bookedSerials.has(i)) {
+                block.classList.add('booked');
+            } else {
+                block.classList.add('available');
+                block.onclick = () => selectWalkInSerial(i, block);
+            }
+
+            blocksContainer.appendChild(block);
+        }
+
+        // Show available count
+        const availableCount = maxPatients - bookedSerials.size;
+        const msgDiv = document.getElementById('walkInSerialMessage');
+        msgDiv.style.display = 'block';
+        msgDiv.style.background = '#d1fae5';
+        msgDiv.style.color = '#065f46';
+        msgDiv.textContent = `✓ ${availableCount} of ${maxPatients} serials available`;
+
+    } catch (error) {
+        console.error('Error loading serials:', error);
+        document.getElementById('walkInSerialLoading').style.display = 'none';
+        const msgDiv = document.getElementById('walkInSerialMessage');
+        msgDiv.style.display = 'block';
+        msgDiv.style.background = '#fee2e2';
+        msgDiv.style.color = '#991b1b';
+        msgDiv.textContent = 'Failed to load serials. Please try again.';
+    }
+}
+
+// Select serial
+function selectWalkInSerial(serialNum, blockElement) {
+    // Remove previous selection
+    document.querySelectorAll('.serial-block-walkin.selected').forEach(block => {
+        block.classList.remove('selected');
+        block.classList.add('available');
+    });
+
+    // Add new selection
+    blockElement.classList.remove('available');
+    blockElement.classList.add('selected');
+    walkInSelectedSerial = serialNum;
+
+    // Enable confirm button
+    document.getElementById('confirmWalkInSerial').disabled = false;
+}
+
+// Confirm serial selection
+window.confirmWalkInSerial = function() {
+    if (!walkInSelectedSerial) {
+        showMessage('Please select a serial number', 'error');
+        return;
+    }
+
+    const selectedDate = document.getElementById('walkInModalDatePicker').value;
+    
+    // Update hidden fields
+    document.getElementById('walkInSelectedSerial').value = walkInSelectedSerial;
+    document.getElementById('walkInSelectedDate').value = selectedDate;
+
+    // Update display field
+    const formattedDate = new Date(selectedDate).toLocaleDateString('en-US', {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+
+    document.getElementById('walkInSerialDisplay').value = 
+        `Serial #${walkInSelectedSerial} - ${formattedDate}`;
+
+    walkInSelectedDate = selectedDate;
+
+    // Close modal
+    closeWalkInSerialModal();
+};
+
+// ==================== END WALK-IN BOOKING FUNCTIONS ====================
+        
         function showMessage(text, type) {
             const messageDiv = document.getElementById('globalMessage');
             messageDiv.textContent = text;
