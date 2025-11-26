@@ -826,6 +826,12 @@
                 </a>
             </li>
             <li class="nav-item">
+    <a class="nav-link" data-section="today-appointments">
+        <i class="fas fa-calendar-day"></i>
+        Today's Appointments
+    </a>
+</li>
+            <li class="nav-item">
                 <a class="nav-link" data-section="appointments">
                     <i class="fas fa-calendar-check"></i>
                     Appointments
@@ -964,7 +970,320 @@
             </div>
         </section>
 
-        <!-- Appointments Section -->
+        <!-- Today's Appointments Section -->
+<!-- এটি <section class="content-section" id="appointments"> এর আগে যোগ করুন -->
+
+<section class="content-section" id="today-appointments">
+    <div style="margin-bottom: 30px;">
+        <h3 style="color: #2c3e50; margin-bottom: 10px;">
+            <i class="fas fa-calendar-day"></i> Today's Serial Management
+        </h3>
+        <p style="color: #7f8c8d; font-size: 14px;">
+            View today's appointments and serial queue managed by attendant
+        </p>
+    </div>
+
+    <!-- Serial Management Display (Read-only) -->
+    <div id="todaySerialManagementRoot"></div>
+
+    <!-- Today's Patient List (Read-only) -->
+    <div id="todayPatientListRoot"></div>
+</section>
+
+<style>
+/* Styles for Today's Appointments Section */
+.today-serial-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.today-serial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.today-serial-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.today-serial-slot {
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.today-serial-slot.current {
+    box-shadow: 0 0 0 4px #fbbf24;
+    transform: scale(1.05);
+}
+
+.today-serial-slot.empty {
+    opacity: 0.4;
+}
+
+.today-slot-number {
+    font-size: 3rem;
+    font-weight: bold;
+    font-family: monospace;
+    margin-bottom: 8px;
+}
+
+.today-slot-name {
+    font-size: 0.875rem;
+    opacity: 0.95;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.today-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.today-stat-card {
+    padding: 16px;
+    border-radius: 12px;
+    border: 2px solid;
+}
+
+.today-skipped-list {
+    background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+    padding: 16px;
+    border-radius: 12px;
+    border: 2px solid #fb923c;
+    margin-top: 16px;
+}
+
+.today-skipped-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.today-skipped-badge {
+    background: #f97316;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(249,115,22,0.3);
+}
+
+.today-progress-bar {
+    width: 100%;
+    height: 16px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.today-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6);
+    transition: width 0.5s ease;
+}
+
+.today-patient-section {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.today-patient-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.today-patient-count-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.today-patients-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.today-patients-table thead th {
+    background: #f8f9fa;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.today-patients-table tbody tr {
+    background: white;
+    transition: all 0.3s ease;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.today-patients-table tbody tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.today-patients-table tbody td {
+    padding: 16px;
+    color: #2c3e50;
+    font-size: 0.9rem;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.today-patients-table tbody td:first-child {
+    border-left: 1px solid #f0f0f0;
+    border-radius: 12px 0 0 12px;
+}
+
+.today-patients-table tbody td:last-child {
+    border-right: 1px solid #f0f0f0;
+    border-radius: 0 12px 12px 0;
+}
+
+.today-patient-row-completed {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+    border-left: 4px solid #10b981 !important;
+}
+
+.today-patient-row-skipped {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+    border-left: 4px solid #f59e0b !important;
+}
+
+.today-serial-number-cell {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #667eea;
+    font-family: monospace;
+    width: 80px;
+}
+
+.today-patient-name-cell {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.today-patient-address-cell {
+    color: #6b7280;
+    font-size: 0.85rem;
+}
+
+.today-patient-phone-cell {
+    color: #374151;
+    font-weight: 500;
+}
+
+.today-status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.today-status-waiting {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.today-status-completed {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.today-status-skipped {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.today-patient-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #9ca3af;
+}
+
+.today-patient-empty i {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.3;
+}
+
+@media (max-width: 768px) {
+    .today-serial-slots {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .today-slot-number {
+        font-size: 2rem;
+    }
+    
+    .today-patients-table thead {
+        display: none;
+    }
+    
+    .today-patients-table tbody tr {
+        display: block;
+        margin-bottom: 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 12px;
+    }
+    
+    .today-patients-table tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border: none !important;
+        border-radius: 0 !important;
+    }
+    
+    .today-patients-table tbody td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+    }
+}
+</style>
+        
+
     <!-- Appointments Section -->
 <section class="content-section" id="appointments">
     <div class="table-container">
@@ -2480,6 +2799,7 @@ maxPatients: document.getElementById('maxPatients').value,
 
             const titles = {
                 dashboard: 'Doctor Dashboard',
+                'today-appointments': 'Today\'s Appointments', 
                 appointments: 'All Appointments',
                 patients: 'My Patients',
                 schedule: 'Schedule Timings',
@@ -2490,20 +2810,289 @@ maxPatients: document.getElementById('maxPatients').value,
 
             loadSectionData(sectionName);
         }
+// ==================== TODAY'S APPOINTMENTS FUNCTIONS ====================
 
-        function loadSectionData(sectionName) {
-            switch(sectionName) {
-                case 'appointments':
-                    loadAppointmentsData();
-                    break;
-                case 'patients':
-                    loadPatientsData();
-                    break;
-                case 'attendants':
-                    loadAttendants();
-                    break;
+// Load today's serial management data (read-only)
+async function loadTodaySerialManagement() {
+    if (!doctorId) return;
+    
+    const today = new Date().toISOString().split('T')[0];
+    
+    try {
+        // Load today's appointments
+        const bookingsRef = collection(db, 'bookings');
+        const q = query(
+            bookingsRef, 
+            where('doctorId', '==', doctorId),
+            where('appointmentDate', '==', today)
+        );
+        
+        const snapshot = await getDocs(q);
+        const todayAppointments = [];
+        snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            if (data.serialNumber) {
+                todayAppointments.push({
+                    id: docSnap.id,
+                    ...data
+                });
             }
+        });
+        
+        // Sort by serial number
+        todayAppointments.sort((a, b) => a.serialNumber - b.serialNumber);
+        
+        // Load serial management data
+        const serialDocId = `${doctorId}_${today}`;
+        const serialDocRef = doc(db, 'serialManagement', serialDocId);
+        const serialDocSnap = await getDoc(serialDocRef);
+        
+        if (serialDocSnap.exists()) {
+            const serialData = serialDocSnap.data();
+            renderTodaySerialUI(serialData, todayAppointments);
+            renderTodayPatientList(serialData, todayAppointments);
+            
+            // Set up real-time listener
+            onSnapshot(serialDocRef, async (snapshot) => {
+                if (snapshot.exists()) {
+                    // Reload appointments for fresh data
+                    const freshSnapshot = await getDocs(q);
+                    const freshAppointments = [];
+                    freshSnapshot.forEach(docSnap => {
+                        const data = docSnap.data();
+                        if (data.serialNumber) {
+                            freshAppointments.push({
+                                id: docSnap.id,
+                                ...data
+                            });
+                        }
+                    });
+                    freshAppointments.sort((a, b) => a.serialNumber - b.serialNumber);
+                    
+                    renderTodaySerialUI(snapshot.data(), freshAppointments);
+                    renderTodayPatientList(snapshot.data(), freshAppointments);
+                }
+            });
+        } else {
+            // No serial management data yet
+            document.getElementById('todaySerialManagementRoot').innerHTML = `
+                <div class="today-serial-card">
+                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                        <i class="fas fa-calendar-times" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
+                        <p style="font-size: 16px;">No serial management data available for today</p>
+                        <p style="font-size: 14px; margin-top: 10px;">Attendant will initialize the serial queue when they start managing appointments</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('todayPatientListRoot').innerHTML = `
+                <div class="today-patient-section">
+                    <div class="today-patient-empty">
+                        <i class="fas fa-calendar-times"></i>
+                        <p>No patient list available for today</p>
+                    </div>
+                </div>
+            `;
         }
+    } catch (error) {
+        console.error('Error loading today serial management:', error);
+        showMessage('Failed to load today\'s appointments', 'error');
+    }
+}
+
+// Render today's serial UI (read-only version)
+function renderTodaySerialUI(serialData, appointments) {
+    const root = document.getElementById('todaySerialManagementRoot');
+    if (!root) return;
+    
+    const getPatientName = (serial) => {
+        const apt = appointments.find(a => a.serialNumber === serial);
+        return apt ? apt.patientName : 'No Patient';
+    };
+    
+    const progress = appointments.length > 0 
+        ? Math.round((serialData.completed.length / appointments.length) * 100) 
+        : 0;
+    
+    root.innerHTML = `
+        <div class="today-serial-card">
+            <div class="today-serial-header">
+                <div>
+                    <h2 style="font-size: 1.5rem; font-weight: bold; color: #1f2937; margin-bottom: 4px;">
+                        <i class="fas fa-list-ol"></i> Current Serial Queue
+                    </h2>
+                    <p style="color: #6b7280; font-size: 0.875rem;">
+                        <i class="fas fa-calendar"></i> ${new Date().toLocaleDateString()}
+                    </p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 2.5rem; font-weight: bold; color: #8b5cf6;">
+                        ${String(serialData.slots[0] || 0).padStart(2, '0')}
+                    </div>
+                    <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase;">Current</div>
+                </div>
+            </div>
+            
+            <div class="today-serial-slots">
+                ${serialData.slots.map((serial, index) => {
+                    const colors = [
+                        'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                        'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                        'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                        'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                        'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                    ];
+                    return `
+                        <div class="today-serial-slot ${index === 0 ? 'current' : ''} ${serial === 0 ? 'empty' : ''}" 
+                             style="background: ${colors[index]}">
+                            ${index === 0 ? '<div style="position: absolute; top: -8px; right: -8px; background: #fbbf24; color: #92400e; font-size: 0.75rem; font-weight: bold; padding: 4px 12px; border-radius: 999px;">NOW</div>' : ''}
+                            <div class="today-slot-number">
+                                ${serial > 0 ? String(serial).padStart(2, '0') : '--'}
+                            </div>
+                            <div class="today-slot-name">
+                                ${serial > 0 ? getPatientName(serial) : 'Empty'}
+                            </div>
+                            <div style="margin-top: 8px; font-size: 0.75rem; opacity: 0.75;">
+                                ${index === 0 ? 'Current' : `+${index}`}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            
+            <div class="today-stats-grid">
+                <div class="today-stat-card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #1e40af;">${appointments.length}</div>
+                    <div style="font-size: 0.875rem; color: #1e40af; font-weight: 600;">Total</div>
+                </div>
+                <div class="today-stat-card" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #10b981;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #065f46;">${serialData.completed.length}</div>
+                    <div style="font-size: 0.875rem; color: #065f46; font-weight: 600;">Completed</div>
+                </div>
+                <div class="today-stat-card" style="background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%); border-color: #f97316;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #9a3412;">${serialData.skipped.length}</div>
+                    <div style="font-size: 0.875rem; color: #9a3412; font-weight: 600;">Skipped</div>
+                </div>
+                <div class="today-stat-card" style="background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%); border-color: #8b5cf6;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #581c87;">${progress}%</div>
+                    <div style="font-size: 0.875rem; color: #581c87; font-weight: 600;">Progress</div>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: #6b7280; margin-bottom: 8px;">
+                    <span style="font-weight: 600;">Daily Progress</span>
+                    <span style="font-weight: bold;">${serialData.completed.length} / ${appointments.length}</span>
+                </div>
+                <div class="today-progress-bar">
+                    <div class="today-progress-fill" style="width: ${progress}%"></div>
+                </div>
+            </div>
+            
+            ${serialData.skipped.length > 0 ? `
+                <div class="today-skipped-list">
+                    <h4 style="font-weight: bold; color: #9a3412; margin-bottom: 8px;">
+                        <i class="fas fa-forward"></i> Skipped Patients
+                    </h4>
+                    <div class="today-skipped-items">
+                        ${serialData.skipped.map(s => `
+                            <div class="today-skipped-badge">${String(s).padStart(2, '0')}</div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+// Render today's patient list (read-only version)
+function renderTodayPatientList(serialData, appointments) {
+    const root = document.getElementById('todayPatientListRoot');
+    if (!root) return;
+    
+    root.innerHTML = `
+        <div class="today-patient-section">
+            <div class="today-patient-header">
+                <h3><i class="fas fa-users"></i> Today's Patient List</h3>
+                <div class="today-patient-count-badge">
+                    ${appointments.length} Patient${appointments.length !== 1 ? 's' : ''}
+                </div>
+            </div>
+            
+            ${appointments.length > 0 ? `
+                <div style="overflow-x: auto;">
+                    <table class="today-patients-table">
+                        <thead>
+                            <tr>
+                                <th>Serial</th>
+                                <th>Patient Name</th>
+                                <th>Address</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${appointments.map(apt => {
+                                const isCompleted = serialData.completed.includes(apt.serialNumber);
+                                const isSkipped = serialData.skipped.includes(apt.serialNumber);
+                                const rowClass = isCompleted ? 'today-patient-row-completed' : (isSkipped ? 'today-patient-row-skipped' : '');
+                                
+                                return `
+                                    <tr class="${rowClass}">
+                                        <td class="today-serial-number-cell" data-label="Serial">
+                                            ${String(apt.serialNumber).padStart(2, '0')}
+                                        </td>
+                                        <td class="today-patient-name-cell" data-label="Name">
+                                            ${apt.patientName || 'N/A'}
+                                        </td>
+                                        <td class="today-patient-address-cell" data-label="Address">
+                                            ${apt.patientAddress || 'Not provided'}
+                                        </td>
+                                        <td class="today-patient-phone-cell" data-label="Phone">
+                                            <i class="fas fa-phone"></i> ${apt.patientPhone || 'N/A'}
+                                        </td>
+                                        <td data-label="Status">
+                                            ${isCompleted ? 
+                                                '<span class="today-status-indicator today-status-completed"><i class="fas fa-check-circle"></i> Completed</span>' : 
+                                                (isSkipped ? 
+                                                    '<span class="today-status-indicator today-status-skipped"><i class="fas fa-forward"></i> Skipped</span>' : 
+                                                    '<span class="today-status-indicator today-status-waiting"><i class="fas fa-hourglass-half"></i> Waiting</span>'
+                                                )
+                                            }
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            ` : `
+                <div class="today-patient-empty">
+                    <i class="fas fa-calendar-times"></i>
+                    <p style="font-size: 1rem; margin-top: 8px;">No appointments scheduled for today</p>
+                </div>
+            `}
+        </div>
+    `;
+}
+
+// ==================== END TODAY'S APPOINTMENTS FUNCTIONS ====================
+    
+    switch(sectionName) {
+        case 'appointments':
+            loadAppointmentsData();
+            break;
+        case 'patients':
+            loadPatientsData();
+            break;
+        case 'attendants':
+            loadAttendants();
+            break;
+        case 'today-appointments':  // ← এই নতুন case যোগ করুন
+            loadTodaySerialManagement();
+            break;
+    }
+}
 
 
         // Search functionality
