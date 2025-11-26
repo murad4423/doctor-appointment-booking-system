@@ -1231,7 +1231,7 @@ function renderSerialUI(serialData, appointments, serialDocRef) {
                                 <th>Address</th>
                                 <th>Phone</th>
                                 <th>Status</th>
-                                <th>Action</th>
+                               
                             </tr>
                         </thead>
                         <tbody>
@@ -1263,20 +1263,14 @@ function renderSerialUI(serialData, appointments, serialDocRef) {
                                                 )
                                             }
                                         </td>
-                                        <td data-label="Action">
-                                            <div class="action-buttons">
-                                                <button 
-                                                    class="btn-complete ${isCompleted ? 'completed' : ''}" 
-                                                    data-serial="${apt.serialNumber}"
-                                                    data-booking-id="${apt.id || ''}"
-                                                    ${isCompleted ? 'disabled' : ''}
-                                                >
-                                                    ${isCompleted ? 
-                                                        '<i class="fas fa-check"></i> Completed' : 
-                                                        '<i class="fas fa-check-circle"></i> Mark Complete'
-                                                    }
-                                                </button>
-                                            </div>
+<td data-label="Status">
+                                            ${isCompleted ? 
+                                                '<span class="status-indicator" style="background: #d1fae5; color: #065f46;"><i class="fas fa-check-circle"></i> Completed</span>' : 
+                                                (isSkipped ? 
+                                                    '<span class="status-indicator" style="background: #fef3c7; color: #92400e;"><i class="fas fa-forward"></i> Skipped</span>' : 
+                                                    '<span class="status-indicator status-waiting"><i class="fas fa-hourglass-half"></i> Waiting</span>'
+                                                )
+                                            }
                                         </td>
                                     </tr>
                                 `;
@@ -1299,12 +1293,16 @@ function renderSerialUI(serialData, appointments, serialDocRef) {
     const btnUndo = document.getElementById('btnSerialUndo');
     const btnAdd = document.getElementById('btnSerialAdd');
     
-    if (btnDone) {
+if (btnDone) {
         btnDone.onclick = async () => {
             if (btnDone.disabled) return;
             const currentSerial = serialData.slots[0];
             
+            // Find the appointment with this serial number
+            const appointment = appointments.find(apt => apt.serialNumber === currentSerial);
+            
             try {
+                // Update serial management
                 await updateDoc(serialDocRef, {
                     history: {
                         slots: [...serialData.slots],
@@ -1322,7 +1320,18 @@ function renderSerialUI(serialData, appointments, serialDocRef) {
                     completed: [...serialData.completed, currentSerial],
                     lastUpdated: new Date()
                 });
+                
+                // Update booking status
+                if (appointment && appointment.id) {
+                    const bookingRef = doc(db, 'bookings', appointment.id);
+                    await updateDoc(bookingRef, {
+                        status: 'Completed',
+                        completedAt: new Date()
+                    });
+                }
+                
                 showMessage(`Patient #${String(currentSerial).padStart(2, '0')} completed!`, 'success');
+                
             } catch (error) {
                 console.error('Error:', error);
                 showMessage('Failed to update. Please try again.', 'error');
@@ -1414,44 +1423,7 @@ function renderSerialUI(serialData, appointments, serialDocRef) {
             }
         };
     }
-    
-    // NEW: Handle complete button clicks for patient list
-    document.querySelectorAll('.btn-complete:not(.completed)').forEach(btn => {
-        btn.onclick = async () => {
-            const serial = parseInt(btn.dataset.serial);
-            const bookingId = btn.dataset.bookingId;
-            
-            if (!serial || isNaN(serial)) return;
-            
-            if (confirm(`Mark Patient #${String(serial).padStart(2, '0')} as completed?`)) {
-                try {
-                    // Update serial management
-                    const newCompleted = [...serialData.completed, serial];
-                    const newSkipped = serialData.skipped.filter(s => s !== serial);
-                    
-                    await updateDoc(serialDocRef, {
-                        completed: newCompleted,
-                        skipped: newSkipped,
-                        lastUpdated: new Date()
-                    });
-                    
-                    // Update booking status if bookingId exists
-                    if (bookingId) {
-                        const bookingRef = doc(db, 'bookings', bookingId);
-                        await updateDoc(bookingRef, {
-                            status: 'Completed',
-                            completedAt: new Date()
-                        });
-                    }
-                    
-                    showMessage(`Patient #${String(serial).padStart(2, '0')} marked as completed!`, 'success');
-                } catch (error) {
-                    console.error('Error:', error);
-                    showMessage('Failed to update patient status. Please try again.', 'error');
-                }
-            }
-        };
-    });
+
 }
 
 // ==================== END SERIAL MANAGEMENT ====================
