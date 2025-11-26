@@ -1902,73 +1902,119 @@ window.addEventListener('click', (e) => {
 
         document.getElementById('filterPatientName').addEventListener('input', applyFilters);
 
-        // Walk-in Booking Event Listeners
-document.getElementById('bookAppointmentBtn').addEventListener('click', openWalkInBookingModal);
-document.getElementById('closeBookingModalBtn').addEventListener('click', closeWalkInBookingModal);
-document.getElementById('closeWalkInSerialModalBtn').addEventListener('click', closeWalkInSerialModal);
+// Walk-in Booking Event Listeners
+const bookAppointmentBtn = document.getElementById('bookAppointmentBtn');
+if (bookAppointmentBtn) {
+    bookAppointmentBtn.addEventListener('click', function() {
+        openWalkInBookingModal();
+    });
+}
+
+const closeBookingModalBtn = document.getElementById('closeBookingModalBtn');
+if (closeBookingModalBtn) {
+    closeBookingModalBtn.addEventListener('click', function() {
+        closeWalkInBookingModal();
+    });
+}
+
+const closeWalkInSerialModalBtn = document.getElementById('closeWalkInSerialModalBtn');
+if (closeWalkInSerialModalBtn) {
+    closeWalkInSerialModalBtn.addEventListener('click', function() {
+        closeWalkInSerialModal();
+    });
+}
 
 // Serial modal click to open
-document.getElementById('walkInSerialDisplay').addEventListener('click', openWalkInSerialModal);
+const walkInSerialDisplay = document.getElementById('walkInSerialDisplay');
+if (walkInSerialDisplay) {
+    walkInSerialDisplay.addEventListener('click', function() {
+        openWalkInSerialModal();
+    });
+}
 
 // Date navigation
-document.getElementById('walkInDatePrev').addEventListener('click', () => changeWalkInDate(-1));
-document.getElementById('walkInDateNext').addEventListener('click', () => changeWalkInDate(1));
-document.getElementById('walkInModalDatePicker').addEventListener('change', loadWalkInSerials);
+const walkInDatePrev = document.getElementById('walkInDatePrev');
+if (walkInDatePrev) {
+    walkInDatePrev.addEventListener('click', function() {
+        changeWalkInDate(-1);
+    });
+}
+
+const walkInDateNext = document.getElementById('walkInDateNext');
+if (walkInDateNext) {
+    walkInDateNext.addEventListener('click', function() {
+        changeWalkInDate(1);
+    });
+}
+
+const walkInModalDatePicker = document.getElementById('walkInModalDatePicker');
+if (walkInModalDatePicker) {
+    walkInModalDatePicker.addEventListener('change', function() {
+        loadWalkInSerials();
+    });
+}
 
 // Confirm serial button
-document.getElementById('confirmWalkInSerial').addEventListener('click', confirmWalkInSerial);
+const confirmWalkInSerialBtn = document.getElementById('confirmWalkInSerial');
+if (confirmWalkInSerialBtn) {
+    confirmWalkInSerialBtn.addEventListener('click', function() {
+        confirmWalkInSerial();
+    });
+}
 
 // Walk-in booking form submission
-document.getElementById('walkInBookingForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const submitBtn = document.getElementById('submitWalkInBooking');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking...';
-
-    try {
-        const bookingData = {
-            patientName: document.getElementById('walkInPatientName').value,
-            patientPhone: document.getElementById('walkInPhone').value,
-            patientAddress: document.getElementById('walkInAddress').value || 'Not provided',
-            patientEmail: document.getElementById('walkInEmail').value || 'Not provided',
-            appointmentType: document.getElementById('walkInAppointmentType').value,
-            serialNumber: parseInt(document.getElementById('walkInSelectedSerial').value),
-            appointmentDate: document.getElementById('walkInSelectedDate').value,
-            reason: document.getElementById('walkInReason').value,
-            doctorId: doctorId,
-            doctorName: currentDoctorData.name,
-            doctorSpecialty: currentDoctorData.specialty || 'Specialist',
-            bookingFor: 'walkin',
-            bookedBy: currentAttendant.name,
-            bookedByAttendant: true,
-            status: 'Confirmed',
-            createdAt: serverTimestamp(),
-            amount: currentDoctorData.consultationFee || 500
-        };
-
-        await addDoc(collection(db, 'bookings'), bookingData);
-
-        showMessage('✓ Walk-in appointment booked successfully!', 'success');
-        document.getElementById('walkInBookingForm').reset();
-        document.getElementById('walkInSerialDisplay').value = '';
+const walkInBookingForm = document.getElementById('walkInBookingForm');
+if (walkInBookingForm) {
+    walkInBookingForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        closeWalkInBookingModal();
-        
-        // Reload appointments if modal is open
-        if (document.getElementById('appointmentsModal').style.display === 'block') {
-            loadAppointments();
+        const submitBtn = document.getElementById('submitWalkInBooking');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking...';
+
+        try {
+            const bookingData = {
+                patientName: document.getElementById('walkInPatientName').value,
+                patientPhone: document.getElementById('walkInPhone').value,
+                patientAddress: document.getElementById('walkInAddress').value || 'Not provided',
+                patientEmail: document.getElementById('walkInEmail').value || 'Not provided',
+                appointmentType: document.getElementById('walkInAppointmentType').value,
+                serialNumber: parseInt(document.getElementById('walkInSelectedSerial').value),
+                appointmentDate: document.getElementById('walkInSelectedDate').value,
+                reason: document.getElementById('walkInReason').value,
+                doctorId: doctorId,
+                doctorName: currentDoctorData.name,
+                doctorSpecialty: currentDoctorData.specialty || 'Specialist',
+                bookingFor: 'walkin',
+                bookedBy: currentAttendant.name,
+                bookedByAttendant: true,
+                status: 'Confirmed',
+                createdAt: serverTimestamp(),
+                amount: currentDoctorData.consultationFee || 500
+            };
+
+            await addDoc(collection(db, 'bookings'), bookingData);
+
+            showMessage('✓ Walk-in appointment booked successfully!', 'success');
+            document.getElementById('walkInBookingForm').reset();
+            document.getElementById('walkInSerialDisplay').value = '';
+            
+            closeWalkInBookingModal();
+            
+            // Reload appointments if modal is open
+            if (document.getElementById('appointmentsModal').style.display === 'block') {
+                loadAppointments();
+            }
+
+        } catch (error) {
+            console.error('Error booking appointment:', error);
+            showMessage('✗ Failed to book appointment. Please try again.', 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm Booking';
         }
-
-    } catch (error) {
-        console.error('Error booking appointment:', error);
-        showMessage('✗ Failed to book appointment. Please try again.', 'error');
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm Booking';
-    }
-});
-        
+    });
+}
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', () => {
             if (confirm('Are you sure you want to logout?')) {
