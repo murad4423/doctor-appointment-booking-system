@@ -994,6 +994,297 @@
                 gap: 10px;
             }
         }
+/* Serial Management Tab Styles */
+.serial-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.serial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.serial-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.serial-slot {
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.serial-slot.current {
+    box-shadow: 0 0 0 4px #fbbf24;
+    transform: scale(1.05);
+}
+
+.serial-slot.empty {
+    opacity: 0.4;
+}
+
+.slot-number {
+    font-size: 3rem;
+    font-weight: bold;
+    font-family: monospace;
+    margin-bottom: 8px;
+}
+
+.slot-name {
+    font-size: 0.875rem;
+    opacity: 0.95;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stats-grid-serial {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.stat-card-serial {
+    padding: 16px;
+    border-radius: 12px;
+    border: 2px solid;
+}
+
+.skipped-list {
+    background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+    padding: 16px;
+    border-radius: 12px;
+    border: 2px solid #fb923c;
+    margin-top: 16px;
+}
+
+.skipped-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.skipped-badge {
+    background: #f97316;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(249,115,22,0.3);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 16px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6);
+    transition: width 0.5s ease;
+}
+
+.patient-section {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.patient-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.patient-count-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.patients-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.patients-table thead th {
+    background: #f8f9fa;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.patients-table tbody tr {
+    background: white;
+    transition: all 0.3s ease;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.patients-table tbody tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.patients-table tbody td {
+    padding: 16px;
+    color: #2c3e50;
+    font-size: 0.9rem;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.patients-table tbody td:first-child {
+    border-left: 1px solid #f0f0f0;
+    border-radius: 12px 0 0 12px;
+}
+
+.patients-table tbody td:last-child {
+    border-right: 1px solid #f0f0f0;
+    border-radius: 0 12px 12px 0;
+}
+
+.patient-row-completed {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+    border-left: 4px solid #10b981 !important;
+}
+
+.patient-row-skipped {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+    border-left: 4px solid #f59e0b !important;
+}
+
+.serial-number-cell {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #667eea;
+    font-family: monospace;
+    width: 80px;
+}
+
+.patient-name-cell {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.patient-address-cell {
+    color: #6b7280;
+    font-size: 0.85rem;
+}
+
+.patient-phone-cell {
+    color: #374151;
+    font-weight: 500;
+}
+
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-waiting {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.status-completed {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-skipped {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.patient-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #9ca3af;
+}
+
+.patient-empty i {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.3;
+}
+
+@media (max-width: 768px) {
+    .serial-slots {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .slot-number {
+        font-size: 2rem;
+    }
+    
+    .patients-table thead {
+        display: none;
+    }
+    
+    .patients-table tbody tr {
+        display: block;
+        margin-bottom: 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 12px;
+    }
+    
+    .patients-table tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border: none !important;
+        border-radius: 0 !important;
+    }
+    
+    .patients-table tbody td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+    }
+}
+        
     </style>
 </head>
 <body>
@@ -1139,7 +1430,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, doc, getDoc, collection, addDoc, query, where, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, doc, getDoc, collection, addDoc, query, where, getDocs, serverTimestamp,onSnapshot  } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
         const firebaseConfig = {
@@ -1287,73 +1578,89 @@
         </div>
     </div>
 
-    <div class="tabs-container">
-        <div class="tabs">
-            <button class="tab active" data-tab="info">
-                <span>ℹ️</span> Info
-            </button>
-            <button class="tab" data-tab="education">
-                <span>🎓</span> Education
-            </button>
+<div class="tabs-container">
+    <div class="tabs">
+        <button class="tab active" data-tab="serial">
+            <span>📊</span> Serial Management
+        </button>
+        <button class="tab" data-tab="info">
+            <span>ℹ️</span> Info
+        </button>
+        <button class="tab" data-tab="education">
+            <span>🎓</span> Education
+        </button>
+    </div>
+</div>
+
+<div class="content-grid">
+    <div class="main-content">
+        <!-- Serial Management Tab (NEW) -->
+        <div id="serialTab" class="tab-content active">
+            <h2 class="content-title">Today's Serial Management</h2>
+            
+            <!-- Serial Management Display -->
+            <div id="serialManagementRoot"></div>
+            
+            <!-- Today's Patient List -->
+            <div id="patientListRoot" style="margin-top: 30px;"></div>
+        </div>
+
+        <!-- Info Tab (Existing) -->
+        <div id="infoTab" class="tab-content">
+            ${doctor.about ? \`
+                <h2 class="content-title">About Doctor</h2>
+                <div class="about-text">\${doctor.about}</div>
+            \` : ''}
+
+            ${doctor.specialized ? \`
+                <div class="info-section">
+                    <h3 class="info-section-title">Areas of Specialization</h3>
+                    <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
+                        \${doctor.specialized.split(',').map(item => \`<li>\${item.trim()}</li>\`).join('')}
+                    </ul>
+                </div>
+            \` : ''}
+
+            ${doctor.fieldOfConcentration ? \`
+                <div class="info-section">
+                    <h3 class="info-section-title">Field of Concentration</h3>
+                    <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
+                        \${doctor.fieldOfConcentration.split(',').map(item => \`<li>\${item.trim()}</li>\`).join('')}
+                    </ul>
+                </div>
+            \` : ''}
+        </div>
+
+        <!-- Education Tab (Existing) -->
+        <div id="educationTab" class="tab-content">
+            <h2 class="content-title">Educational Qualifications</h2>
+            
+            ${doctor.degrees ? \`
+                <div class="info-section">
+                    <h3 class="info-section-title">Academic Degrees</h3>
+                    <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
+                        \${doctor.degrees.split(',').map(item => \`<li>\${item.trim()}</li>\`).join('')}
+                    </ul>
+                </div>
+            \` : ''}
+
+            ${doctor.fellowships ? \`
+                <div class="info-section">
+                    <h3 class="info-section-title">Fellowships</h3>
+                    <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
+                        \${doctor.fellowships.split(',').map(item => \`<li>\${item.trim()}</li>\`).join('')}
+                    </ul>
+                </div>
+            \` : ''}
+
+            ${doctor.trainings ? \`
+                <div class="info-section">
+                    <h3 class="info-section-title">Training & Courses</h3>
+                    <div class="info-text" style="white-space: pre-line;">\${doctor.trainings}</div>
+                </div>
+            \` : ''}
         </div>
     </div>
-
-    <div class="content-grid">
-        <div class="main-content">
-            <div id="infoTab" class="tab-content active">
-                ${doctor.about ? `
-                    <h2 class="content-title">About Doctor</h2>
-                    <div class="about-text">${doctor.about}</div>
-                ` : ''}
-
-                ${doctor.specialized ? `
-                    <div class="info-section">
-                        <h3 class="info-section-title">Areas of Specialization</h3>
-                        <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
-                            ${doctor.specialized.split(',').map(item => `<li>${item.trim()}</li>`).join('')}
-                        </ul>
-                    </div>
-                ` : ''}
-
-                ${doctor.fieldOfConcentration ? `
-                    <div class="info-section">
-                        <h3 class="info-section-title">Field of Concentration</h3>
-                        <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
-                            ${doctor.fieldOfConcentration.split(',').map(item => `<li>${item.trim()}</li>`).join('')}
-                        </ul>
-                    </div>
-                ` : ''}
-            </div>
-
-            <div id="educationTab" class="tab-content">
-                <h2 class="content-title">Educational Qualifications</h2>
-                
-                ${doctor.degrees ? `
-                    <div class="info-section">
-                        <h3 class="info-section-title">Academic Degrees</h3>
-                        <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
-                            ${doctor.degrees.split(',').map(item => `<li>${item.trim()}</li>`).join('')}
-                        </ul>
-                    </div>
-                ` : ''}
-
-                ${doctor.fellowships ? `
-                    <div class="info-section">
-                        <h3 class="info-section-title">Fellowships</h3>
-                        <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin-left: 20px;">
-                            ${doctor.fellowships.split(',').map(item => `<li>${item.trim()}</li>`).join('')}
-                        </ul>
-                    </div>
-                ` : ''}
-
-                ${doctor.trainings ? `
-                    <div class="info-section">
-                        <h3 class="info-section-title">Training & Courses</h3>
-                        <div class="info-text" style="white-space: pre-line;">${doctor.trainings}</div>
-                    </div>
-                ` : ''}
-            </div>
-        </div>
 
         <div class="sidebar">
             <h2 class="content-title">At a Glance</h2>
@@ -1462,25 +1769,333 @@
             return html;
         }
 
-        function setupTabSwitching() {
-            const tabs = document.querySelectorAll('.tab');
-            const tabContents = document.querySelectorAll('.tab-content');
-
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const targetTab = tab.getAttribute('data-tab');
-                    
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    
-                    tabContents.forEach(content => {
-                        content.classList.remove('active');
-                    });
-                    
-                    document.getElementById(targetTab + 'Tab').classList.add('active');
+        // Load serial management data
+async function loadSerialManagement() {
+    if (!currentDoctor) return;
+    
+    const today = new Date().toISOString().split('T')[0];
+    
+    try {
+        // Load today's appointments
+        const bookingsRef = collection(db, 'bookings');
+        const q = query(
+            bookingsRef, 
+            where('doctorId', '==', doctorId),
+            where('appointmentDate', '==', today)
+        );
+        
+        const snapshot = await getDocs(q);
+        const todayAppointments = [];
+        snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            if (data.serialNumber) {
+                todayAppointments.push({
+                    id: docSnap.id,
+                    ...data
                 });
+            }
+        });
+        
+        // Sort by serial number
+        todayAppointments.sort((a, b) => a.serialNumber - b.serialNumber);
+        
+        // Load serial management data
+        const serialDocId = `${doctorId}_${today}`;
+        const serialDocRef = doc(db, 'serialManagement', serialDocId);
+        const serialDocSnap = await getDoc(serialDocRef);
+        
+        if (serialDocSnap.exists()) {
+            const serialData = serialDocSnap.data();
+            renderSerialManagementUI(serialData, todayAppointments);
+            renderPatientList(serialData, todayAppointments);
+            
+            // Set up real-time listener
+            onSnapshot(serialDocRef, async (snapshot) => {
+                if (snapshot.exists()) {
+                    // Reload appointments for fresh data
+                    const freshSnapshot = await getDocs(q);
+                    const freshAppointments = [];
+                    freshSnapshot.forEach(docSnap => {
+                        const data = docSnap.data();
+                        if (data.serialNumber) {
+                            freshAppointments.push({
+                                id: docSnap.id,
+                                ...data
+                            });
+                        }
+                    });
+                    freshAppointments.sort((a, b) => a.serialNumber - b.serialNumber);
+                    
+                    renderSerialManagementUI(snapshot.data(), freshAppointments);
+                    renderPatientList(snapshot.data(), freshAppointments);
+                }
             });
+        } else {
+            // No serial management data yet
+            document.getElementById('serialManagementRoot').innerHTML = `
+                <div class="serial-card">
+                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                        <i class="fas fa-calendar-times" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
+                        <p style="font-size: 16px;">No serial management data available for today</p>
+                        <p style="font-size: 14px; margin-top: 10px;">Your attendant will initialize the serial queue when they start managing appointments</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('patientListRoot').innerHTML = `
+                <div class="patient-section">
+                    <div class="patient-empty">
+                        <i class="fas fa-calendar-times"></i>
+                        <p>No patient list available for today</p>
+                    </div>
+                </div>
+            `;
         }
+    } catch (error) {
+        console.error('Error loading serial management:', error);
+        document.getElementById('serialManagementRoot').innerHTML = `
+            <div class="serial-card">
+                <div style="text-align: center; padding: 40px; color: #e74c3c;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 15px;"></i>
+                    <p>Failed to load serial management data</p>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Render serial management UI
+function renderSerialManagementUI(serialData, appointments) {
+    const root = document.getElementById('serialManagementRoot');
+    if (!root) return;
+    
+    const getPatientName = (serial) => {
+        const apt = appointments.find(a => a.serialNumber === serial);
+        return apt ? apt.patientName : 'No Patient';
+    };
+    
+    const progress = appointments.length > 0 
+        ? Math.round((serialData.completed.length / appointments.length) * 100) 
+        : 0;
+    
+    root.innerHTML = `
+        <div class="serial-card">
+            <div class="serial-header">
+                <div>
+                    <h2 style="font-size: 1.5rem; font-weight: bold; color: #1f2937; margin-bottom: 4px;">
+                        <i class="fas fa-list-ol"></i> Current Serial Queue
+                    </h2>
+                    <p style="color: #6b7280; font-size: 0.875rem;">
+                        <i class="fas fa-calendar"></i> ${new Date().toLocaleDateString()}
+                    </p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 2.5rem; font-weight: bold; color: #8b5cf6;">
+                        ${String(serialData.slots[0] || 0).padStart(2, '0')}
+                    </div>
+                    <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase;">Current</div>
+                </div>
+            </div>
+            
+            <div class="serial-slots">
+                ${serialData.slots.map((serial, index) => {
+                    const colors = [
+                        'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                        'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                        'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                        'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                        'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                    ];
+                    return `
+                        <div class="serial-slot ${index === 0 ? 'current' : ''} ${serial === 0 ? 'empty' : ''}" 
+                             style="background: ${colors[index]}">
+                            ${index === 0 ? '<div style="position: absolute; top: -8px; right: -8px; background: #fbbf24; color: #92400e; font-size: 0.75rem; font-weight: bold; padding: 4px 12px; border-radius: 999px;">NOW</div>' : ''}
+                            <div class="slot-number">
+                                ${serial > 0 ? String(serial).padStart(2, '0') : '--'}
+                            </div>
+                            <div class="slot-name">
+                                ${serial > 0 ? getPatientName(serial) : 'Empty'}
+                            </div>
+                            <div style="margin-top: 8px; font-size: 0.75rem; opacity: 0.75;">
+                                ${index === 0 ? 'Current' : `+${index}`}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            
+            <div class="stats-grid-serial">
+                <div class="stat-card-serial" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #1e40af;">${appointments.length}</div>
+                    <div style="font-size: 0.875rem; color: #1e40af; font-weight: 600;">Total</div>
+                </div>
+                <div class="stat-card-serial" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #10b981;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #065f46;">${serialData.completed.length}</div>
+                    <div style="font-size: 0.875rem; color: #065f46; font-weight: 600;">Completed</div>
+                </div>
+                <div class="stat-card-serial" style="background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%); border-color: #f97316;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #9a3412;">${serialData.skipped.length}</div>
+                    <div style="font-size: 0.875rem; color: #9a3412; font-weight: 600;">Skipped</div>
+                </div>
+                <div class="stat-card-serial" style="background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%); border-color: #8b5cf6;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #581c87;">${progress}%</div>
+                    <div style="font-size: 0.875rem; color: #581c87; font-weight: 600;">Progress</div>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: #6b7280; margin-bottom: 8px;">
+                    <span style="font-weight: 600;">Daily Progress</span>
+                    <span style="font-weight: bold;">${serialData.completed.length} / ${appointments.length}</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progress}%"></div>
+                </div>
+            </div>
+            
+            ${serialData.skipped.length > 0 ? `
+                <div class="skipped-list">
+                    <h4 style="font-weight: bold; color: #9a3412; margin-bottom: 8px;">
+                        <i class="fas fa-forward"></i> Skipped Patients
+                    </h4>
+                    <div class="skipped-items">
+                        ${serialData.skipped.map(s => `
+                            <div class="skipped-badge">${String(s).padStart(2, '0')}</div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+            
+            ${serialData.slots[0] > 0 ? (() => {
+                const currentPatient = appointments.find(a => a.serialNumber === serialData.slots[0]);
+                return currentPatient ? `
+                    <div style="background: #e0e7ff; padding: 20px; border-radius: 12px; margin-top: 20px; border: 2px solid #667eea;">
+                        <div style="text-align: center; margin-bottom: 12px;">
+                            <h4 style="font-weight: bold; color: #4338ca; font-size: 15px; margin: 0;">
+                                <i class="fas fa-user-md"></i> Current Patient in Chamber
+                            </h4>
+                        </div>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 25px; flex-wrap: wrap; font-size: 14px;">
+                            <div style="font-weight: bold; color: #1f2937; font-size: 16px;">
+                                <span style="background: #667eea; color: white; padding: 4px 12px; border-radius: 6px; margin-right: 8px;">
+                                    ${String(serialData.slots[0]).padStart(2, '0')}
+                                </span>
+                                ${currentPatient.patientName}
+                            </div>
+                            <div style="color: #4b5563;">
+                                <i class="fas fa-phone" style="color: #667eea;"></i> ${currentPatient.phone || 'N/A'}
+                            </div>
+                            ${currentPatient.patientAddress ? `
+                                <div style="color: #4b5563;">
+                                    <i class="fas fa-map-marker-alt" style="color: #667eea;"></i> ${currentPatient.patientAddress}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                ` : '';
+            })() : ''}
+        </div>
+    `;
+}
+
+// Render patient list
+function renderPatientList(serialData, appointments) {
+    const root = document.getElementById('patientListRoot');
+    if (!root) return;
+    
+    root.innerHTML = `
+        <div class="patient-section">
+            <div class="patient-header">
+                <h3><i class="fas fa-users"></i> Today's Patient List</h3>
+                <div class="patient-count-badge">
+                    ${appointments.length} Patient${appointments.length !== 1 ? 's' : ''}
+                </div>
+            </div>
+            
+            ${appointments.length > 0 ? `
+                <div style="overflow-x: auto;">
+                    <table class="patients-table">
+                        <thead>
+                            <tr>
+                                <th>Serial</th>
+                                <th>Patient Name</th>
+                                <th>Address</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${appointments.map(apt => {
+                                const isCompleted = serialData.completed.includes(apt.serialNumber);
+                                const isSkipped = serialData.skipped.includes(apt.serialNumber);
+                                const rowClass = isCompleted ? 'patient-row-completed' : (isSkipped ? 'patient-row-skipped' : '');
+                                
+                                return `
+                                    <tr class="${rowClass}">
+                                        <td class="serial-number-cell" data-label="Serial">
+                                            ${String(apt.serialNumber).padStart(2, '0')}
+                                        </td>
+                                        <td class="patient-name-cell" data-label="Name">
+                                            ${apt.patientName || 'N/A'}
+                                        </td>
+                                        <td class="patient-address-cell" data-label="Address">
+                                            ${apt.patientAddress || 'Not provided'}
+                                        </td>
+                                        <td class="patient-phone-cell" data-label="Phone">
+                                            <i class="fas fa-phone"></i> ${apt.phone || 'N/A'}
+                                        </td>
+                                        <td data-label="Status">
+                                            ${isCompleted ? 
+                                                '<span class="status-indicator status-completed"><i class="fas fa-check-circle"></i> Completed</span>' : 
+                                                (isSkipped ? 
+                                                    '<span class="status-indicator status-skipped"><i class="fas fa-forward"></i> Skipped</span>' : 
+                                                    '<span class="status-indicator status-waiting"><i class="fas fa-hourglass-half"></i> Waiting</span>'
+                                                )
+                                            }
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            ` : `
+                <div class="patient-empty">
+                    <i class="fas fa-calendar-times"></i>
+                    <p style="font-size: 1rem; margin-top: 8px;">No appointments scheduled for today</p>
+                </div>
+            `}
+        </div>
+    `;
+}
+        
+function setupTabSwitching() {
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetTab = tab.getAttribute('data-tab');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.getElementById(targetTab + 'Tab').classList.add('active');
+            
+            // Load serial management when tab is clicked
+            if (targetTab === 'serial') {
+                loadSerialManagement();
+            }
+        });
+    });
+    
+    // Load serial management immediately on page load
+    loadSerialManagement();
+}
 
         // Share profile function
         window.shareProfile = function() {
