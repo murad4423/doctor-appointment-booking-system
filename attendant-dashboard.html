@@ -913,6 +913,201 @@ function renderSerialUI(serialData, appointments, serialDocRef) {
                         font-size: 2rem;
                     }
                 }
+                /* Patient List Styles */
+                .patient-list-section {
+                    background: white;
+                    border-radius: 16px;
+                    padding: 24px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                    margin-top: 24px;
+                }
+                .patient-list-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                    padding-bottom: 16px;
+                    border-bottom: 2px solid #e5e7eb;
+                }
+                .patient-list-header h3 {
+                    font-size: 1.25rem;
+                    font-weight: bold;
+                    color: #1f2937;
+                    margin: 0;
+                }
+                .patient-count-badge {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    font-weight: 600;
+                    font-size: 0.875rem;
+                }
+                .patients-table {
+                    width: 100%;
+                    border-collapse: separate;
+                    border-spacing: 0 8px;
+                }
+                .patients-table thead th {
+                    background: #f8f9fa;
+                    padding: 12px 16px;
+                    text-align: left;
+                    font-weight: 600;
+                    color: #495057;
+                    font-size: 0.875rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    border-bottom: 2px solid #e9ecef;
+                }
+                .patients-table tbody tr {
+                    background: white;
+                    transition: all 0.3s ease;
+                    border-radius: 12px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                }
+                .patients-table tbody tr:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+                }
+                .patients-table tbody td {
+                    padding: 16px;
+                    color: #2c3e50;
+                    font-size: 0.9rem;
+                    border-top: 1px solid #f0f0f0;
+                    border-bottom: 1px solid #f0f0f0;
+                }
+                .patients-table tbody td:first-child {
+                    border-left: 1px solid #f0f0f0;
+                    border-radius: 12px 0 0 12px;
+                }
+                .patients-table tbody td:last-child {
+                    border-right: 1px solid #f0f0f0;
+                    border-radius: 0 12px 12px 0;
+                }
+                .patient-row-completed {
+                    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+                    border-left: 4px solid #10b981 !important;
+                }
+                .patient-row-skipped {
+                    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+                    border-left: 4px solid #f59e0b !important;
+                }
+                .serial-number-cell {
+                    font-weight: bold;
+                    font-size: 1.5rem;
+                    color: #667eea;
+                    font-family: monospace;
+                    width: 80px;
+                }
+                .patient-name-cell {
+                    font-weight: 600;
+                    color: #1f2937;
+                }
+                .patient-address-cell {
+                    color: #6b7280;
+                    font-size: 0.85rem;
+                }
+                .patient-phone-cell {
+                    color: #374151;
+                    font-weight: 500;
+                }
+                .action-buttons {
+                    display: flex;
+                    gap: 8px;
+                }
+                .btn-complete {
+                    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-weight: 600;
+                    font-size: 0.875rem;
+                    transition: all 0.2s;
+                    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+                }
+                .btn-complete:hover:not(:disabled) {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+                }
+                .btn-complete:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+                .btn-complete.completed {
+                    background: #6b7280;
+                    cursor: default;
+                }
+                .status-indicator {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                }
+                .status-waiting {
+                    background: #e0e7ff;
+                    color: #4338ca;
+                }
+                .status-in-queue {
+                    background: #dbeafe;
+                    color: #1e40af;
+                }
+                .patient-list-empty {
+                    text-align: center;
+                    padding: 60px 20px;
+                    color: #9ca3af;
+                }
+                .patient-list-empty i {
+                    font-size: 3rem;
+                    margin-bottom: 16px;
+                    opacity: 0.3;
+                }
+                @media (max-width: 768px) {
+                    .patient-list-section {
+                        padding: 16px;
+                    }
+                    .patients-table {
+                        font-size: 0.8rem;
+                    }
+                    .patients-table thead {
+                        display: none;
+                    }
+                    .patients-table tbody tr {
+                        display: block;
+                        margin-bottom: 16px;
+                        border: 1px solid #e5e7eb;
+                        border-radius: 12px;
+                        padding: 12px;
+                    }
+                    .patients-table tbody td {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 8px 0;
+                        border: none !important;
+                        border-radius: 0 !important;
+                    }
+                    .patients-table tbody td:before {
+                        content: attr(data-label);
+                        font-weight: 600;
+                        color: #6b7280;
+                        text-transform: uppercase;
+                        font-size: 0.75rem;
+                    }
+                    .serial-number-cell {
+                        font-size: 1.25rem;
+                    }
+                    .action-buttons {
+                        flex-direction: column;
+                        width: 100%;
+                    }
+                    .btn-complete {
+                        width: 100%;
+                    }
+                }
             </style>
             
             <div class="serial-header">
@@ -1016,6 +1211,100 @@ function renderSerialUI(serialData, appointments, serialDocRef) {
                 </div>
             ` : ''}
         </div>
+        ${serialData.skipped.length > 0 ? `
+                <div class="skipped-list">
+                    <h4 style="font-weight: bold; color: #9a3412; margin-bottom: 8px;">
+                        <i class="fas fa-forward"></i> Skipped Patients
+                    </h4>
+                    <div class="skipped-items">
+                        ${serialData.skipped.map(s => `
+                            <div class="skipped-badge">${String(s).padStart(2, '0')}</div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+        </div>
+        
+        <!-- NEW PATIENT LIST SECTION -->
+        <div class="patient-list-section">
+            <div class="patient-list-header">
+                <h3><i class="fas fa-users"></i> Today's Patient List</h3>
+                <div class="patient-count-badge">
+                    ${appointments.length} Patient${appointments.length !== 1 ? 's' : ''}
+                </div>
+            </div>
+            
+            ${appointments.length > 0 ? `
+                <div style="overflow-x: auto;">
+                    <table class="patients-table">
+                        <thead>
+                            <tr>
+                                <th>Serial</th>
+                                <th>Patient Name</th>
+                                <th>Address</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${appointments.map(apt => {
+                                const isCompleted = serialData.completed.includes(apt.serialNumber);
+                                const isSkipped = serialData.skipped.includes(apt.serialNumber);
+                                const rowClass = isCompleted ? 'patient-row-completed' : (isSkipped ? 'patient-row-skipped' : '');
+                                
+                                return `
+                                    <tr class="${rowClass}">
+                                        <td class="serial-number-cell" data-label="Serial">
+                                            ${String(apt.serialNumber).padStart(2, '0')}
+                                        </td>
+                                        <td class="patient-name-cell" data-label="Name">
+                                            ${apt.patientName || 'N/A'}
+                                        </td>
+                                        <td class="patient-address-cell" data-label="Address">
+                                            ${apt.patientAddress || 'Not provided'}
+                                        </td>
+                                        <td class="patient-phone-cell" data-label="Phone">
+                                            <i class="fas fa-phone"></i> ${apt.patientPhone || 'N/A'}
+                                        </td>
+                                        <td data-label="Status">
+                                            ${isCompleted ? 
+                                                '<span class="status-indicator" style="background: #d1fae5; color: #065f46;"><i class="fas fa-check-circle"></i> Completed</span>' : 
+                                                (isSkipped ? 
+                                                    '<span class="status-indicator" style="background: #fef3c7; color: #92400e;"><i class="fas fa-clock"></i> Skipped</span>' : 
+                                                    '<span class="status-indicator status-waiting"><i class="fas fa-hourglass-half"></i> Waiting</span>'
+                                                )
+                                            }
+                                        </td>
+                                        <td data-label="Action">
+                                            <div class="action-buttons">
+                                                <button 
+                                                    class="btn-complete ${isCompleted ? 'completed' : ''}" 
+                                                    data-serial="${apt.serialNumber}"
+                                                    data-booking-id="${apt.id || ''}"
+                                                    ${isCompleted ? 'disabled' : ''}
+                                                >
+                                                    ${isCompleted ? 
+                                                        '<i class="fas fa-check"></i> Completed' : 
+                                                        '<i class="fas fa-check-circle"></i> Mark Complete'
+                                                    }
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            ` : `
+                <div class="patient-list-empty">
+                    <i class="fas fa-calendar-times"></i>
+                    <p style="font-size: 1rem; margin-top: 8px;">No appointments scheduled for today</p>
+                </div>
+            `}
+        </div>
+    `;
     `;
     
     // Attach event handlers
@@ -1139,6 +1428,46 @@ function renderSerialUI(serialData, appointments, serialDocRef) {
             }
         };
     }
+    }
+    
+    // NEW: Handle complete button clicks for patient list
+    document.querySelectorAll('.btn-complete:not(.completed)').forEach(btn => {
+        btn.onclick = async () => {
+            const serial = parseInt(btn.dataset.serial);
+            const bookingId = btn.dataset.bookingId;
+            
+            if (!serial || isNaN(serial)) return;
+            
+            if (confirm(`Mark Patient #${String(serial).padStart(2, '0')} as completed?`)) {
+                try {
+                    // Update serial management
+                    const newCompleted = [...serialData.completed, serial];
+                    const newSkipped = serialData.skipped.filter(s => s !== serial);
+                    
+                    await updateDoc(serialDocRef, {
+                        completed: newCompleted,
+                        skipped: newSkipped,
+                        lastUpdated: new Date()
+                    });
+                    
+                    // Update booking status if bookingId exists
+                    if (bookingId) {
+                        const bookingRef = doc(db, 'bookings', bookingId);
+                        await updateDoc(bookingRef, {
+                            status: 'Completed',
+                            completedAt: new Date()
+                        });
+                    }
+                    
+                    showMessage(`Patient #${String(serial).padStart(2, '0')} marked as completed!`, 'success');
+                } catch (error) {
+                    console.error('Error:', error);
+                    showMessage('Failed to update patient status. Please try again.', 'error');
+                }
+            }
+        };
+    });
+}
 }
 
 // ==================== END SERIAL MANAGEMENT ====================
@@ -1225,9 +1554,15 @@ if (checkAttendantSession()) {
                 const q = query(bookingsRef, where('doctorId', '==', doctorId));
                 const appointmentsSnapshot = await getDocs(q);
 
-                allAppointments = [];
+allAppointments = [];
                 appointmentsSnapshot.forEach((docSnap) => {
-                    allAppointments.push({ id: docSnap.id, ...docSnap.data() });
+                    const data = docSnap.data();
+                    allAppointments.push({ 
+                        id: docSnap.id, 
+                        ...data,
+                        patientAddress: data.patientAddress || 'Not provided',
+                        patientPhone: data.patientPhone || 'N/A'
+                    });
                 });
 
                 filteredAppointments = [...allAppointments];
