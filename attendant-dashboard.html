@@ -938,25 +938,28 @@ async function initSerialManagement() {
     let serialDocSnap = await getDoc(serialDocRef);
     let serialData;
     
-if (!serialDocSnap.exists()) {
-    // First time today - initialize with first 5 appointments
-    const firstFive = [];
-    
-    console.log('INITIALIZING - Total appointments:', todayAppointments.length);
-    console.log('First 5 appointments:', todayAppointments.slice(0, 5).map(a => a.serialNumber));
-    
-    for (let i = 0; i < 5; i++) {
-        if (i < todayAppointments.length) {
-            firstFive.push(todayAppointments[i].serialNumber);
-            console.log(`Slot ${i}: Adding serial ${todayAppointments[i].serialNumber}`);
-        } else {
-            firstFive.push(0);
-            console.log(`Slot ${i}: Empty (no appointment)`);
+    if (!serialDocSnap.exists()) {
+        // First time today - initialize with first 5 appointments
+        const firstFive = [];
+        
+        console.log('=== INITIALIZING SERIAL MANAGEMENT ===');
+        console.log('Total appointments today:', todayAppointments.length);
+        console.log('Appointments:', todayAppointments.map(a => ({serial: a.serialNumber, name: a.patientName})));
+        
+        // Fill first 5 slots with appointments
+        for (let i = 0; i < 5; i++) {
+            if (i < todayAppointments.length) {
+                const serialNum = todayAppointments[i].serialNumber;
+                firstFive.push(serialNum);
+                console.log(`✓ Slot ${i}: Serial ${serialNum} (${todayAppointments[i].patientName})`);
+            } else {
+                firstFive.push(0);
+                console.log(`✓ Slot ${i}: Empty (no appointment)`);
+            }
         }
-    }
-    
-    console.log('Final firstFive array:', firstFive);
-    // DON'T duplicate the while loop - remove the duplicate lines
+        
+        console.log('Final slots array:', firstFive);
+        console.log('=======================================');
         
         serialData = {
             doctorId: doctorId,
@@ -972,11 +975,16 @@ if (!serialDocSnap.exists()) {
         await setDoc(serialDocRef, serialData);
     } else {
         serialData = serialDocSnap.data();
+        console.log('=== LOADING EXISTING SERIAL DATA ===');
+        console.log('Current slots:', serialData.slots);
+        console.log('Completed:', serialData.completed);
+        console.log('Skipped:', serialData.skipped);
+        console.log('====================================');
     }
     
     renderSerialUI(serialData, todayAppointments, serialDocRef);
     
-// Real-time listener with fresh appointments data
+    // Real-time listener with fresh appointments data
     onSnapshot(serialDocRef, async (snapshot) => {
         if (snapshot.exists()) {
             // Reload appointments to get latest data
