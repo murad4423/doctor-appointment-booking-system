@@ -941,13 +941,21 @@ async function initSerialManagement() {
 if (!serialDocSnap.exists()) {
     // First time today - initialize with first 5 appointments
     const firstFive = [];
+    
+    console.log('INITIALIZING - Total appointments:', todayAppointments.length);
+    console.log('First 5 appointments:', todayAppointments.slice(0, 5).map(a => a.serialNumber));
+    
     for (let i = 0; i < 5; i++) {
         if (i < todayAppointments.length) {
             firstFive.push(todayAppointments[i].serialNumber);
+            console.log(`Slot ${i}: Adding serial ${todayAppointments[i].serialNumber}`);
         } else {
             firstFive.push(0);
+            console.log(`Slot ${i}: Empty (no appointment)`);
         }
     }
+    
+    console.log('Final firstFive array:', firstFive);
     // DON'T duplicate the while loop - remove the duplicate lines
         
         serialData = {
