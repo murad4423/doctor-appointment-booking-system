@@ -1000,7 +1000,13 @@ if (!serialDocSnap.exists()) {
 function renderSerialUI(serialData, appointments, serialDocRef) {
     const root = document.getElementById('serialManagementRoot');
     if (!root) return;
-    
+      // ADD THESE DEBUG LOGS:
+    console.log('=== RENDER SERIAL UI ===');
+    console.log('Current Slots:', serialData.slots);
+    console.log('Completed:', serialData.completed);
+    console.log('Skipped:', serialData.skipped);
+    console.log('All Appointments:', appointments.map(a => a.serialNumber));
+    console.log('=======================');
     const getPatientName = (serial) => {
         const apt = appointments.find(a => a.serialNumber === serial);
         return apt ? apt.patientName : 'No Patient';
