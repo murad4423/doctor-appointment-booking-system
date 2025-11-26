@@ -938,9 +938,16 @@ async function initSerialManagement() {
     let serialDocSnap = await getDoc(serialDocRef);
     let serialData;
     
-    if (!serialDocSnap.exists()) {
-        // First time today - initialize with first 5 appointments
-        const firstFive = todayAppointments.slice(0, 5).map(a => a.serialNumber);
+  if (!serialDocSnap.exists()) {
+    // First time today - initialize with first 5 appointments
+    const firstFive = [];
+    for (let i = 0; i < 5; i++) {
+        if (i < todayAppointments.length) {
+            firstFive.push(todayAppointments[i].serialNumber);
+        } else {
+            firstFive.push(0);
+        }
+    }
         // Fill remaining slots with 0
         while (firstFive.length < 5) {
             firstFive.push(0);
@@ -1505,81 +1512,109 @@ function renderSerialUI(serialData, appointments, serialDocRef) {
     const btnAdd = document.getElementById('btnSerialAdd');
     
 if (btnDone) {
-        btnDone.onclick = async () => {
-            if (btnDone.disabled) return;
-            const currentSerial = serialData.slots[0];
-            
-            // Find the appointment with this serial number
-            const appointment = appointments.find(apt => apt.serialNumber === currentSerial);
-            
-            try {
-                // Update serial management
-                await updateDoc(serialDocRef, {
-                    history: {
-                        slots: [...serialData.slots],
-                        skipped: [...serialData.skipped],
-                        completed: [...serialData.completed]
-                    },
-                    slots: [
-                        serialData.slots[1],
-                        serialData.slots[2],
-                        serialData.slots[3],
-                        serialData.slots[4],
-                        serialData.nextSerial && serialData.nextSerial <= 99 ? serialData.nextSerial : 0
-                    ],
-                    nextSerial: serialData.nextSerial && serialData.nextSerial <= 99 ? serialData.nextSerial + 1 : serialData.nextSerial,
-                    completed: [...serialData.completed, currentSerial],
-                    lastUpdated: new Date()
-                });
-                
-                // Update booking status
-                if (appointment && appointment.id) {
-                    const bookingRef = doc(db, 'bookings', appointment.id);
-                    await updateDoc(bookingRef, {
-                        status: 'Completed',
-                        completedAt: new Date()
-                    });
-                }
-                
-                showMessage(`Patient #${String(currentSerial).padStart(2, '0')} completed!`, 'success');
-                
-            } catch (error) {
-                console.error('Error:', error);
-                showMessage('Failed to update. Please try again.', 'error');
+    btnDone.onclick = async () => {
+        if (btnDone.disabled) return;
+        const currentSerial = serialData.slots[0];
+        
+        // Find the appointment with this serial number
+        const appointment = appointments.find(apt => apt.serialNumber === currentSerial);
+        
+        // Find next available serial from appointments list
+        const usedSerials = new Set([
+            ...serialData.slots.filter(s => s > 0),
+            ...serialData.completed,
+            ...serialData.skipped
+        ]);
+        
+        let nextAvailableSerial = 0;
+        for (const apt of appointments) {
+            if (apt.serialNumber && !usedSerials.has(apt.serialNumber)) {
+                nextAvailableSerial = apt.serialNumber;
+                break;
             }
-        };
-    }
+        }
+        
+        try {
+            // Update serial management
+            await updateDoc(serialDocRef, {
+                history: {
+                    slots: [...serialData.slots],
+                    skipped: [...serialData.skipped],
+                    completed: [...serialData.completed]
+                },
+                slots: [
+                    serialData.slots[1] || 0,
+                    serialData.slots[2] || 0,
+                    serialData.slots[3] || 0,
+                    serialData.slots[4] || 0,
+                    nextAvailableSerial
+                ],
+                completed: [...serialData.completed, currentSerial],
+                lastUpdated: new Date()
+            });
+            
+            // Update booking status
+            if (appointment && appointment.id) {
+                const bookingRef = doc(db, 'bookings', appointment.id);
+                await updateDoc(bookingRef, {
+                    status: 'Completed',
+                    completedAt: new Date()
+                });
+            }
+            
+            showMessage(`Patient #${String(currentSerial).padStart(2, '0')} completed!`, 'success');
+            
+        } catch (error) {
+            console.error('Error:', error);
+            showMessage('Failed to update. Please try again.', 'error');
+        }
+    };
+}
     
-    if (btnSkip) {
-        btnSkip.onclick = async () => {
-            if (btnSkip.disabled) return;
-            const currentSerial = serialData.slots[0];
-            
-            try {
-                await updateDoc(serialDocRef, {
-                    history: {
-                        slots: [...serialData.slots],
-                        skipped: [...serialData.skipped],
-                        completed: [...serialData.completed]
-                    },
-                    slots: [
-                        serialData.slots[1],
-                        serialData.slots[2],
-                        serialData.slots[3],
-                        serialData.slots[4],
-                        serialData.nextSerial && serialData.nextSerial <= 99 ? serialData.nextSerial : 0
-                    ],
-                    nextSerial: serialData.nextSerial && serialData.nextSerial <= 99 ? serialData.nextSerial + 1 : serialData.nextSerial,
-                    skipped: [...serialData.skipped, currentSerial],
-                    lastUpdated: new Date()
-                });
-                showMessage(`Patient #${String(currentSerial).padStart(2, '0')} skipped!`, 'success');
-            } catch (error) {
-                console.error('Error:', error);
-                showMessage('Failed to skip. Please try again.', 'error');
+if (btnSkip) {
+    btnSkip.onclick = async () => {
+        if (btnSkip.disabled) return;
+        const currentSerial = serialData.slots[0];
+        
+        // Find next available serial from appointments list
+        const usedSerials = new Set([
+            ...serialData.slots.filter(s => s > 0),
+            ...serialData.completed,
+            ...serialData.skipped
+        ]);
+        
+        let nextAvailableSerial = 0;
+        for (const apt of appointments) {
+            if (apt.serialNumber && !usedSerials.has(apt.serialNumber)) {
+                nextAvailableSerial = apt.serialNumber;
+                break;
             }
-        };
-    }
+        }
+        
+        try {
+            await updateDoc(serialDocRef, {
+                history: {
+                    slots: [...serialData.slots],
+                    skipped: [...serialData.skipped],
+                    completed: [...serialData.completed]
+                },
+                slots: [
+                    serialData.slots[1] || 0,
+                    serialData.slots[2] || 0,
+                    serialData.slots[3] || 0,
+                    serialData.slots[4] || 0,
+                    nextAvailableSerial
+                ],
+                skipped: [...serialData.skipped, currentSerial],
+                lastUpdated: new Date()
+            });
+            showMessage(`Patient #${String(currentSerial).padStart(2, '0')} skipped!`, 'success');
+        } catch (error) {
+            console.error('Error:', error);
+            showMessage('Failed to skip. Please try again.', 'error');
+        }
+    };
+}
     
     if (btnUndo) {
         btnUndo.onclick = async () => {
@@ -1598,42 +1633,207 @@ if (btnDone) {
         };
     }
     
-    if (btnAdd) {
-        btnAdd.onclick = async () => {
-            if (serialData.skipped.length === 0) return;
+  if (btnAdd) {
+    btnAdd.onclick = async () => {
+        if (serialData.skipped.length === 0) return;
+        
+        // Create modal HTML
+        const modalHTML = `
+            <div id="skipSelectionModal" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            ">
+                <div style="
+                    background: white;
+                    border-radius: 16px;
+                    padding: 30px;
+                    max-width: 600px;
+                    width: 90%;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                ">
+                    <h3 style="
+                        margin: 0 0 20px 0;
+                        color: #1f2937;
+                        font-size: 1.5rem;
+                    ">
+                        <i class="fas fa-hand-pointer"></i> Select Skipped Serial
+                    </h3>
+                    <div id="skipBlocksContainer" style="
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+                        gap: 12px;
+                        margin-bottom: 20px;
+                    ">
+                        ${serialData.skipped.map(serial => `
+                            <div class="skip-block" data-serial="${serial}" style="
+                                background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+                                color: white;
+                                padding: 20px;
+                                border-radius: 12px;
+                                text-align: center;
+                                font-size: 1.5rem;
+                                font-weight: bold;
+                                cursor: pointer;
+                                transition: all 0.3s;
+                                box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+                            ">
+                                ${String(serial).padStart(2, '0')}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div style="
+                        display: flex;
+                        gap: 12px;
+                    ">
+                        <button id="cancelSkipSelection" style="
+                            flex: 1;
+                            padding: 12px 24px;
+                            background: #6c757d;
+                            color: white;
+                            border: none;
+                            border-radius: 8px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            font-size: 1rem;
+                        ">
+                            Cancel
+                        </button>
+                        <button id="confirmSkipSelection" disabled style="
+                            flex: 2;
+                            padding: 12px 24px;
+                            background: #10b981;
+                            color: white;
+                            border: none;
+                            border-radius: 8px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            font-size: 1rem;
+                        ">
+                            Confirm Selection
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Append modal to body
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        let selectedSerial = null;
+        
+        // Add click handlers to skip blocks
+        document.querySelectorAll('.skip-block').forEach(block => {
+            block.addEventListener('click', function() {
+                // Remove previous selection
+                document.querySelectorAll('.skip-block').forEach(b => {
+                    b.style.background = 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)';
+                    b.style.transform = 'scale(1)';
+                    b.style.border = 'none';
+                });
+                
+                // Add selection
+                this.style.background = 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)';
+                this.style.transform = 'scale(1.1)';
+                this.style.border = '3px solid #1e40af';
+                
+                selectedSerial = parseInt(this.getAttribute('data-serial'));
+                document.getElementById('confirmSkipSelection').disabled = false;
+                document.getElementById('confirmSkipSelection').style.opacity = '1';
+            });
             
-            const selected = prompt(`Enter serial number from skipped list:\n${serialData.skipped.join(', ')}`);
-            if (selected) {
-                const num = parseInt(selected);
-                if (serialData.skipped.includes(num)) {
-                    try {
-                        await updateDoc(serialDocRef, {
-                            history: {
-                                slots: [...serialData.slots],
-                                skipped: [...serialData.skipped],
-                                completed: [...serialData.completed]
-                            },
-                            slots: [
-                                serialData.slots[0],
-                                serialData.slots[1],
-                                serialData.slots[2],
-                                serialData.slots[3],
-                                num
-                            ],
-                            skipped: serialData.skipped.filter(s => s !== num),
-                            lastUpdated: new Date()
-                        });
-                        showMessage(`Patient #${String(num).padStart(2, '0')} added to queue!`, 'success');
-                    } catch (error) {
-                        console.error('Error:', error);
-                        showMessage('Failed to add. Please try again.', 'error');
-                    }
-                } else {
-                    alert('Serial not found in skipped list!');
+            // Hover effect
+            block.addEventListener('mouseenter', function() {
+                if (!this.style.border) {
+                    this.style.transform = 'scale(1.05)';
                 }
+            });
+            
+            block.addEventListener('mouseleave', function() {
+                if (!this.style.border) {
+                    this.style.transform = 'scale(1)';
+                }
+            });
+        });
+        
+        // Cancel button
+        document.getElementById('cancelSkipSelection').addEventListener('click', () => {
+            document.getElementById('skipSelectionModal').remove();
+        });
+        
+        // Confirm button
+        document.getElementById('confirmSkipSelection').addEventListener('click', async () => {
+            if (!selectedSerial) return;
+            
+            try {
+                // Find first empty slot or use last slot
+                let newSlots = [...serialData.slots];
+                let insertIndex = -1;
+                
+                // Check for first empty slot
+                for (let i = 0; i < newSlots.length; i++) {
+                    if (newSlots[i] === 0) {
+                        insertIndex = i;
+                        break;
+                    }
+                }
+                
+                if (insertIndex !== -1) {
+                    // Insert in empty slot
+                    newSlots[insertIndex] = selectedSerial;
+                } else {
+                    // Push current slot 5 value back and insert skipped serial
+                    const lastValue = newSlots[4];
+                    newSlots[4] = selectedSerial;
+                    
+                    // Find next available serial after lastValue
+                    const usedSerials = new Set([
+                        ...newSlots.filter(s => s > 0),
+                        ...serialData.completed,
+                        ...serialData.skipped.filter(s => s !== selectedSerial)
+                    ]);
+                    
+                    let nextSerial = 0;
+                    for (const apt of appointments) {
+                        if (apt.serialNumber && 
+                            apt.serialNumber > lastValue && 
+                            !usedSerials.has(apt.serialNumber)) {
+                            nextSerial = apt.serialNumber;
+                            break;
+                        }
+                    }
+                    
+                    // If we found a next serial, we'll use it in future operations
+                }
+                
+                await updateDoc(serialDocRef, {
+                    history: {
+                        slots: [...serialData.slots],
+                        skipped: [...serialData.skipped],
+                        completed: [...serialData.completed]
+                    },
+                    slots: newSlots,
+                    skipped: serialData.skipped.filter(s => s !== selectedSerial),
+                    lastUpdated: new Date()
+                });
+                
+                showMessage(`Serial #${String(selectedSerial).padStart(2, '0')} added to queue!`, 'success');
+                document.getElementById('skipSelectionModal').remove();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Failed to add. Please try again.', 'error');
             }
-        };
-    }
+        });
+    };
+}
 
 }
 
