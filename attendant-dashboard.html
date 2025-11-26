@@ -938,7 +938,7 @@ async function initSerialManagement() {
     let serialDocSnap = await getDoc(serialDocRef);
     let serialData;
     
-  if (!serialDocSnap.exists()) {
+if (!serialDocSnap.exists()) {
     // First time today - initialize with first 5 appointments
     const firstFive = [];
     for (let i = 0; i < 5; i++) {
@@ -948,10 +948,7 @@ async function initSerialManagement() {
             firstFive.push(0);
         }
     }
-        // Fill remaining slots with 0
-        while (firstFive.length < 5) {
-            firstFive.push(0);
-        }
+    // DON'T duplicate the while loop - remove the duplicate lines
         
         serialData = {
             doctorId: doctorId,
@@ -971,10 +968,31 @@ async function initSerialManagement() {
     
     renderSerialUI(serialData, todayAppointments, serialDocRef);
     
-    // Real-time listener
-    onSnapshot(serialDocRef, (snapshot) => {
+// Real-time listener with fresh appointments data
+    onSnapshot(serialDocRef, async (snapshot) => {
         if (snapshot.exists()) {
-            renderSerialUI(snapshot.data(), todayAppointments, serialDocRef);
+            // Reload appointments to get latest data
+            const bookingsRef = collection(db, 'bookings');
+            const q = query(
+                bookingsRef, 
+                where('doctorId', '==', doctorId),
+                where('appointmentDate', '==', today)
+            );
+            
+            const freshSnapshot = await getDocs(q);
+            const freshAppointments = [];
+            freshSnapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                if (data.serialNumber) {
+                    freshAppointments.push({
+                        id: docSnap.id,
+                        ...data
+                    });
+                }
+            });
+            freshAppointments.sort((a, b) => a.serialNumber - b.serialNumber);
+            
+            renderSerialUI(snapshot.data(), freshAppointments, serialDocRef);
         }
     });
 }
@@ -1519,13 +1537,17 @@ if (btnDone) {
         // Find the appointment with this serial number
         const appointment = appointments.find(apt => apt.serialNumber === currentSerial);
         
-        // Find next available serial from appointments list
+        // Build list of all used serials
         const usedSerials = new Set([
             ...serialData.slots.filter(s => s > 0),
             ...serialData.completed,
             ...serialData.skipped
         ]);
         
+        // Add current serial to used since we're completing it
+        usedSerials.add(currentSerial);
+        
+        // Find next available serial from appointments (in order)
         let nextAvailableSerial = 0;
         for (const apt of appointments) {
             if (apt.serialNumber && !usedSerials.has(apt.serialNumber)) {
@@ -1535,20 +1557,26 @@ if (btnDone) {
         }
         
         try {
-            // Update serial management
+            // Save history BEFORE making changes
+            const historyData = {
+                slots: [...serialData.slots],
+                skipped: [...serialData.skipped],
+                completed: [...serialData.completed]
+            };
+            
+            // Create new slots array by shifting left
+            const newSlots = [
+                serialData.slots[1] || 0,
+                serialData.slots[2] || 0,
+                serialData.slots[3] || 0,
+                serialData.slots[4] || 0,
+                nextAvailableSerial
+            ];
+            
+            // Update Firestore
             await updateDoc(serialDocRef, {
-                history: {
-                    slots: [...serialData.slots],
-                    skipped: [...serialData.skipped],
-                    completed: [...serialData.completed]
-                },
-                slots: [
-                    serialData.slots[1] || 0,
-                    serialData.slots[2] || 0,
-                    serialData.slots[3] || 0,
-                    serialData.slots[4] || 0,
-                    nextAvailableSerial
-                ],
+                history: historyData,
+                slots: newSlots,
                 completed: [...serialData.completed, currentSerial],
                 lastUpdated: new Date()
             });
@@ -1562,7 +1590,7 @@ if (btnDone) {
                 });
             }
             
-            showMessage(`Patient #${String(currentSerial).padStart(2, '0')} completed!`, 'success');
+            showMessage(`✓ Patient #${String(currentSerial).padStart(2, '0')} completed!`, 'success');
             
         } catch (error) {
             console.error('Error:', error);
@@ -1576,13 +1604,17 @@ if (btnSkip) {
         if (btnSkip.disabled) return;
         const currentSerial = serialData.slots[0];
         
-        // Find next available serial from appointments list
+        // Build list of all used serials
         const usedSerials = new Set([
             ...serialData.slots.filter(s => s > 0),
             ...serialData.completed,
             ...serialData.skipped
         ]);
         
+        // Add current serial to used since we're skipping it
+        usedSerials.add(currentSerial);
+        
+        // Find next available serial from appointments (in order)
         let nextAvailableSerial = 0;
         for (const apt of appointments) {
             if (apt.serialNumber && !usedSerials.has(apt.serialNumber)) {
@@ -1592,23 +1624,32 @@ if (btnSkip) {
         }
         
         try {
+            // Save history BEFORE making changes
+            const historyData = {
+                slots: [...serialData.slots],
+                skipped: [...serialData.skipped],
+                completed: [...serialData.completed]
+            };
+            
+            // Create new slots array by shifting left
+            const newSlots = [
+                serialData.slots[1] || 0,
+                serialData.slots[2] || 0,
+                serialData.slots[3] || 0,
+                serialData.slots[4] || 0,
+                nextAvailableSerial
+            ];
+            
+            // Update Firestore
             await updateDoc(serialDocRef, {
-                history: {
-                    slots: [...serialData.slots],
-                    skipped: [...serialData.skipped],
-                    completed: [...serialData.completed]
-                },
-                slots: [
-                    serialData.slots[1] || 0,
-                    serialData.slots[2] || 0,
-                    serialData.slots[3] || 0,
-                    serialData.slots[4] || 0,
-                    nextAvailableSerial
-                ],
+                history: historyData,
+                slots: newSlots,
                 skipped: [...serialData.skipped, currentSerial],
                 lastUpdated: new Date()
             });
-            showMessage(`Patient #${String(currentSerial).padStart(2, '0')} skipped!`, 'success');
+            
+            showMessage(`⏭ Patient #${String(currentSerial).padStart(2, '0')} skipped!`, 'success');
+            
         } catch (error) {
             console.error('Error:', error);
             showMessage('Failed to skip. Please try again.', 'error');
@@ -1837,6 +1878,8 @@ if (btnSkip) {
 
 }
 
+
+        
 // ==================== END SERIAL MANAGEMENT ====================
         let doctorId = null;
         let allAppointments = [];
