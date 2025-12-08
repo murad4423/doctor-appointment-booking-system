@@ -934,11 +934,11 @@ async function initSerialManagement() {
         });
         
         // Include ALL appointments, even without serial numbers
-        todayAppointments.push({
-            id: docSnap.id,
-            ...data,
-            serialNumber: data.serialNumber || 0
-        });
+todayAppointments.push({
+    id: docSnap.id,
+    ...data,
+    serialNumber: parseInt(data.serialNumber) || 0  // String কে Number এ convert করছে
+});
     });
     
     console.log('Total appointments loaded:', todayAppointments.length);
@@ -1020,11 +1020,11 @@ async function initSerialManagement() {
             const freshAppointments = [];
             freshSnapshot.forEach(docSnap => {
                 const data = docSnap.data();
-                freshAppointments.push({
-                    id: docSnap.id,
-                    ...data,
-                    serialNumber: data.serialNumber || 0
-                });
+freshAppointments.push({
+    id: docSnap.id,
+    ...data,
+    serialNumber: parseInt(data.serialNumber) || 0  // String কে Number এ convert করছে
+});
             });
             freshAppointments.sort((a, b) => (a.serialNumber || 0) - (b.serialNumber || 0));
             
