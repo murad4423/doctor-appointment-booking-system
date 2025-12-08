@@ -931,6 +931,9 @@ async function initSerialManagement() {
     // Sort by serial number
     todayAppointments.sort((a, b) => a.serialNumber - b.serialNumber);
     
+    console.log('📋 Total appointments today:', todayAppointments.length);
+    console.log('📋 Serials:', todayAppointments.map(a => a.serialNumber));
+    
     // Initialize or load serial management data
     const serialDocId = `${doctorId}_${today}`;
     const serialDocRef = doc(db, 'serialManagement', serialDocId);
@@ -938,28 +941,22 @@ async function initSerialManagement() {
     let serialDocSnap = await getDoc(serialDocRef);
     let serialData;
     
-if (!serialDocSnap.exists()) {
-    // First time today - initialize with first 5 appointments
-    const firstFive = [];
-    
-    console.log('=== INITIALIZING SERIAL MANAGEMENT ===');
-    console.log('Total appointments today:', todayAppointments.length);
-    console.log('Appointments:', todayAppointments.map(a => ({serial: a.serialNumber, name: a.patientName})));
-    
-    // Fill first 5 slots with appointments
-    for (let i = 0; i < 5; i++) {
-        if (i < todayAppointments.length) {
-            const serialNum = todayAppointments[i].serialNumber;
-            firstFive.push(serialNum);
-            console.log(`✓ Slot ${i}: Serial ${serialNum} (${todayAppointments[i].patientName})`);
-        } else {
-            firstFive.push(0);
-            console.log(`✓ Slot ${i}: Empty (no appointment)`);
+    if (!serialDocSnap.exists()) {
+        // ✅ FIRST TIME TODAY - Initialize with first 5 appointments
+        const firstFive = [];
+        
+        console.log('🆕 Creating new serial management document');
+        
+        for (let i = 0; i < 5; i++) {
+            if (i < todayAppointments.length) {
+                const serialNum = todayAppointments[i].serialNumber;
+                firstFive.push(serialNum);
+                console.log(`✅ Slot ${i}: Serial ${serialNum} (${todayAppointments[i].patientName})`);
+            } else {
+                firstFive.push(0);
+                console.log(`⚪ Slot ${i}: Empty`);
+            }
         }
-    }
-    
-    console.log('Final slots array:', firstFive);
-    console.log('=======================================')
         
         serialData = {
             doctorId: doctorId,
@@ -973,28 +970,101 @@ if (!serialDocSnap.exists()) {
         };
         
         await setDoc(serialDocRef, serialData);
+        console.log('✅ Serial document created:', serialData);
+        
     } else {
+        // ✅ DOCUMENT EXISTS - Check if needs refresh
         serialData = serialDocSnap.data();
-        console.log('=== LOADING EXISTING SERIAL DATA ===');
+        
+        console.log('📂 Loading existing document');
         console.log('Current slots:', serialData.slots);
         console.log('Completed:', serialData.completed);
         console.log('Skipped:', serialData.skipped);
-        console.log('====================================');
+        
+        // 🔄 CHECK IF SLOTS NEED REFRESH
+        const allProcessed = new Set([...serialData.completed, ...serialData.skipped]);
+        const currentSlotsSerials = serialData.slots.filter(s => s > 0);
+        
+        // Count how many appointments are not yet in the system
+        const unprocessedAppointments = todayAppointments.filter(apt => 
+            !allProcessed.has(apt.serialNumber) && 
+            !currentSlotsSerials.includes(apt.serialNumber)
+        );
+        
+        console.log('🔍 Unprocessed appointments:', unprocessedAppointments.length);
+        
+        // If there are unprocessed appointments and slots have empty spaces
+        const emptySlots = serialData.slots.filter(s => s === 0).length;
+        
+        if (unprocessedAppointments.length > 0 && emptySlots > 0) {
+            console.log('🔄 Refreshing slots with new appointments...');
+            
+            // Rebuild slots array
+            const newSlots = [...serialData.slots];
+            let nextAppointmentIndex = 0;
+            
+            // Fill empty slots with unprocessed appointments
+            for (let i = 0; i < newSlots.length; i++) {
+                if (newSlots[i] === 0 && nextAppointmentIndex < unprocessedAppointments.length) {
+                    newSlots[i] = unprocessedAppointments[nextAppointmentIndex].serialNumber;
+                    console.log(`✅ Filled slot ${i} with serial ${newSlots[i]}`);
+                    nextAppointmentIndex++;
+                }
+            }
+            
+            // Update document with new slots
+            await updateDoc(serialDocRef, {
+                slots: newSlots,
+                lastUpdated: new Date()
+            });
+            
+            serialData.slots = newSlots;
+            console.log('✅ Slots refreshed:', newSlots);
+        }
+        
+        // 🔄 CHECK IF ALL SLOTS ARE EMPTY BUT APPOINTMENTS EXIST
+        const allSlotsEmpty = serialData.slots.every(s => s === 0);
+        
+        if (allSlotsEmpty && todayAppointments.length > 0) {
+            console.log('⚠️ All slots empty but appointments exist - REBUILDING...');
+            
+            // Get all serials that should NOT be in slots
+            const usedSerials = new Set([...serialData.completed, ...serialData.skipped]);
+            
+            // Get available appointments (not completed/skipped)
+            const availableAppointments = todayAppointments.filter(apt => 
+                !usedSerials.has(apt.serialNumber)
+            );
+            
+            console.log('Available appointments:', availableAppointments.length);
+            
+            // Rebuild first 5 slots
+            const rebuiltSlots = [];
+            for (let i = 0; i < 5; i++) {
+                if (i < availableAppointments.length) {
+                    rebuiltSlots.push(availableAppointments[i].serialNumber);
+                } else {
+                    rebuiltSlots.push(0);
+                }
+            }
+            
+            // Update document
+            await updateDoc(serialDocRef, {
+                slots: rebuiltSlots,
+                lastUpdated: new Date()
+            });
+            
+            serialData.slots = rebuiltSlots;
+            console.log('✅ Slots rebuilt:', rebuiltSlots);
+        }
     }
     
     renderSerialUI(serialData, todayAppointments, serialDocRef);
     
-    // Real-time listener with fresh appointments data
+    // Real-time listener
     onSnapshot(serialDocRef, async (snapshot) => {
         if (snapshot.exists()) {
             // Reload appointments to get latest data
-            const bookingsRef = collection(db, 'bookings');
-            const q = query(
-                bookingsRef, 
-                where('doctorId', '==', doctorId),
-                where('appointmentDate', '==', today)
-            );
-            
             const freshSnapshot = await getDocs(q);
             const freshAppointments = [];
             freshSnapshot.forEach(docSnap => {
