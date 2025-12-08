@@ -1060,22 +1060,7 @@ function renderSerialUI(serialData, appointments, serialDocRef) {
         ? Math.round((serialData.completed.length / validAppointments.length) * 100) 
         : 0;
     
-      // ADD THESE DEBUG LOGS:
-    console.log('=== RENDER SERIAL UI ===');
-    console.log('Current Slots:', serialData.slots);
-    console.log('Completed:', serialData.completed);
-    console.log('Skipped:', serialData.skipped);
-    console.log('All Appointments:', appointments.map(a => a.serialNumber));
-    console.log('=======================');
-    const getPatientName = (serial) => {
-        const apt = appointments.find(a => a.serialNumber === serial);
-        return apt ? apt.patientName : 'No Patient';
-    };
-    
-    const progress = appointments.length > 0 
-        ? Math.round((serialData.completed.length / appointments.length) * 100) 
-        : 0;
-    
+   
     root.innerHTML = `
         <div class="serial-management-card">
             <style>
