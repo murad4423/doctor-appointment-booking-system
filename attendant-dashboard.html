@@ -904,15 +904,9 @@
         // ==================== SERIAL MANAGEMENT SYSTEM ====================
 
 async function initSerialManagement() {
-    if (!currentAttendant || !doctorId) {
-        console.error('Missing currentAttendant or doctorId');
-        return;
-    }
+    if (!currentAttendant || !doctorId) return;
     
     const today = new Date().toISOString().split('T')[0];
-    console.log('=== INIT SERIAL MANAGEMENT ===');
-    console.log('Doctor ID:', doctorId);
-    console.log('Today:', today);
     
     // Load today's appointments with serial numbers
     const bookingsRef = collection(db, 'bookings');
@@ -926,31 +920,16 @@ async function initSerialManagement() {
     const todayAppointments = [];
     snapshot.forEach(docSnap => {
         const data = docSnap.data();
-        console.log('Appointment found:', {
-            id: docSnap.id,
-            serial: data.serialNumber,
-            name: data.patientName,
-            status: data.status
-        });
-        
-        // Include ALL appointments, even without serial numbers
-todayAppointments.push({
-    id: docSnap.id,
-    ...data,
-    serialNumber: parseInt(data.serialNumber) || 0  // String কে Number এ convert করছে
-});
+        if (data.serialNumber) {
+            todayAppointments.push({
+                id: docSnap.id,
+                ...data
+            });
+        }
     });
     
-    console.log('Total appointments loaded:', todayAppointments.length);
-    
-    // Filter out appointments without serial numbers for slot management
-    const validAppointments = todayAppointments.filter(apt => apt.serialNumber > 0);
-    
     // Sort by serial number
-    validAppointments.sort((a, b) => a.serialNumber - b.serialNumber);
-    
-    console.log('Valid appointments with serials:', validAppointments.length);
-    console.log('Valid serials:', validAppointments.map(a => a.serialNumber));
+    todayAppointments.sort((a, b) => a.serialNumber - b.serialNumber);
     
     // Initialize or load serial management data
     const serialDocId = `${doctorId}_${today}`;
@@ -959,33 +938,34 @@ todayAppointments.push({
     let serialDocSnap = await getDoc(serialDocRef);
     let serialData;
     
-    if (!serialDocSnap.exists()) {
-        // First time today - initialize with first 5 appointments
-        const firstFive = [];
-        
-        console.log('=== INITIALIZING NEW SERIAL MANAGEMENT ===');
-        console.log('Valid appointments:', validAppointments.length);
-        
-        // Fill first 5 slots with valid appointments
-        for (let i = 0; i < 5; i++) {
-            if (i < validAppointments.length) {
-                const serialNum = validAppointments[i].serialNumber;
-                firstFive.push(serialNum);
-                console.log(`✓ Slot ${i}: Serial ${serialNum} (${validAppointments[i].patientName})`);
-            } else {
-                firstFive.push(0);
-                console.log(`✓ Slot ${i}: Empty (no appointment)`);
-            }
+if (!serialDocSnap.exists()) {
+    // First time today - initialize with first 5 appointments
+    const firstFive = [];
+    
+    console.log('=== INITIALIZING SERIAL MANAGEMENT ===');
+    console.log('Total appointments today:', todayAppointments.length);
+    console.log('Appointments:', todayAppointments.map(a => ({serial: a.serialNumber, name: a.patientName})));
+    
+    // Fill first 5 slots with appointments
+    for (let i = 0; i < 5; i++) {
+        if (i < todayAppointments.length) {
+            const serialNum = todayAppointments[i].serialNumber;
+            firstFive.push(serialNum);
+            console.log(`✓ Slot ${i}: Serial ${serialNum} (${todayAppointments[i].patientName})`);
+        } else {
+            firstFive.push(0);
+            console.log(`✓ Slot ${i}: Empty (no appointment)`);
         }
-        
-        console.log('Final slots array:', firstFive);
-        console.log('==========================================');
+    }
+    
+    console.log('Final slots array:', firstFive);
+    console.log('=======================================')
         
         serialData = {
             doctorId: doctorId,
             date: today,
             slots: firstFive,
-            nextSerial: validAppointments.length > 5 ? validAppointments[5].serialNumber : 0,
+            nextSerial: todayAppointments.length > 5 ? todayAppointments[5].serialNumber : 0,
             skipped: [],
             completed: [],
             history: { slots: firstFive, skipped: [], completed: [] },
@@ -1002,7 +982,6 @@ todayAppointments.push({
         console.log('====================================');
     }
     
-    // Pass ALL appointments (including those without serials) for display
     renderSerialUI(serialData, todayAppointments, serialDocRef);
     
     // Real-time listener with fresh appointments data
@@ -1020,15 +999,14 @@ todayAppointments.push({
             const freshAppointments = [];
             freshSnapshot.forEach(docSnap => {
                 const data = docSnap.data();
-freshAppointments.push({
-    id: docSnap.id,
-    ...data,
-    serialNumber: parseInt(data.serialNumber) || 0  // String কে Number এ convert করছে
-});
+                if (data.serialNumber) {
+                    freshAppointments.push({
+                        id: docSnap.id,
+                        ...data
+                    });
+                }
             });
-            freshAppointments.sort((a, b) => (a.serialNumber || 0) - (b.serialNumber || 0));
-            
-            console.log('Real-time update - Fresh appointments:', freshAppointments.length);
+            freshAppointments.sort((a, b) => a.serialNumber - b.serialNumber);
             
             renderSerialUI(snapshot.data(), freshAppointments, serialDocRef);
         }
@@ -1038,29 +1016,22 @@ freshAppointments.push({
 function renderSerialUI(serialData, appointments, serialDocRef) {
     const root = document.getElementById('serialManagementRoot');
     if (!root) return;
-    
-    // Debug logs
+      // ADD THESE DEBUG LOGS:
     console.log('=== RENDER SERIAL UI ===');
     console.log('Current Slots:', serialData.slots);
     console.log('Completed:', serialData.completed);
     console.log('Skipped:', serialData.skipped);
-    console.log('All Appointments:', appointments.length);
-    console.log('Appointment serials:', appointments.map(a => a.serialNumber));
+    console.log('All Appointments:', appointments.map(a => a.serialNumber));
     console.log('=======================');
-    
-    // Only use appointments with valid serial numbers for slot display
-    const validAppointments = appointments.filter(a => a.serialNumber > 0);
-    
     const getPatientName = (serial) => {
-        const apt = validAppointments.find(a => a.serialNumber === serial);
+        const apt = appointments.find(a => a.serialNumber === serial);
         return apt ? apt.patientName : 'No Patient';
     };
     
-    const progress = validAppointments.length > 0 
-        ? Math.round((serialData.completed.length / validAppointments.length) * 100) 
+    const progress = appointments.length > 0 
+        ? Math.round((serialData.completed.length / appointments.length) * 100) 
         : 0;
     
-   
     root.innerHTML = `
         <div class="serial-management-card">
             <style>
@@ -1456,34 +1427,34 @@ function renderSerialUI(serialData, appointments, serialDocRef) {
                 </button>
             </div>
             
-<div class="stats-grid">
-    <div class="stat-card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
-        <div style="font-size: 2rem; font-weight: bold; color: #1e40af;">${validAppointments.length}</div>
-        <div style="font-size: 0.875rem; color: #1e40af; font-weight: 600;">Total</div>
-    </div>
-    <div class="stat-card" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #10b981;">
-        <div style="font-size: 2rem; font-weight: bold; color: #065f46;">${serialData.completed.length}</div>
-        <div style="font-size: 0.875rem; color: #065f46; font-weight: 600;">Completed</div>
-    </div>
-    <div class="stat-card" style="background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%); border-color: #f97316;">
-        <div style="font-size: 2rem; font-weight: bold; color: #9a3412;">${serialData.skipped.length}</div>
-        <div style="font-size: 0.875rem; color: #9a3412; font-weight: 600;">Skipped</div>
-    </div>
-    <div class="stat-card" style="background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%); border-color: #8b5cf6;">
-        <div style="font-size: 2rem; font-weight: bold; color: #581c87;">${progress}%</div>
-        <div style="font-size: 0.875rem; color: #581c87; font-weight: 600;">Progress</div>
-    </div>
-</div>
-
-<div style="margin-bottom: 24px;">
-    <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: #6b7280; margin-bottom: 8px;">
-        <span style="font-weight: 600;">Daily Progress</span>
-        <span style="font-weight: bold;">${serialData.completed.length} / ${validAppointments.length}</span>
-    </div>
-    <div class="progress-bar">
-        <div class="progress-fill" style="width: ${progress}%"></div>
-    </div>
-</div>
+            <div class="stats-grid">
+                <div class="stat-card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #1e40af;">${appointments.length}</div>
+                    <div style="font-size: 0.875rem; color: #1e40af; font-weight: 600;">Total</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #10b981;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #065f46;">${serialData.completed.length}</div>
+                    <div style="font-size: 0.875rem; color: #065f46; font-weight: 600;">Completed</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%); border-color: #f97316;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #9a3412;">${serialData.skipped.length}</div>
+                    <div style="font-size: 0.875rem; color: #9a3412; font-weight: 600;">Skipped</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%); border-color: #8b5cf6;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #581c87;">${progress}%</div>
+                    <div style="font-size: 0.875rem; color: #581c87; font-weight: 600;">Progress</div>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: #6b7280; margin-bottom: 8px;">
+                    <span style="font-weight: 600;">Daily Progress</span>
+                    <span style="font-weight: bold;">${serialData.completed.length} / ${appointments.length}</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progress}%"></div>
+                </div>
+            </div>
             
  ${serialData.skipped.length > 0 ? `
                 <div class="skipped-list">
@@ -1499,72 +1470,79 @@ function renderSerialUI(serialData, appointments, serialDocRef) {
             ` : ''}
         </div>
         
-<!-- PATIENT LIST SECTION -->
-<div class="patient-list-section">
-    <div class="patient-list-header">
-        <h3><i class="fas fa-users"></i> Today's Patient List</h3>
-        <div class="patient-count-badge">
-            ${appointments.length} Patient${appointments.length !== 1 ? 's' : ''}
-        </div>
-    </div>
-    
-    ${appointments.length > 0 ? `
-        <div style="overflow-x: auto;">
-            <table class="patients-table">
-                <thead>
-                    <tr>
-                        <th>Serial</th>
-                        <th>Patient Name</th>
-                        <th>Address</th>
-                        <th>Phone</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${appointments
-                        .filter(apt => apt.serialNumber > 0)
-                        .sort((a, b) => a.serialNumber - b.serialNumber)
-                        .map(apt => {
-                        const isCompleted = serialData.completed.includes(apt.serialNumber);
-                        const isSkipped = serialData.skipped.includes(apt.serialNumber);
-                        const rowClass = isCompleted ? 'patient-row-completed' : (isSkipped ? 'patient-row-skipped' : '');
-                        
-                        return `
-                            <tr class="${rowClass}">
-                                <td class="serial-number-cell" data-label="Serial">
-                                    ${String(apt.serialNumber).padStart(2, '0')}
-                                </td>
-                                <td class="patient-name-cell" data-label="Name">
-                                    ${apt.patientName || 'N/A'}
-                                </td>
-                                <td class="patient-address-cell" data-label="Address">
-                                    ${apt.patientAddress || 'Not provided'}
-                                </td>
-                                <td class="patient-phone-cell" data-label="Phone">
-                                    <i class="fas fa-phone"></i> ${apt.patientPhone || 'N/A'}
-                                </td>
-                                <td data-label="Status">
-                                    ${isCompleted ? 
-                                        '<span class="status-indicator" style="background: #d1fae5; color: #065f46;"><i class="fas fa-check-circle"></i> Completed</span>' : 
-                                        (isSkipped ? 
-                                            '<span class="status-indicator" style="background: #fef3c7; color: #92400e;"><i class="fas fa-forward"></i> Skipped</span>' : 
-                                            '<span class="status-indicator status-waiting"><i class="fas fa-hourglass-half"></i> Waiting</span>'
-                                        )
-                                    }
-                                </td>
+        <!-- PATIENT LIST SECTION -->
+        <div class="patient-list-section">
+            <div class="patient-list-header">
+                <h3><i class="fas fa-users"></i> Today's Patient List</h3>
+                <div class="patient-count-badge">
+                    ${appointments.length} Patient${appointments.length !== 1 ? 's' : ''}
+                </div>
+            </div>
+            
+            ${appointments.length > 0 ? `
+                <div style="overflow-x: auto;">
+                    <table class="patients-table">
+                        <thead>
+                            <tr>
+                                <th>Serial</th>
+                                <th>Patient Name</th>
+                                <th>Address</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                               
                             </tr>
-                        `;
-                    }).join('')}
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody>
+                            ${appointments.map(apt => {
+                                const isCompleted = serialData.completed.includes(apt.serialNumber);
+                                const isSkipped = serialData.skipped.includes(apt.serialNumber);
+                                const rowClass = isCompleted ? 'patient-row-completed' : (isSkipped ? 'patient-row-skipped' : '');
+                                
+                                return `
+                                    <tr class="${rowClass}">
+                                        <td class="serial-number-cell" data-label="Serial">
+                                            ${String(apt.serialNumber).padStart(2, '0')}
+                                        </td>
+                                        <td class="patient-name-cell" data-label="Name">
+                                            ${apt.patientName || 'N/A'}
+                                        </td>
+                                        <td class="patient-address-cell" data-label="Address">
+                                            ${apt.patientAddress || 'Not provided'}
+                                        </td>
+                                        <td class="patient-phone-cell" data-label="Phone">
+                                            <i class="fas fa-phone"></i> ${apt.patientPhone || 'N/A'}
+                                        </td>
+                                        <td data-label="Status">
+                                            ${isCompleted ? 
+                                                '<span class="status-indicator" style="background: #d1fae5; color: #065f46;"><i class="fas fa-check-circle"></i> Completed</span>' : 
+                                                (isSkipped ? 
+                                                    '<span class="status-indicator" style="background: #fef3c7; color: #92400e;"><i class="fas fa-clock"></i> Skipped</span>' : 
+                                                    '<span class="status-indicator status-waiting"><i class="fas fa-hourglass-half"></i> Waiting</span>'
+                                                )
+                                            }
+                                        </td>
+<td data-label="Status">
+                                            ${isCompleted ? 
+                                                '<span class="status-indicator" style="background: #d1fae5; color: #065f46;"><i class="fas fa-check-circle"></i> Completed</span>' : 
+                                                (isSkipped ? 
+                                                    '<span class="status-indicator" style="background: #fef3c7; color: #92400e;"><i class="fas fa-forward"></i> Skipped</span>' : 
+                                                    '<span class="status-indicator status-waiting"><i class="fas fa-hourglass-half"></i> Waiting</span>'
+                                                )
+                                            }
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            ` : `
+                <div class="patient-list-empty">
+                    <i class="fas fa-calendar-times"></i>
+                    <p style="font-size: 1rem; margin-top: 8px;">No appointments scheduled for today</p>
+                </div>
+            `}
         </div>
-    ` : `
-        <div class="patient-list-empty">
-            <i class="fas fa-calendar-times"></i>
-            <p style="font-size: 1rem; margin-top: 8px;">No appointments scheduled for today</p>
-        </div>
-    `}
-</div>
     `;
     
     // Attach event handlers
